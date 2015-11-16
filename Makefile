@@ -1,3 +1,5 @@
+CLASS=App
+
 all: run
 
 install-deps:
@@ -10,4 +12,4 @@ package:
 	mvn clean package
 
 run: package
-	mvn exec:java -Dexec.mainClass=nl.vu.ai.aso.App
+	mvn exec:java -Dexec.classpathScope=compile -Dexec.mainClass=nl.vu.ai.aso.$(CLASS)

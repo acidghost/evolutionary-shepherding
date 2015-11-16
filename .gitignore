@@ -16,3 +16,4 @@ mason
 .idea
 *.iml
 target
+*.stat
