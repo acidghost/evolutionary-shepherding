@@ -20,7 +20,7 @@
       <artifactId>ecj</artifactId>
       <scope>system</scope>
       <version>23.0</version>
-      <systemPath>${basedir}\ecj\jar\ecj.23.jar</systemPath>
+      <systemPath>${basedir}/ecj/jar/ecj.23.jar</systemPath>
     </dependency>
 
     <dependency>
@@ -28,7 +28,7 @@
       <artifactId>mason</artifactId>
       <scope>system</scope>
       <version>19.0</version>
-      <systemPath>${basedir}\mason\jar\mason.19.jar</systemPath>
+      <systemPath>${basedir}/mason/jar/mason.19.jar</systemPath>
     </dependency>
   </dependencies>
 
