@@ -1,4 +1,4 @@
-CLASS=App
+CLASS=Herding
 
 all: run
 
