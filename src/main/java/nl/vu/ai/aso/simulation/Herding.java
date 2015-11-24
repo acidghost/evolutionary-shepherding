@@ -1,5 +1,6 @@
 package nl.vu.ai.aso.simulation;
 
+import nl.vu.ai.aso.shared.EvaluationResults;
 import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
@@ -72,7 +73,7 @@ public class Herding extends SimState {
         System.exit(0);
     }
 
-    public static Map<String, Double> runSimulation(List<List<Double>> shepherd, List<List<Double>> sheep, boolean predator) {
+    public static EvaluationResults runSimulation(List<List<Double>> shepherd, List<List<Double>> sheep, boolean predator) {
         Herding herding = new Herding(System.currentTimeMillis(), shepherd, sheep, predator);
 
         herding.setJob(1);
@@ -83,10 +84,7 @@ public class Herding extends SimState {
         herding.finish();
 
         double sheepDist = herding.sheepDistance();
-        Map<String, Double> returnMap = new HashMap<String, Double>();
-        returnMap.put("sheep", sheepDist);
-        returnMap.put("shepherd", 0.0);
-        return returnMap;
+        return new EvaluationResults(0.0, sheepDist);
     }
 
 }
