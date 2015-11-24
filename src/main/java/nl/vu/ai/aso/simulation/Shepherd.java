@@ -6,6 +6,7 @@ import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
 import sim.util.MutableDouble2D;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Shepherd extends AgentWithNetwork implements Steppable {
@@ -23,7 +24,7 @@ public class Shepherd extends AgentWithNetwork implements Steppable {
         MutableDouble2D sumForces = new MutableDouble2D();
 
         //TODO: get the right inputs
-        Double2D newTargetPosition = feedforward(new double[] {});
+        Double2D newTargetPosition = feedforward(new ArrayList<Double>());
 
         sumForces.addIn(newTargetPosition);
 

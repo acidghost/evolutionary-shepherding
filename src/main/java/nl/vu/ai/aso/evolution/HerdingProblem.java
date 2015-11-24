@@ -8,6 +8,8 @@ import ec.vector.DoubleVectorIndividual;
 import nl.vu.ai.aso.simulation.Herding;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,12 +54,12 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
         int split = evolutionState.parameters.getInt(new Parameter(POP_SEPARATOR), new Parameter(POP_SEPARATOR + ".default"));
         boolean predator = evolutionState.parameters.getBoolean(new Parameter(EVAL_PREDATOR), new Parameter(EVAL_PREDATOR + ".default"), false);
 
-        ArrayList<double[]> shepherd = new ArrayList<double[]>();
-        ArrayList<double[]> sheep = new ArrayList<double[]>();
+        ArrayList<List<Double>> shepherd = new ArrayList<List<Double>>();
+        ArrayList<List<Double>> sheep = new ArrayList<List<Double>>();
         for(int i = 0; i < individuals.length; i++) {
             DoubleVectorIndividual individual = (DoubleVectorIndividual) individuals[i];
             evolutionState.output.message(i + " - " + individual.genotypeToStringForHumans());
-            double[] genome = individual.genome;
+            List genome = Arrays.asList(individual.genome);
             if (i < split) {
                 shepherd.add(genome);
             } else {
@@ -66,18 +68,7 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
         }
 
         // TODO: use a custom class instead of a Map
-        // TODO: use Lists instead of arrays as parameters..
-        double[][] shepherdArray = new double[shepherd.size()][];
-        double[][] sheepArray = new double[sheep.size()][];
-        for (int i = 0; i < shepherd.size(); i++) {
-            double[] shepherdIndividual = shepherd.get(i);
-            shepherdArray[i] = shepherdIndividual;
-        }
-        for (int i = 0; i < sheep.size(); i++) {
-            double[] sheepIndividual = sheep.get(i);
-            sheepArray[i] = sheepIndividual;
-        }
-        Map<String, Double> results = Herding.runSimulation(shepherdArray, sheepArray, predator);
+        Map<String, Double> results = Herding.runSimulation(shepherd, sheep, predator);
 
         for (int i = 0; i < individuals.length; i++) {
             if (updateFitness[i]) {
