@@ -1,7 +1,7 @@
 package nl.vu.ai.aso.evolution;
 
-import com.sun.org.apache.bcel.internal.generic.POP;
 import ec.*;
+import ec.coevolve.GroupedProblemForm;
 import ec.simple.SimpleFitness;
 import ec.util.Parameter;
 import ec.vector.DoubleVectorIndividual;
@@ -13,10 +13,20 @@ import java.util.Map;
 /**
  * Created by acidghost on 24/11/15.
  */
-public class HerdingProblem extends SimpleGrupedProblem {
+public class HerdingProblem extends Problem implements GroupedProblemForm {
 
     private final String POP_SEPARATOR = "pop.separator";
     private final String EVAL_PREDATOR = "eval.predator";
+
+    public void preprocessPopulation(EvolutionState evolutionState, Population pop, boolean[] prepareForAssessment, boolean countVictoriesOnly) {
+        for( int i = 0 ; i < pop.subpops.length ; i++ ) {
+            if (prepareForAssessment[i]) {
+                for( int j = 0 ; j < pop.subpops[i].individuals.length ; j++ ) {
+                    ((SimpleFitness)(pop.subpops[i].individuals[j].fitness)).trials = new ArrayList();
+                }
+            }
+        }
+    }
 
     public void postprocessPopulation(EvolutionState evolutionState, Population pop, boolean[] assessFitness, boolean countVictoriesOnly) {
         for (int i=0; i < pop.subpops.length; i++) {
