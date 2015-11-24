@@ -4,10 +4,8 @@ import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 
 public class Herding extends SimState {
@@ -61,7 +59,13 @@ public class Herding extends SimState {
     public static void main(String[] args ) {
 
         List<List<Double>> fakeShepherd = new ArrayList<List<Double>>();
+        fakeShepherd.add(Arrays.asList(1.0, 2.0, 4.5, 6.7));
+        fakeShepherd.add(Arrays.asList(2.0, 1.1, 2.2, 1.4));
+
         List<List<Double>> fakeSheep = new ArrayList<List<Double>>();
+        fakeSheep.add(Arrays.asList(1.0, 2.0, 4.5, 6.7));
+        fakeSheep.add(Arrays.asList(2.0, 1.1, 2.2, 1.4));
+
         boolean fakePredatorPresent = false;
 
         runSimulation(fakeShepherd, fakeSheep, fakePredatorPresent);

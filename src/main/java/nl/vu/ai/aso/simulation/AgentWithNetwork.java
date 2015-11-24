@@ -19,8 +19,8 @@ public abstract class AgentWithNetwork {
         _nnHidden = hidden;
     }
 
-    protected Double2D feedforward(List<Double> inputs) {
-        //TODO: call the feedforward NN
+    protected Double2D getNewPostion(List<Double> inputs, List<Double> weights) {
+        //TODO: call the getNewPostion NN
 
         //TODO: transform the out of the NN in x,y coordinates
 
