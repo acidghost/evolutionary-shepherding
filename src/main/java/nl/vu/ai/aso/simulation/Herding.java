@@ -80,6 +80,7 @@ public class Herding extends SimState {
         double sheepDist = herding.sheepDistance();
         Map<String, Double> returnMap = new HashMap<String, Double>();
         returnMap.put("sheep", sheepDist);
+        returnMap.put("shepherd", 0.0);
         return returnMap;
     }
 
