@@ -5,6 +5,7 @@ import ec.coevolve.GroupedProblemForm;
 import ec.simple.SimpleFitness;
 import ec.util.Parameter;
 import ec.vector.DoubleVectorIndividual;
+import nl.vu.ai.aso.shared.EvaluationResults;
 import nl.vu.ai.aso.simulation.Herding;
 
 import java.util.ArrayList;
@@ -67,18 +68,17 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
             }
         }
 
-        // TODO: use a custom class instead of a Map
-        Map<String, Double> results = Herding.runSimulation(shepherd, sheep, predator);
+        EvaluationResults results = Herding.runSimulation(shepherd, sheep, predator);
 
         for (int i = 0; i < individuals.length; i++) {
             if (updateFitness[i]) {
                 Individual individual = individuals[i];
                 if (i < split) {
-                    double score = results.get("shepherd");
+                    double score = results.getShepherdScore();
                     individual.fitness.trials.add(score);
                     ((SimpleFitness) individual.fitness).setFitness(evolutionState, score, false);
                 } else {
-                    double score = results.get("sheep");
+                    double score = results.getSheepScore();
                     individual.fitness.trials.add(score);
                     ((SimpleFitness) individual.fitness).setFitness(evolutionState, score, false);
                 }
