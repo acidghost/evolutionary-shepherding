@@ -21,7 +21,10 @@ public abstract class AgentWithNetwork {
 
     protected Double2D feedforward(List<Double> inputs) {
         //TODO: call the feedforward NN
-        return null;
+
+        //TODO: transform the out of the NN in x,y coordinates
+
+        return new Double2D(1.0,1.0); //this returns the actual x,y as new computed position
     }
 
 }
