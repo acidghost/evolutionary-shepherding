@@ -7,18 +7,18 @@ import sim.util.Double2D;
  */
 public abstract class AgentWithNetwork {
 
-    private double[] weights;
-    private int nin;
-    private int nhid;
+    private double[] _weights;
+    private int _nnInputs;
+    private int _nnHidden;
 
     public AgentWithNetwork(double[] weights, int inputs, int hidden) {
-        this.weights = weights;
-        nin = inputs;
-        nhid = hidden;
+        this._weights = weights;
+        _nnInputs = inputs;
+        _nnHidden = hidden;
     }
 
     protected Double2D feedforward(double[] inputs) {
-        //TODO: implement NN feedforward
+        //TODO: call the feedforward NN
         return null;
     }
 
