@@ -13,6 +13,7 @@ hs_err_pid*
 
 ecj
 mason
+neuroph
 .idea
 *.iml
 target

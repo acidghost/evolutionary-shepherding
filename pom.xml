@@ -26,7 +26,22 @@
       <version>19.0</version>
       <systemPath>${basedir}/mason/jar/mason.19.jar</systemPath>
     </dependency>
+
+    <dependency>
+      <groupId>org.neuroph</groupId>
+      <artifactId>neuroph</artifactId>
+      <scope>system</scope>
+      <version>2.92</version>
+      <systemPath>${basedir}/neuroph/neuroph-core-2.92.jar</systemPath>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.13</version>
+    </dependency>
   </dependencies>
+
 
 
 </project>
