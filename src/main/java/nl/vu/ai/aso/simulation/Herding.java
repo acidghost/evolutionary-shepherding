@@ -15,7 +15,7 @@ public class Herding extends SimState {
     private boolean predatorPresent;
     private double speed = 0.1;
 
-    public Herding(long seed, double[][] shepherd, double[][] sheep, boolean predatorPresent) {
+    public Herding(long seed, double[][] shepherds, double[][] sheep, boolean predatorPresent) {
         super(seed);
         this.shepherds = shepherds;
         this.sheep = sheep;
@@ -63,6 +63,7 @@ public class Herding extends SimState {
         double sheepDist = herding.sheepDistance();
         Map<String, Double> returnMap = new HashMap<String, Double>();
         returnMap.put("sheep", sheepDist);
+        returnMap.put("shepherd", 0.0);
         return returnMap;
     }
 

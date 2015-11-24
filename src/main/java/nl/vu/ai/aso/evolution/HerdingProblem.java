@@ -1,27 +1,22 @@
 package nl.vu.ai.aso.evolution;
 
+import com.sun.org.apache.bcel.internal.generic.POP;
 import ec.*;
-import ec.coevolve.GroupedProblemForm;
 import ec.simple.SimpleFitness;
 import ec.util.Parameter;
-import ec.vector.IntegerVectorIndividual;
+import ec.vector.DoubleVectorIndividual;
+import nl.vu.ai.aso.simulation.Herding;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by acidghost on 24/11/15.
  */
-public class HerdingProblem extends Problem implements GroupedProblemForm {
+public class HerdingProblem extends SimpleGrupedProblem {
 
-    public void preprocessPopulation(EvolutionState evolutionState, Population pop, boolean[] prepareForAssessment, boolean countVictoriesOnly) {
-        for( int i = 0 ; i < pop.subpops.length ; i++ ) {
-            if (prepareForAssessment[i]) {
-                for( int j = 0 ; j < pop.subpops[i].individuals.length ; j++ ) {
-                    ((SimpleFitness)(pop.subpops[i].individuals[j].fitness)).trials = new ArrayList();
-                }
-            }
-        }
-    }
+    private final String POP_SEPARATOR = "pop.separator";
+    private final String EVAL_PREDATOR = "eval.predator";
 
     public void postprocessPopulation(EvolutionState evolutionState, Population pop, boolean[] assessFitness, boolean countVictoriesOnly) {
         for (int i=0; i < pop.subpops.length; i++) {
@@ -31,17 +26,12 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
                     Individual individual = subpop.individuals[j];
                     SimpleFitness fit = (SimpleFitness) individual.fitness;
 
-                    double best = i < 2 ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
-                    if (i < 2) {
-                        for (int l=0; l < fit.trials.size(); l++) {
-                            best = Math.max(((Double)(fit.trials.get(l))).doubleValue(), best);
-                        }
-                    } else {
-                        for (int l=0; l < fit.trials.size(); l++) {
-                            best = Math.min(((Double) (fit.trials.get(l))).doubleValue(), best);
-                        }
+                    double fitSum = 0;
+                    for (Object score : fit.trials) {
+                        fitSum += (Double) score;
                     }
-                    fit.setFitness(evolutionState, best, i < 2 ? best == 400 : best == -400);
+
+                    fit.setFitness(evolutionState, fitSum / fit.trials.size(), false);
                     individual.evaluated = true;
                 }
             }
@@ -49,30 +39,47 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
     }
 
     public void evaluate(EvolutionState evolutionState, Individual[] individuals, boolean[] updateFitness, boolean countVictoriesOnly, int[] subpops, int threadnum) {
-        evolutionState.output.message("Evaluating individuals...");
-        double totalSum = 0;
+        int split = evolutionState.parameters.getInt(new Parameter(POP_SEPARATOR), new Parameter(POP_SEPARATOR + ".default"));
+        boolean predator = evolutionState.parameters.getBoolean(new Parameter(EVAL_PREDATOR), new Parameter(EVAL_PREDATOR + ".default"), false);
+
+        ArrayList<double[]> shepherd = new ArrayList<double[]>();
+        ArrayList<double[]> sheep = new ArrayList<double[]>();
         for(int i = 0; i < individuals.length; i++) {
-            IntegerVectorIndividual individual = (IntegerVectorIndividual) individuals[i];
+            DoubleVectorIndividual individual = (DoubleVectorIndividual) individuals[i];
             evolutionState.output.message(i + " - " + individual.genotypeToStringForHumans());
-            int[] genome = individual.genome;
-            for (int gene : genome) {
-                totalSum += gene;
+            double[] genome = individual.genome;
+            if (i < split) {
+                shepherd.add(genome);
+            } else {
+                sheep.add(genome);
             }
         }
 
-        evolutionState.output.message("Total sum: " + totalSum);
-
-        int split = evolutionState.parameters.getInt(new Parameter("pop.separator"), new Parameter("pop.separator.default"));
+        // TODO: use a custom class instead of a Map
+        // TODO: use Lists instead of arrays as parameters..
+        double[][] shepherdArray = new double[shepherd.size()][];
+        double[][] sheepArray = new double[sheep.size()][];
+        for (int i = 0; i < shepherd.size(); i++) {
+            double[] shepherdIndividual = shepherd.get(i);
+            shepherdArray[i] = shepherdIndividual;
+        }
+        for (int i = 0; i < sheep.size(); i++) {
+            double[] sheepIndividual = sheep.get(i);
+            sheepArray[i] = sheepIndividual;
+        }
+        Map<String, Double> results = Herding.runSimulation(shepherdArray, sheepArray, predator);
 
         for (int i = 0; i < individuals.length; i++) {
             if (updateFitness[i]) {
                 Individual individual = individuals[i];
                 if (i < split) {
-                    individual.fitness.trials.add(totalSum);
-                    ((SimpleFitness) individual.fitness).setFitness(evolutionState, totalSum, false);
+                    double score = results.get("shepherd");
+                    individual.fitness.trials.add(score);
+                    ((SimpleFitness) individual.fitness).setFitness(evolutionState, score, false);
                 } else {
-                    individual.fitness.trials.add(-totalSum);
-                    ((SimpleFitness) individual.fitness).setFitness(evolutionState, -totalSum, false);
+                    double score = results.get("sheep");
+                    individual.fitness.trials.add(score);
+                    ((SimpleFitness) individual.fitness).setFitness(evolutionState, score, false);
                 }
             }
         }
