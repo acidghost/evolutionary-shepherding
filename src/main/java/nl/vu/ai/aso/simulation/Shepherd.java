@@ -6,9 +6,11 @@ import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
 import sim.util.MutableDouble2D;
 
+import java.util.List;
+
 public class Shepherd extends AgentWithNetwork implements Steppable {
 
-    public Shepherd(double[] weights, int inputs) {
+    public Shepherd(List<Double> weights, int inputs) {
         super(weights, inputs, inputs > 3 ? 5 : 3);
     }
 
