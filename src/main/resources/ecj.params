@@ -136,7 +136,7 @@ stat.file				$out.stat
 
 
 eval =                                  ec.coevolve.MultiPopCoevolutionaryEvaluator
-eval.problem =                          nl.vu.ai.aso.DemoProblem
+eval.problem =                          nl.vu.ai.aso.ecj.DemoProblem
 
 eval.num-shuffled=		            	1
 eval.num-current=                       0
@@ -167,19 +167,5 @@ pop.subpop.0.species.pipe.source.0 = 	ec.vector.breed.VectorCrossoverPipeline
 pop.subpop.0.species.pipe.source.0.source.0 = ec.select.TournamentSelection
 pop.subpop.0.species.pipe.source.0.source.1 = same
 
-pop.subpop.2 =                          ec.Subpopulation
-pop.subpop.2.duplicate-retries =        2
-pop.subpop.2.size =                     10
-pop.subpop.2.species =                  ec.vector.IntegerVectorSpecies
-pop.subpop.2.species.crossover-type =   one
-pop.subpop.2.species.mutation-type =    reset
-pop.subpop.2.species.mutation-prob =    0.01
-pop.subpop.2.species.genome-size =      10
-pop.subpop.2.species.min-gene =         -10
-pop.subpop.2.species.max-gene =         10
-pop.subpop.2.species.fitness =          ec.simple.SimpleFitness
-pop.subpop.2.species.ind =              ec.vector.IntegerVectorIndividual
-pop.subpop.2.species.pipe = 		    ec.vector.breed.VectorMutationPipeline
-pop.subpop.2.species.pipe.source.0 = 	ec.vector.breed.VectorCrossoverPipeline
-pop.subpop.2.species.pipe.source.0.source.0 = ec.select.TournamentSelection
-pop.subpop.2.species.pipe.source.0.source.1 = same
+pop.separator = 2
+pop.separator.default = 2

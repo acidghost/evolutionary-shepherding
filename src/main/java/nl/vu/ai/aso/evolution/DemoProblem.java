@@ -1,8 +1,9 @@
-package nl.vu.ai.aso;
+package nl.vu.ai.aso.evolution;
 
 import ec.*;
 import ec.coevolve.GroupedProblemForm;
 import ec.simple.SimpleFitness;
+import ec.util.Parameter;
 import ec.vector.IntegerVectorIndividual;
 
 import java.util.ArrayList;
@@ -61,10 +62,12 @@ public class DemoProblem extends Problem implements GroupedProblemForm {
 
         evolutionState.output.message("Total sum: " + totalSum);
 
+        int split = evolutionState.parameters.getInt(new Parameter("pop.separator"), new Parameter("pop.separator.default"));
+
         for (int i = 0; i < individuals.length; i++) {
             if (updateFitness[i]) {
                 Individual individual = individuals[i];
-                if (i < 2) {
+                if (i < split) {
                     individual.fitness.trials.add(totalSum);
                     ((SimpleFitness) individual.fitness).setFitness(evolutionState, totalSum, false);
                 } else {

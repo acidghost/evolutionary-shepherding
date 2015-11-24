@@ -1,4 +1,4 @@
-CLASS=Herding
+CLASS=EvolutionaryShepherding
 
 all: run
 
