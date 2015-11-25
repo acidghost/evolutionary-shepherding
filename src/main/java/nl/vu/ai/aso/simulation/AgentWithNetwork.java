@@ -9,7 +9,7 @@ import java.util.List;
  */
 public abstract class AgentWithNetwork {
 
-    private List<Double> _weights;
+    protected List<Double> _weights;
     private int _nnInputs;
     private int _nnHidden;
 

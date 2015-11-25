@@ -5,11 +5,13 @@ import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 
 public class Herding extends SimState {
+
+    private final double TIME_STEP_PERIOD = 0.1; //makes the steps occur at 10Hz
+
     public Continuous2D _yard = new Continuous2D(0.1, 37, 37); //37x37 foot pasture
     List<List<Double>> _shepherds;
     List<List<Double>> _sheeps;
@@ -36,7 +38,7 @@ public class Herding extends SimState {
                 new Double2D(_yard.getWidth() * 0.5 + random.nextDouble() - 0.5,
                     _yard.getHeight() * 0.5 + random.nextDouble() - 0.5));
 
-            schedule.scheduleRepeating(shephard);
+            schedule.scheduleRepeating(shephard, TIME_STEP_PERIOD);
         }
 
         // add sheeps to the yard
@@ -46,7 +48,7 @@ public class Herding extends SimState {
             _yard.setObjectLocation(sheep,
                 new Double2D(_yard.getWidth() - random.nextDouble() - 0.5,
                     _yard.getHeight() - random.nextDouble() - 0.5));
-            schedule.scheduleRepeating(sheep);
+            schedule.scheduleRepeating(sheep, TIME_STEP_PERIOD);
         }
 
         // TODO: add a predator if needed
