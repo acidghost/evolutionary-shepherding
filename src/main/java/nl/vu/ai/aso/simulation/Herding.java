@@ -5,49 +5,50 @@ import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Herding extends SimState {
 
     private final double TIME_STEP_PERIOD = 1.1; //makes the steps occur at 10Hz
 
-    public Continuous2D _yard = new Continuous2D(0.1, 37, 37); //37x37 foot pasture
-    List<double[]> _shepherds;
-    List<double[]> _sheeps;
-    private boolean _predatorPresent;
+    public Continuous2D yard = new Continuous2D(0.1, 37, 37); //37x37 foot pasture
+    List<double[]> shepherds;
+    List<double[]> sheep;
+    private boolean predatorPresent;
 
     public Herding(long seed, List<double[]> shepherds, List<double[]> sheeps, boolean predatorPresent) {
         super(seed);
-        this._shepherds = shepherds;
-        this._sheeps = sheeps;
-        this._predatorPresent = predatorPresent;
+        this.shepherds = shepherds;
+        this.sheep = sheeps;
+        this.predatorPresent = predatorPresent;
     }
 
     public void start() {
         super.start();
 
         // clear the yard
-        _yard.clear();
+        yard.clear();
 
-        // add sheperds to the yard
-        for(int i = 0; i < _shepherds.size(); i++) {
-            Shepherd shephard = new Shepherd(_shepherds.get(i), _shepherds.size() > 1 && _predatorPresent ? 4 : 2);
+        // add shepherds to the yard
+        for(int i = 0; i < shepherds.size(); i++) {
+            Shepherd shephard = new Shepherd(shepherds.get(i), shepherds.size() > 1 && predatorPresent ? 4 : 2);
             //TODO: set another spawn postion
-            _yard.setObjectLocation(shephard,
-                new Double2D(_yard.getWidth() * 0.5 + random.nextDouble() - 0.5,
-                    _yard.getHeight() * 0.5 + random.nextDouble() - 0.5));
+            yard.setObjectLocation(shephard,
+                new Double2D(yard.getWidth() * 0.5 + random.nextDouble() - 0.5,
+                    yard.getHeight() * 0.5 + random.nextDouble() - 0.5));
 
             schedule.scheduleRepeating(shephard, TIME_STEP_PERIOD);
         }
 
-        // add sheeps to the yard
-        for(int i = 0; i < _sheeps.size(); i++) {
-            Sheep sheep = new Sheep(_sheeps.get(i), _sheeps.size() > 1 && _predatorPresent ? 5 : 3);
+        // add sheep to the yard
+        for(int i = 0; i < sheep.size(); i++) {
+            Sheep sheep = new Sheep(this.sheep.get(i), this.sheep.size() > 1 && predatorPresent ? 4 : 2);
             //TODO: set another spawn postion
-            _yard.setObjectLocation(sheep,
-                new Double2D(_yard.getWidth() - random.nextDouble() - 0.5,
-                    _yard.getHeight() - random.nextDouble() - 0.5));
+            yard.setObjectLocation(sheep,
+                new Double2D(yard.getWidth() - random.nextDouble() - 0.5,
+                    yard.getHeight() - random.nextDouble() - 0.5));
             schedule.scheduleRepeating(sheep, TIME_STEP_PERIOD);
         }
 

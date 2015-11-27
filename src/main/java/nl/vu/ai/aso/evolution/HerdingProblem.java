@@ -9,9 +9,6 @@ import nl.vu.ai.aso.shared.EvaluationResults;
 import nl.vu.ai.aso.simulation.Herding;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by acidghost on 24/11/15.
@@ -59,13 +56,10 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
         ArrayList<double[]> sheep = new ArrayList<>();
         for(int i = 0; i < individuals.length; i++) {
             DoubleVectorIndividual individual = (DoubleVectorIndividual) individuals[i];
-            evolutionState.output.message(i + " - " + individual.genotypeToStringForHumans());
             double[] genome = individual.genome;
             if (i < split) {
-                System.out.println("Adding shepherd " + individual.genotypeToString());
                 shepherd.add(genome);
             } else {
-                System.out.println("Adding sheep " + individual.genotypeToString());
                 sheep.add(genome);
             }
         }

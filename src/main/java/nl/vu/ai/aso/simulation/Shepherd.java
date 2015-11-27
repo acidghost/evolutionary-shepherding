@@ -1,6 +1,6 @@
 package nl.vu.ai.aso.simulation;
 
-import nl.vu.ai.aso.shared.NNinputs;
+import nl.vu.ai.aso.shared.ShepherdInputs;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.continuous.Continuous2D;
@@ -9,25 +9,24 @@ import sim.util.Double2D;
 import sim.util.MutableDouble2D;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Shepherd extends AgentWithNetwork implements Steppable {
 
     public Shepherd(double[] weights, int inputs) {
-        super(weights, inputs, inputs > 2 ? 5 : 3);
+        super(weights, inputs);
     }
 
     public void step(SimState simState) {
         Herding herding = (Herding) simState;
-        Continuous2D yard = herding._yard;
+        Continuous2D yard = herding.yard;
 
-        Double2D me = herding._yard.getObjectLocation(this);
+        Double2D me = herding.yard.getObjectLocation(this);
 
         MutableDouble2D sumForces = new MutableDouble2D();
 
 
         //TODO: get the right inputs
-        NNinputs inputs = getSheepCentricInputs(detectNearestNeighbors(yard), yard);
+        ShepherdInputs inputs = getSheepCentricInputs(detectNearestNeighbors(yard), yard);
 
         //TODO: use netOut which is radius and bearing to move the agent
         Double2D newTargetPosition = getNewPostion(inputs);
@@ -36,11 +35,11 @@ public class Shepherd extends AgentWithNetwork implements Steppable {
 
         sumForces.addIn(me);
 
-        herding._yard.setObjectLocation(this, new Double2D(sumForces));
+        herding.yard.setObjectLocation(this, new Double2D(sumForces));
     }
 
     // takes the neighbors and returns the NN-sheep-centirc-inputs
-    private NNinputs getSheepCentricInputs(Object[] neighbors, Continuous2D yard) {
+    private ShepherdInputs getSheepCentricInputs(Object[] neighbors, Continuous2D yard) {
 
         Shepherd shepherd = (Shepherd) neighbors[0];
         Sheep sheep = (Sheep) neighbors[1];
@@ -49,7 +48,7 @@ public class Shepherd extends AgentWithNetwork implements Steppable {
         //TODO: find better corral positoning system
         Double2D corralPosition = new Double2D(yard.getHeight() * 0.5, yard.getWidth());
 
-        NNinputs inputs = new NNinputs(0, 0, 0, 0);
+        ShepherdInputs inputs = new ShepherdInputs(0.0, 0.0, null, null);
         return inputs;
     }
 

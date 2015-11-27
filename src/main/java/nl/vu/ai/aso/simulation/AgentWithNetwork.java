@@ -1,31 +1,25 @@
 package nl.vu.ai.aso.simulation;
 
 import nl.vu.ai.aso.neuralnetwork.Mlp;
-import nl.vu.ai.aso.shared.NNinputs;
+import nl.vu.ai.aso.shared.ShepherdInputs;
 import sim.util.Double2D;
-
-import java.util.List;
 
 /**
  * Created by acidghost on 24/11/15.
  */
 public abstract class AgentWithNetwork {
 
-    protected double[] _weights;
-    private int _nnInputs;
-    private int _nnHidden;
-
     private Mlp network;
 
     public AgentWithNetwork(double[] weights, int inputs, int hidden) {
-        this._weights = weights;
-        _nnInputs = inputs;
-        _nnHidden = hidden;
-
-        network = new Mlp(_weights, inputs, hidden);
+        network = new Mlp(weights, inputs, hidden);
     }
 
-    protected Double2D getNewPostion(NNinputs inputs) {
+    public AgentWithNetwork(double[] weights, int inputs) {
+        this(weights, inputs, inputs > 2 ? 5 : 3);
+    }
+
+    protected Double2D getNewPostion(ShepherdInputs inputs) {
         double[] output = network.feedforward(inputs.toArray());
 
         //TODO: transform the out of the NN in x,y coordinates
