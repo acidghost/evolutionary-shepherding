@@ -15,26 +15,14 @@ public class Mlp {
 
     private MultiLayerPerceptron mlp;
 
-    public Mlp(List<Double> weights, int inputs, int hidden) {
+    public Mlp(double[] weights, int inputs, int hidden) {
         mlp = new MultiLayerPerceptron(TransferFunctionType.SIGMOID, inputs, hidden, 2);
-
-        mlp.setWeights(Utils.toPrimitiveDouble(weights));
+        mlp.setWeights(weights);
     }
 
     public static void main(String[] args) {
-
-        List<Double> weights = new ArrayList<Double>();
-        int numberInputs = 3;
-        int numberHidden = 5;
-        int numberWeight = numberInputs*numberHidden + numberHidden * 2;
-        for (int i = 0; i < numberWeight; i++) weights.add(0.0);
-
+        double[] weights = new double[] { 1, 2, 3 };
         Mlp nn = new Mlp(weights, 5, 3);
-
-        List<Double> input = new ArrayList<Double>();
-        for (int i = 0; i < numberInputs; i++) input.add(0.0);
-
-        nn.feedforward(input);
     }
 
         // input, weights
