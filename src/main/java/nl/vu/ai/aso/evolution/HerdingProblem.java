@@ -41,6 +41,7 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
                         fitSum += (Double) score;
                     }
 
+                    // evolutionState.output.message("Number of trials: " + fit.trials.size());
                     fit.setFitness(evolutionState, fitSum / fit.trials.size(), false);
                     individual.evaluated = true;
                 }
@@ -56,6 +57,7 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
         ArrayList<double[]> sheep = new ArrayList<>();
         for(int i = 0; i < individuals.length; i++) {
             DoubleVectorIndividual individual = (DoubleVectorIndividual) individuals[i];
+            evolutionState.output.message("Doing individual " + individual.hashCode() + " " + individual.genotypeToStringForHumans());
             double[] genome = individual.genome;
             if (i < split) {
                 shepherd.add(genome);
@@ -63,6 +65,8 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
                 sheep.add(genome);
             }
         }
+
+        evolutionState.output.message("\n\n");
 
         EvaluationResults results = Herding.runSimulation(shepherd, sheep, predator);
 

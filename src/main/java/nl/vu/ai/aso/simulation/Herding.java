@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Herding extends SimState {
 
-    private final double TIME_STEP_PERIOD = 1.1; //makes the steps occur at 10Hz
+    private final double TIME_STEP_PERIOD = 1;
 
     public Continuous2D yard = new Continuous2D(0.1, 37, 37); //37x37 foot pasture
     List<double[]> shepherds;
