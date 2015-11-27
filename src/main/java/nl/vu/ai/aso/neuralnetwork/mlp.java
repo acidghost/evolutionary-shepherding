@@ -22,16 +22,17 @@ public class Mlp {
     }
 
     public static void main(String[] args) {
-        boolean isSimpleNN = false;
+
         List<Double> weights = new ArrayList<Double>();
+        int numberInputs = 3;
+        int numberHidden = 5;
+        int numberWeight = numberInputs*numberHidden + numberHidden * 2;
+        for (int i = 0; i < numberWeight; i++) weights.add(0.0);
+
         Mlp nn = new Mlp(weights, 5, 3);
 
         List<Double> input = new ArrayList<Double>();
-        input.add(1.0);
-        input.add(1.0);
-        input.add(1.0);
-        input.add(1.0);
-        input.add(1.0);
+        for (int i = 0; i < numberInputs; i++) input.add(0.0);
 
         nn.feedforward(input);
     }
@@ -46,7 +47,7 @@ public class Mlp {
         System.out.print("Input: " + Arrays.toString(inputs.toArray()));
         System.out.println(" Output: " + Arrays.toString(networkOutput));
 
-        return networkOutput; //TODO: replace this comment with the specification of the return array
+        return networkOutput; //// Array: [0] is distance to the center of mass of the sheep, [1] is bearing relative to center of mass and corral
     }
 
 }
