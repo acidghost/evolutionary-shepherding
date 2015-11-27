@@ -1,5 +1,6 @@
 package nl.vu.ai.aso.simulation;
 
+import nl.vu.ai.aso.neuralnetwork.Mlp;
 import sim.util.Double2D;
 
 import java.util.List;
@@ -13,14 +14,18 @@ public abstract class AgentWithNetwork {
     private int _nnInputs;
     private int _nnHidden;
 
+    private Mlp network;
+
     public AgentWithNetwork(List<Double> weights, int inputs, int hidden) {
         this._weights = weights;
         _nnInputs = inputs;
         _nnHidden = hidden;
+
+        network = new Mlp(_weights, inputs, hidden);
     }
 
-    protected Double2D getNewPostion(List<Double> inputs, List<Double> weights) {
-        //TODO: call the getNewPostion NN
+    protected Double2D getNewPostion(List<Double> inputs) {
+        double[] output = network.feedforward(inputs);
 
         //TODO: transform the out of the NN in x,y coordinates
 

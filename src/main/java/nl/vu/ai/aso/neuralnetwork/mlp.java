@@ -15,11 +15,8 @@ public class Mlp {
 
     private MultiLayerPerceptron mlp;
 
-    public Mlp(boolean simpleNN, List<Double> weights) {
-        if (simpleNN)
-            mlp = new MultiLayerPerceptron(TransferFunctionType.SIGMOID, 3, 3, 2);
-        else
-            mlp = new MultiLayerPerceptron(TransferFunctionType.SIGMOID, 5, 5, 2);
+    public Mlp(List<Double> weights, int inputs, int hidden) {
+        mlp = new MultiLayerPerceptron(TransferFunctionType.SIGMOID, inputs, hidden, 2);
 
         mlp.setWeights(Utils.toPrimitiveDouble(weights));
     }
@@ -27,7 +24,7 @@ public class Mlp {
     public static void main(String[] args) {
         boolean isSimpleNN = false;
         List<Double> weights = new ArrayList<Double>();
-        Mlp nn = new Mlp(isSimpleNN, weights);
+        Mlp nn = new Mlp(weights, 5, 3);
 
         List<Double> input = new ArrayList<Double>();
         input.add(1.0);
