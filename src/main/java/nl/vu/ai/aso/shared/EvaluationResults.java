@@ -21,4 +21,8 @@ public class EvaluationResults {
         return sheepScore;
     }
 
+    @Override
+    public String toString() {
+        return "Shepherd score: " + shepherdScore + "\nSheep score: " + sheepScore;
+    }
 }

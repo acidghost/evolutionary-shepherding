@@ -3,7 +3,7 @@ package nl.vu.ai.aso.shared;
 /**
  * Created by acidghost on 27/11/15.
  */
-public class SheepInputs {
+public class SheepInputs implements INetInputs {
 
     public Double shepherd_r;
     public Double shepherd_b;

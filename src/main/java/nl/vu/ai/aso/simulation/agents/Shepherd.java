@@ -1,6 +1,7 @@
-package nl.vu.ai.aso.simulation;
+package nl.vu.ai.aso.simulation.agents;
 
 import nl.vu.ai.aso.shared.ShepherdInputs;
+import nl.vu.ai.aso.simulation.Herding;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.continuous.Continuous2D;
@@ -8,12 +9,17 @@ import sim.util.Bag;
 import sim.util.Double2D;
 import sim.util.MutableDouble2D;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Shepherd extends AgentWithNetwork implements Steppable {
 
     public Shepherd(double[] weights, int inputs) {
-        super(weights, inputs);
+        this(0, 0, weights, inputs);
+    }
+
+    public Shepherd(double newX, double newY, double[] weights, int inputs) {
+        super(newX, newY, 10, Color.blue, weights, inputs);
     }
 
     public void step(SimState simState) {
@@ -23,7 +29,6 @@ public class Shepherd extends AgentWithNetwork implements Steppable {
         Double2D me = herding.yard.getObjectLocation(this);
 
         MutableDouble2D sumForces = new MutableDouble2D();
-
 
         //TODO: get the right inputs
         ShepherdInputs inputs = getSheepCentricInputs(detectNearestNeighbors(yard), yard);

@@ -1,4 +1,4 @@
-package nl.vu.ai.aso.simulation;
+package nl.vu.ai.aso.simulation.agents;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;

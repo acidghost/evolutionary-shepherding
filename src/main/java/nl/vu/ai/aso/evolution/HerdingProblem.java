@@ -7,6 +7,7 @@ import ec.util.Parameter;
 import ec.vector.DoubleVectorIndividual;
 import nl.vu.ai.aso.shared.EvaluationResults;
 import nl.vu.ai.aso.simulation.Herding;
+import nl.vu.ai.aso.simulation.HerdingGUI;
 
 import java.util.ArrayList;
 
@@ -17,6 +18,9 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
 
     private final String POP_SEPARATOR = "pop.separator";
     private final String EVAL_PREDATOR = "eval.predator";
+    private final String EVAL_STEPS = "eval.evaluations";
+
+    private static int evaluationCouter = 0;
 
     public void preprocessPopulation(EvolutionState evolutionState, Population pop, boolean[] prepareForAssessment, boolean countVictoriesOnly) {
         for( int i = 0 ; i < pop.subpops.length ; i++ ) {
@@ -52,6 +56,10 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
     public void evaluate(EvolutionState evolutionState, Individual[] individuals, boolean[] updateFitness, boolean countVictoriesOnly, int[] subpops, int threadnum) {
         int split = evolutionState.parameters.getInt(new Parameter(POP_SEPARATOR), new Parameter(POP_SEPARATOR + ".default"));
         boolean predator = evolutionState.parameters.getBoolean(new Parameter(EVAL_PREDATOR), new Parameter(EVAL_PREDATOR + ".default"), false);
+        int evaluations = evolutionState.parameters.getInt(new Parameter(EVAL_STEPS), new Parameter(EVAL_STEPS));
+
+        evaluationCouter++;
+        evolutionState.output.message("Evaluate: " + evaluationCouter);
 
         ArrayList<double[]> shepherd = new ArrayList<>();
         ArrayList<double[]> sheep = new ArrayList<>();
@@ -66,9 +74,8 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
             }
         }
 
-        evolutionState.output.message("\n\n");
-
-        EvaluationResults results = Herding.runSimulation(shepherd, sheep, predator);
+        // EvaluationResults results = Herding.runSimulation(evaluations, shepherd, sheep, predator);
+        EvaluationResults results = HerdingGUI.runSimulation(evaluations, 100, shepherd, sheep, predator);
 
         for (int i = 0; i < individuals.length; i++) {
             if (updateFitness[i]) {

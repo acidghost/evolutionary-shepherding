@@ -1,6 +1,8 @@
 package nl.vu.ai.aso.simulation;
 
 import nl.vu.ai.aso.shared.EvaluationResults;
+import nl.vu.ai.aso.simulation.agents.Sheep;
+import nl.vu.ai.aso.simulation.agents.Shepherd;
 import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
@@ -14,8 +16,8 @@ public class Herding extends SimState {
     private final double TIME_STEP_PERIOD = 1;
 
     public Continuous2D yard = new Continuous2D(0.1, 37, 37); //37x37 foot pasture
-    List<double[]> shepherds;
-    List<double[]> sheep;
+    public List<double[]> shepherds;
+    public List<double[]> sheep;
     private boolean predatorPresent;
 
     public Herding(long seed, List<double[]> shepherds, List<double[]> sheeps, boolean predatorPresent) {
@@ -72,22 +74,27 @@ public class Herding extends SimState {
 
         boolean fakePredatorPresent = false;
 
-        runSimulation(fakeShepherd, fakeSheep, fakePredatorPresent);
+        runSimulation(5000, fakeShepherd, fakeSheep, fakePredatorPresent);
         System.exit(0);
     }
 
-    public static EvaluationResults runSimulation(List<double[]> shepherd, List<double[]> sheep, boolean predator) {
+    public static EvaluationResults runSimulation(int totalSteps, List<double[]> shepherd, List<double[]> sheep, boolean predator) {
         Herding herding = new Herding(System.currentTimeMillis(), shepherd, sheep, predator);
 
-        herding.setJob(1);
-        herding.start();
-        do
-            if (!herding.schedule.step(herding)) break;
-        while(herding.schedule.getSteps() < 5000); //TODO: check if 5000 is ok
-        herding.finish();
+        herding.loop(totalSteps);
 
         double sheepDist = herding.sheepDistance();
         return new EvaluationResults(0.0, sheepDist);
+    }
+
+    public void loop(int totalSteps) {
+        setJob(1);
+        start();
+        do {
+            System.out.println(schedule.getSteps());
+            if (!schedule.step(this)) break;
+        } while(schedule.getSteps() < totalSteps);
+        finish();
     }
 
 }
