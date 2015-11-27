@@ -27,6 +27,8 @@ public class Shepherd extends AgentWithNetwork implements Steppable {
 
         //TODO: get the right inputs
         NNinputs inputs = getSheepCentricInputs(detectNearestNeighbors(yard), yard);
+        Double2D netOut = feedforward(new double[] {});
+        //TODO: use netOut which is radius and bearing to move the agent
 
         Double2D newTargetPosition = getNewPostion(inputs.toList(), _weights);
 
