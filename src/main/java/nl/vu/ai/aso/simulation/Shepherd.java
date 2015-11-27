@@ -1,5 +1,6 @@
 package nl.vu.ai.aso.simulation;
 
+import nl.vu.ai.aso.shared.NNinputs;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.continuous.Continuous2D;
@@ -27,7 +28,7 @@ public class Shepherd extends AgentWithNetwork implements Steppable {
 
         //TODO: get the right inputs
         NNinputs inputs = getSheepCentricInputs(detectNearestNeighbors(yard), yard);
-        Double2D netOut = feedforward(new double[] {});
+        Double2D netOut = feedforward(new double[]{});
         //TODO: use netOut which is radius and bearing to move the agent
 
         Double2D newTargetPosition = getNewPostion(inputs.toList(), _weights);

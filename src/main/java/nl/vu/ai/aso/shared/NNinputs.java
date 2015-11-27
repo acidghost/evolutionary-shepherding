@@ -1,4 +1,4 @@
-package nl.vu.ai.aso.simulation;
+package nl.vu.ai.aso.shared;
 
 import java.util.ArrayList;
 import java.util.Arrays;
