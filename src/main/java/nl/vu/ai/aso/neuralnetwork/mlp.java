@@ -4,7 +4,6 @@ import nl.vu.ai.aso.shared.Utils;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.util.TransferFunctionType;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
