@@ -13,11 +13,11 @@ public class Herding extends SimState {
     private final double TIME_STEP_PERIOD = 0.1; //makes the steps occur at 10Hz
 
     public Continuous2D _yard = new Continuous2D(0.1, 37, 37); //37x37 foot pasture
-    List<List<Double>> _shepherds;
-    List<List<Double>> _sheeps;
+    List<double[]> _shepherds;
+    List<double[]> _sheeps;
     private boolean _predatorPresent;
 
-    public Herding(long seed, List<List<Double>> shepherds, List<List<Double>> sheeps, boolean predatorPresent) {
+    public Herding(long seed, List<double[]> shepherds, List<double[]> sheeps, boolean predatorPresent) {
         super(seed);
         this._shepherds = shepherds;
         this._sheeps = sheeps;
@@ -61,13 +61,13 @@ public class Herding extends SimState {
     // development's convenient method
     public static void main(String[] args ) {
 
-        List<List<Double>> fakeShepherd = new ArrayList<List<Double>>();
-        fakeShepherd.add(Arrays.asList(1.0, 2.0, 4.5, 6.7));
-        fakeShepherd.add(Arrays.asList(2.0, 1.1, 2.2, 1.4));
+        List<double[]> fakeShepherd = new ArrayList<>();
+        fakeShepherd.add(new double[] { 1.0, 2.0, 4.5, 6.7 });
+        fakeShepherd.add(new double[] {2.0, 1.1, 2.2, 1.4 });
 
-        List<List<Double>> fakeSheep = new ArrayList<List<Double>>();
-        fakeSheep.add(Arrays.asList(1.0, 2.0, 4.5, 6.7));
-        fakeSheep.add(Arrays.asList(2.0, 1.1, 2.2, 1.4));
+        List<double[]> fakeSheep = new ArrayList<>();
+        fakeSheep.add(new double[] { 1.0, 2.0, 4.5, 6.7 });
+        fakeSheep.add(new double[] {2.0, 1.1, 2.2, 1.4 });
 
         boolean fakePredatorPresent = false;
 
@@ -75,7 +75,7 @@ public class Herding extends SimState {
         System.exit(0);
     }
 
-    public static EvaluationResults runSimulation(List<List<Double>> shepherd, List<List<Double>> sheep, boolean predator) {
+    public static EvaluationResults runSimulation(List<double[]> shepherd, List<double[]> sheep, boolean predator) {
         Herding herding = new Herding(System.currentTimeMillis(), shepherd, sheep, predator);
 
         herding.setJob(1);

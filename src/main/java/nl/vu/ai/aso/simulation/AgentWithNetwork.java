@@ -10,13 +10,13 @@ import java.util.List;
  */
 public abstract class AgentWithNetwork {
 
-    protected List<Double> _weights;
+    protected double[] _weights;
     private int _nnInputs;
     private int _nnHidden;
 
     private Mlp network;
 
-    public AgentWithNetwork(List<Double> weights, int inputs, int hidden) {
+    public AgentWithNetwork(double[] weights, int inputs, int hidden) {
         this._weights = weights;
         _nnInputs = inputs;
         _nnHidden = hidden;

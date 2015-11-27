@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Shepherd extends AgentWithNetwork implements Steppable {
 
-    public Shepherd(List<Double> weights, int inputs) {
+    public Shepherd(double[] weights, int inputs) {
         super(weights, inputs, inputs > 3 ? 5 : 3);
     }
 

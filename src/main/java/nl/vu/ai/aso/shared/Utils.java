@@ -1,5 +1,7 @@
 package nl.vu.ai.aso.shared;
 
+import com.google.common.primitives.Doubles;
+
 import java.util.List;
 
 /**
@@ -8,7 +10,7 @@ import java.util.List;
 public class Utils {
 
     public static double[] toPrimitiveDouble(List<Double> list) {
-        return list.stream().mapToDouble(Double::doubleValue).toArray();
+        return Doubles.toArray(list);
     }
 
 }

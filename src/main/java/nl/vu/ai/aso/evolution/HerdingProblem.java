@@ -55,15 +55,17 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
         int split = evolutionState.parameters.getInt(new Parameter(POP_SEPARATOR), new Parameter(POP_SEPARATOR + ".default"));
         boolean predator = evolutionState.parameters.getBoolean(new Parameter(EVAL_PREDATOR), new Parameter(EVAL_PREDATOR + ".default"), false);
 
-        ArrayList<List<Double>> shepherd = new ArrayList<List<Double>>();
-        ArrayList<List<Double>> sheep = new ArrayList<List<Double>>();
+        ArrayList<double[]> shepherd = new ArrayList<>();
+        ArrayList<double[]> sheep = new ArrayList<>();
         for(int i = 0; i < individuals.length; i++) {
             DoubleVectorIndividual individual = (DoubleVectorIndividual) individuals[i];
             evolutionState.output.message(i + " - " + individual.genotypeToStringForHumans());
-            List genome = Arrays.asList(individual.genome);
+            double[] genome = individual.genome;
             if (i < split) {
+                System.out.println("Adding shepherd " + individual.genotypeToString());
                 shepherd.add(genome);
             } else {
+                System.out.println("Adding sheep " + individual.genotypeToString());
                 sheep.add(genome);
             }
         }
