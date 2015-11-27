@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Herding extends SimState {
 
-    private final double TIME_STEP_PERIOD = 0.1; //makes the steps occur at 10Hz
+    private final double TIME_STEP_PERIOD = 1.1; //makes the steps occur at 10Hz
 
     public Continuous2D _yard = new Continuous2D(0.1, 37, 37); //37x37 foot pasture
     List<double[]> _shepherds;
@@ -32,7 +32,7 @@ public class Herding extends SimState {
 
         // add sheperds to the yard
         for(int i = 0; i < _shepherds.size(); i++) {
-            Shepherd shephard = new Shepherd(_shepherds.get(i), _shepherds.size() > 1 && _predatorPresent ? 5 : 3);
+            Shepherd shephard = new Shepherd(_shepherds.get(i), _shepherds.size() > 1 && _predatorPresent ? 4 : 2);
             //TODO: set another spawn postion
             _yard.setObjectLocation(shephard,
                 new Double2D(_yard.getWidth() * 0.5 + random.nextDouble() - 0.5,

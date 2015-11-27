@@ -14,7 +14,7 @@ import java.util.List;
 public class Shepherd extends AgentWithNetwork implements Steppable {
 
     public Shepherd(double[] weights, int inputs) {
-        super(weights, inputs, inputs > 3 ? 5 : 3);
+        super(weights, inputs, inputs > 2 ? 5 : 3);
     }
 
     public void step(SimState simState) {
@@ -30,7 +30,7 @@ public class Shepherd extends AgentWithNetwork implements Steppable {
         NNinputs inputs = getSheepCentricInputs(detectNearestNeighbors(yard), yard);
 
         //TODO: use netOut which is radius and bearing to move the agent
-        Double2D newTargetPosition = getNewPostion(inputs.toList());
+        Double2D newTargetPosition = getNewPostion(inputs);
 
         sumForces.addIn(newTargetPosition);
 
@@ -46,10 +46,10 @@ public class Shepherd extends AgentWithNetwork implements Steppable {
         Sheep sheep = (Sheep) neighbors[1];
         Predator predator = (Predator) neighbors[2]; // might be null
 
-        Double2D corralPosition = new Double2D(yard.getHeight() * 0.5, yard.getWidth());//TODO: find better corral positoning system
+        //TODO: find better corral positoning system
+        Double2D corralPosition = new Double2D(yard.getHeight() * 0.5, yard.getWidth());
 
-
-        NNinputs inputs = new NNinputs();
+        NNinputs inputs = new NNinputs(0, 0, 0, 0);
         return inputs;
     }
 

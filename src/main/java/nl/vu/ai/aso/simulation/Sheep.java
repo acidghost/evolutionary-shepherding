@@ -14,7 +14,7 @@ import java.util.List;
 public class Sheep extends AgentWithNetwork implements Steppable {
 
     public Sheep(double[] weights, int inputs) {
-        super(weights, inputs, inputs > 3 ? 5 : 3);
+        super(weights, inputs, inputs > 2 ? 5 : 3);
     }
 
     public void step(SimState simState) {

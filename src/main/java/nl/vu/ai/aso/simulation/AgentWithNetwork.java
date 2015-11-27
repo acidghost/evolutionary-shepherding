@@ -1,6 +1,7 @@
 package nl.vu.ai.aso.simulation;
 
 import nl.vu.ai.aso.neuralnetwork.Mlp;
+import nl.vu.ai.aso.shared.NNinputs;
 import sim.util.Double2D;
 
 import java.util.List;
@@ -24,8 +25,8 @@ public abstract class AgentWithNetwork {
         network = new Mlp(_weights, inputs, hidden);
     }
 
-    protected Double2D getNewPostion(List<Double> inputs) {
-        double[] output = network.feedforward(inputs);
+    protected Double2D getNewPostion(NNinputs inputs) {
+        double[] output = network.feedforward(inputs.toArray());
 
         //TODO: transform the out of the NN in x,y coordinates
 
