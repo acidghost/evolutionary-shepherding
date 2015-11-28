@@ -103,6 +103,24 @@ public abstract class Entity extends OvalPortrayal2D {
 
     public boolean isValidMove(final Herding herding, final MutableDouble2D newLoc) {
         // TODO: implement me!
+        // check collisions with other agents?
+
+        // check walls
+        if (newLoc.x > herding.WIDTH) {
+            if (velocity.x > 0) velocity.x = -velocity.x;
+            return false;
+        } else if (newLoc.x < 0) {
+            if (velocity.x < 0) velocity.x = -velocity.x;
+            return false;
+        } else if (newLoc.y > herding.HEIGHT) {
+            if (velocity.y > 0) velocity.y = -velocity.y;
+            return false;
+        } else if (newLoc.y < 0) {
+            if (velocity.y < 0) velocity.y = -velocity.y;
+            return false;
+        }
+
+        // no collisions
         return true;
     }
 

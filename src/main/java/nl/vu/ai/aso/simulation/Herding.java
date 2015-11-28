@@ -14,8 +14,10 @@ import java.util.List;
 public class Herding extends SimState {
 
     private final double TIME_STEP_PERIOD = 1;
+    public final int WIDTH = 37;
+    public final int HEIGHT = 37;
 
-    public Continuous2D yard = new Continuous2D(0.1, 37, 37); //37x37 foot pasture
+    public Continuous2D yard = new Continuous2D(1, WIDTH, HEIGHT); //37x37 foot pasture
     public List<double[]> shepherds;
     public List<double[]> sheep;
     private boolean predatorPresent;

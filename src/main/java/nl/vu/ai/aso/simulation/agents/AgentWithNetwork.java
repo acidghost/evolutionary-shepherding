@@ -42,12 +42,11 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
 
     public MutableDouble2D getForces(Continuous2D yard) {
         MutableDouble2D sumForces = new MutableDouble2D();
-        Double2D me = yard.getObjectLocation(this);
+        sumForces.setTo(0.0, 0.0);
 
         INetInputs inputs = getInputs(yard);
         Double2D newTargetPosition = getNewPosition(inputs);
         sumForces.addIn(newTargetPosition);
-        sumForces.addIn(me);
 
         return sumForces;
     }
@@ -58,20 +57,24 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
         Continuous2D yard = herding.yard;
 
         MutableDouble2D force = getForces(yard);
-        System.out.println("Force on " + this.getClass().getSimpleName() + " is " + force.toCoordinates());
+        // System.out.println("Force on " + this.getClass().getSimpleName() + " is " + force.toCoordinates());
 
         // acceleration = f/m
         acceleration.multiply(force, 1 / mass); // resets acceleration
+        // System.out.println("Acc on " + this.getClass().getSimpleName() + " is " + acceleration.toCoordinates());
         // v = v + a
         velocity.addIn(acceleration);
         capVelocity();
+        // System.out.println("Vel on " + this.getClass().getSimpleName() + " is " + velocity.toCoordinates());
         // L = L + v
-        newLoc.add(loc,velocity);  // resets newLoc
+        newLoc.add(loc, velocity);  // resets newLoc
 
         // is new location valid?
-        if(isValidMove(herding, newLoc)) {
+        if (isValidMove(herding, newLoc)) {
             loc = newLoc;
             System.out.println("New agent (" + this.getClass().getSimpleName() + ") location @ " + loc.toCoordinates());
+        } else {
+            System.out.println(this.getClass().getSimpleName() + " hit something @ " + newLoc.toCoordinates());
         }
 
         yard.setObjectLocation(this, new Double2D(loc));
