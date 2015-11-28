@@ -1,6 +1,7 @@
 package nl.vu.ai.aso.simulation.agents;
 
 import nl.vu.ai.aso.simulation.Herding;
+import sim.field.continuous.Continuous2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import sim.util.MutableDouble2D;
@@ -16,14 +17,12 @@ public abstract class Entity extends OvalPortrayal2D {
 
     public MutableDouble2D loc, velocity, bump;
     public MutableDouble2D force = new MutableDouble2D();
-    public MutableDouble2D accel = new MutableDouble2D();
+    public MutableDouble2D acceleration = new MutableDouble2D();
     public MutableDouble2D newLoc = new MutableDouble2D();
     public MutableDouble2D sumVector = new MutableDouble2D(0, 0);
 
     public double speed, radius;
-
     public double cap;
-
     public double mass;
 
     // Accessors for inspector
@@ -99,6 +98,10 @@ public abstract class Entity extends OvalPortrayal2D {
         speed = 0.4;
     }
 
+    public Entity(MutableDouble2D loc, double newRadius, Color c) {
+        this(loc.x, loc.y, newRadius, c);
+    }
+
     public boolean isValidMove(final Herding herding, final MutableDouble2D newLoc) {
         // TODO: implement me!
         return true;
@@ -111,6 +114,8 @@ public abstract class Entity extends OvalPortrayal2D {
 
     @Override
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
+        // System.out.println("Drawing " + this.getClass().getSimpleName());
+
         // draw the circle
         super.draw(object, graphics, info);
 

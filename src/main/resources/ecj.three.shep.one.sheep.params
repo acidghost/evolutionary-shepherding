@@ -153,7 +153,7 @@ breed =                                 nl.vu.ai.aso.evolution.CoESBreeder
 
 generations=                            50
 # select.tournament.size =                5
-pop.subpops =                           2
+pop.subpops =                           4
 
 es.mu.0 =                               10
 es.lambda.0 =                           100
@@ -188,7 +188,7 @@ pop.subpop.1.duplicate-retries =        0
 pop.subpop.1.size =                     10
 pop.subpop.1.species =                  ec.vector.FloatVectorSpecies
 pop.subpop.1.species.crossover-type =   one
-pop.subpop.1.species.genome-size =      17
+pop.subpop.1.species.genome-size =      37
 pop.subpop.1.species.min-gene =         -10
 pop.subpop.1.species.max-gene =         10
 pop.subpop.1.species.fitness =          ec.simple.SimpleFitness
@@ -205,7 +205,57 @@ pop.subpop.1.species.mutation-bounded =	true
 # pop.subpop.1.species.pipe.source.0.source.1 = same
 
 
-pop.separator = 1
-pop.separator.default = 1
+es.mu.2 =                               10
+es.lambda.2 =                           100
+
+pop.subpop.2 =                          ec.Subpopulation
+pop.subpop.2.duplicate-retries =        0
+pop.subpop.2.size =                     10
+pop.subpop.2.species =                  ec.vector.FloatVectorSpecies
+pop.subpop.2.species.crossover-type =   one
+pop.subpop.2.species.genome-size =      37
+pop.subpop.2.species.min-gene =         -10
+pop.subpop.2.species.max-gene =         10
+pop.subpop.2.species.fitness =          ec.simple.SimpleFitness
+pop.subpop.2.species.ind =              ec.vector.DoubleVectorIndividual
+pop.subpop.2.species.pipe =             ec.vector.breed.VectorMutationPipeline
+pop.subpop.2.species.pipe.source.0 =    ec.es.ESSelection
+pop.subpop.2.species.mutation-type =    gauss
+pop.subpop.2.species.mutation-stdev =   0.01
+pop.subpop.2.species.mutation-prob =    1.0
+pop.subpop.2.species.mutation-bounded =	true
+# pop.subpop.2.species.pipe = 		    ec.vector.breed.VectorMutationPipeline
+# pop.subpop.2.species.pipe.source.0 = 	ec.vector.breed.VectorCrossoverPipeline
+# pop.subpop.2.species.pipe.source.0.source.0 = ec.select.TournamentSelection
+# pop.subpop.2.species.pipe.source.0.source.1 = same
+
+
+es.mu.3 =                               10
+es.lambda.3 =                           100
+
+pop.subpop.3 =                          ec.Subpopulation
+pop.subpop.3.duplicate-retries =        0
+pop.subpop.3.size =                     10
+pop.subpop.3.species =                  ec.vector.FloatVectorSpecies
+pop.subpop.3.species.crossover-type =   one
+pop.subpop.3.species.genome-size =      17
+pop.subpop.3.species.min-gene =         -10
+pop.subpop.3.species.max-gene =         10
+pop.subpop.3.species.fitness =          ec.simple.SimpleFitness
+pop.subpop.3.species.ind =              ec.vector.DoubleVectorIndividual
+pop.subpop.3.species.pipe =             ec.vector.breed.VectorMutationPipeline
+pop.subpop.3.species.pipe.source.0 =    ec.es.ESSelection
+pop.subpop.3.species.mutation-type =    gauss
+pop.subpop.3.species.mutation-stdev =   0.01
+pop.subpop.3.species.mutation-prob =    1.0
+pop.subpop.3.species.mutation-bounded =	true
+# pop.subpop.3.species.pipe = 		    ec.vector.breed.VectorMutationPipeline
+# pop.subpop.3.species.pipe.source.0 = 	ec.vector.breed.VectorCrossoverPipeline
+# pop.subpop.3.species.pipe.source.0.source.0 = ec.select.TournamentSelection
+# pop.subpop.3.species.pipe.source.0.source.1 = same
+
+
+pop.separator = 3
+pop.separator.default = 3
 eval.predator = false
 eval.predator.default = false

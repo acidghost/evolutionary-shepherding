@@ -2,6 +2,7 @@ package nl.vu.ai.aso.simulation.agents;
 
 import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;
+import sim.util.Double2D;
 import sim.util.MutableDouble2D;
 
 import java.awt.*;
@@ -16,7 +17,11 @@ public class Sheep extends AgentWithNetwork {
     }
 
     public Sheep(double newX, double newY, double[] weights, int inputs) {
-        super(newX, newY, 2, Color.lightGray, weights, inputs);
+        super(newX, newY, 1, Color.lightGray, weights, inputs);
+    }
+
+    public Sheep(Double2D location, double[] weights, int inputs) {
+        this(location.x, location.y, weights, inputs);
     }
 
     public void step(SimState simState) {

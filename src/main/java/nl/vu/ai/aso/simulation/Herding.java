@@ -33,19 +33,33 @@ public class Herding extends SimState {
         // clear the yard
         yard.clear();
 
+        //TODO: set another spawn postion
+        final Double2D[] shepherdsPositions = new Double2D[] {
+            new Double2D(yard.getWidth() * 0.5 - 8, yard.getHeight() * 0.5),
+            new Double2D(yard.getWidth() * 0.5 - 8, yard.getHeight() * 0.5),
+            new Double2D(yard.getWidth() * 0.5 - 8, yard.getHeight() * 0.5)
+        };
+
         // add shepherds to the yard
-        for (double[] shepherdWeights : shepherds) {
-            Shepherd shepherd = new Shepherd(shepherdWeights, 4);
-            //TODO: set another spawn postion
-            yard.setObjectLocation(shepherd, new Double2D(yard.getWidth() * 0.5 + random.nextDouble() - 0.5, yard.getHeight() * 0.5 + random.nextDouble() - 0.5));
+        for (int i = 0; i < shepherds.size(); i++) {
+            double[] shepherdWeights = shepherds.get(i);
+            Shepherd shepherd = new Shepherd(shepherdsPositions[i], shepherdWeights, 4);
+            yard.setObjectLocation(shepherd, shepherdsPositions[i]);
             schedule.scheduleRepeating(shepherd, TIME_STEP_PERIOD);
         }
 
+        //TODO: set another spawn postion
+        final Double2D[] sheepPositions = new Double2D[] {
+            new Double2D(yard.getWidth() * 0.5 + 8, yard.getHeight() * 0.5),
+            new Double2D(yard.getWidth() * 0.5 + 8, yard.getHeight() * 0.5),
+            new Double2D(yard.getWidth() * 0.5 + 8, yard.getHeight() * 0.5)
+        };
+
         // add sheep to the yard
-        for (double[] sheepWeights : sheep) {
-            Sheep sheep = new Sheep(sheepWeights, this.sheep.size() > 1 && predatorPresent ? 4 : 2);
-            //TODO: set another spawn postion
-            yard.setObjectLocation(sheep, new Double2D(yard.getWidth() - random.nextDouble() - 0.5, yard.getHeight() - random.nextDouble() - 0.5));
+        for (int i = 0; i < sheep.size(); i++) {
+            double[] sheepWeights = sheep.get(i);
+            Sheep sheep = new Sheep(sheepPositions[i], sheepWeights, this.sheep.size() > 1 && predatorPresent ? 4 : 2);
+            yard.setObjectLocation(sheep, sheepPositions[i]);
             schedule.scheduleRepeating(sheep, TIME_STEP_PERIOD);
         }
 
@@ -86,7 +100,7 @@ public class Herding extends SimState {
         setJob(1);
         start();
         do {
-            System.out.println(schedule.getSteps());
+            // System.out.println(schedule.getSteps());
             if (!schedule.step(this)) break;
         } while(schedule.getSteps() < totalSteps);
         finish();

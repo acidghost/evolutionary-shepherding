@@ -19,7 +19,11 @@ public class Shepherd extends AgentWithNetwork {
     }
 
     public Shepherd(double newX, double newY, double[] weights, int inputs) {
-        super(newX, newY, 2, Color.blue, weights, inputs);
+        super(newX, newY, 1, Color.blue, weights, inputs);
+    }
+
+    public Shepherd(Double2D location, double[] weights, int inputs) {
+        this(location.x, location.y, weights, inputs);
     }
 
     @Override

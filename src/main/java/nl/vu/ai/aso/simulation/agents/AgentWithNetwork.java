@@ -29,13 +29,11 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
 
     protected Double2D getNewPostion(INetInputs inputs) {
         // System.out.println("Requesting new position to NN -> " + this.getClass().getSimpleName());
-        // for (double i : inputs.toArray())
-            // System.out.println(i);
         double[] output = network.feedforward(inputs.toArray());
+        System.out.println("NN output is " + output[0] + ", " + output[1]);
 
         //TODO: transform the out of the NN in x,y coordinates
-
-        return new Double2D(1.0,1.0); //this returns the actual x,y as new computed position
+        return new Double2D(output[0], output[1]); //this returns the actual x,y as new computed position
     }
 
     abstract public MutableDouble2D getForces(Continuous2D yard);
@@ -46,20 +44,21 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
         Continuous2D yard = herding.yard;
 
         MutableDouble2D force = getForces(yard);
+        System.out.println("Force on " + this.getClass().getSimpleName() + " is " + force.toCoordinates());
 
         // acceleration = f/m
-        accel.multiply(force, 1/mass); // resets accel
-
+        acceleration.multiply(force, 1 / mass); // resets acceleration
         // v = v + a
-        velocity.addIn(accel);
+        velocity.addIn(acceleration);
         capVelocity();
-
         // L = L + v
         newLoc.add(loc,velocity);  // resets newLoc
 
         // is new location valid?
-        if(isValidMove(herding, newLoc))
+        if(isValidMove(herding, newLoc)) {
             loc = newLoc;
+            System.out.println("New agent (" + this.getClass().getSimpleName() + ") location @ " + loc.toCoordinates());
+        }
 
         yard.setObjectLocation(this, new Double2D(loc));
     }

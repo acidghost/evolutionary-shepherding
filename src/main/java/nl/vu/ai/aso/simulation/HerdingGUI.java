@@ -3,7 +3,10 @@ package nl.vu.ai.aso.simulation;
 import nl.vu.ai.aso.shared.EvaluationResults;
 import nl.vu.ai.aso.simulation.agents.Sheep;
 import nl.vu.ai.aso.simulation.agents.Shepherd;
-import sim.display.*;
+import sim.display.Console;
+import sim.display.Controller;
+import sim.display.Display2D;
+import sim.display.GUIState;
 import sim.engine.SimState;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
 
@@ -87,7 +90,6 @@ public class HerdingGUI extends GUIState {
         Herding herding = (Herding) state;
 
         yardPortrayal.setField(herding.yard);
-        // yardPortrayal.setPortrayalForAll(new OvalPortrayal2D());
 
         // tell the portrayals what to portray and how to portray them
         yardPortrayal.setPortrayalForClass(Shepherd.class, new sim.portrayal.simple.RectanglePortrayal2D(Color.red));
