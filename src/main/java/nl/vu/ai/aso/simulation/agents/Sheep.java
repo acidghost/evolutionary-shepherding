@@ -1,9 +1,8 @@
 package nl.vu.ai.aso.simulation.agents;
 
-import sim.engine.SimState;
+import nl.vu.ai.aso.shared.SheepInputs;
 import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
-import sim.util.MutableDouble2D;
 
 import java.awt.*;
 
@@ -24,13 +23,8 @@ public class Sheep extends AgentWithNetwork {
         this(location.x, location.y, weights, inputs);
     }
 
-    public void step(SimState simState) {
-        //TODO: implement
-    }
-
     @Override
-    public MutableDouble2D getForces(Continuous2D yard) {
-        // TODO: implement me!
-        return null;
+    protected SheepInputs getInputs(Continuous2D yard) {
+        return new SheepInputs(0.0, 0.0, null, null);
     }
 }
