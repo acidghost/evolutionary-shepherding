@@ -1,10 +1,11 @@
 package nl.vu.ai.aso.simulation;
 
 import nl.vu.ai.aso.shared.EvaluationResults;
+import nl.vu.ai.aso.simulation.agents.Sheep;
+import nl.vu.ai.aso.simulation.agents.Shepherd;
 import sim.display.*;
 import sim.engine.SimState;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
-import sim.portrayal.simple.OvalPortrayal2D;
 
 import javax.swing.*;
 import java.awt.*;
@@ -86,10 +87,14 @@ public class HerdingGUI extends GUIState {
         Herding herding = (Herding) state;
 
         yardPortrayal.setField(herding.yard);
-        yardPortrayal.setPortrayalForAll(new OvalPortrayal2D());
+        // yardPortrayal.setPortrayalForAll(new OvalPortrayal2D());
+
+        // tell the portrayals what to portray and how to portray them
+        yardPortrayal.setPortrayalForClass(Shepherd.class, new sim.portrayal.simple.RectanglePortrayal2D(Color.red));
+        yardPortrayal.setPortrayalForClass(Sheep.class, new sim.portrayal.simple.OvalPortrayal2D(Color.white));
 
         display.reset();
-        display.setBackdrop(Color.white);
+        display.setBackdrop(Color.black);
 
         display.repaint();
     }
@@ -97,7 +102,7 @@ public class HerdingGUI extends GUIState {
     @Override
     public void init(Controller controller) {
         super.init(controller);
-        display = new Display2D(600,600,this);
+        display = new Display2D(600, 600, this);
         display.setClipping(false);
         displayFrame = display.createFrame();
         displayFrame.setTitle("Herding Display");
@@ -109,7 +114,7 @@ public class HerdingGUI extends GUIState {
 
     @Override
     public boolean step() {
-        System.out.println("Doing step in GUI: " + state.schedule.getSteps());
+        // System.out.println("Doing step in GUI: " + state.schedule.getSteps());
         return super.step();
     }
 

@@ -3,7 +3,6 @@ package nl.vu.ai.aso.simulation.agents;
 import nl.vu.ai.aso.shared.ShepherdInputs;
 import nl.vu.ai.aso.simulation.Herding;
 import sim.engine.SimState;
-import sim.engine.Steppable;
 import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
 import sim.util.Double2D;
@@ -11,50 +10,68 @@ import sim.util.MutableDouble2D;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
-public class Shepherd extends AgentWithNetwork implements Steppable {
+public class Shepherd extends AgentWithNetwork {
 
     public Shepherd(double[] weights, int inputs) {
         this(0, 0, weights, inputs);
     }
 
     public Shepherd(double newX, double newY, double[] weights, int inputs) {
-        super(newX, newY, 10, Color.blue, weights, inputs);
+        super(newX, newY, 2, Color.blue, weights, inputs);
     }
 
-    public void step(SimState simState) {
-        Herding herding = (Herding) simState;
-        Continuous2D yard = herding.yard;
-
-        Double2D me = herding.yard.getObjectLocation(this);
-
+    @Override
+    public MutableDouble2D getForces(Continuous2D yard) {
         MutableDouble2D sumForces = new MutableDouble2D();
+        Double2D me = yard.getObjectLocation(this);
 
-        //TODO: get the right inputs
-        ShepherdInputs inputs = getSheepCentricInputs(detectNearestNeighbors(yard), yard);
-
-        //TODO: use netOut which is radius and bearing to move the agent
+        ShepherdInputs inputs = getInputs(yard);
         Double2D newTargetPosition = getNewPostion(inputs);
-
         sumForces.addIn(newTargetPosition);
-
         sumForces.addIn(me);
 
-        herding.yard.setObjectLocation(this, new Double2D(sumForces));
+        return sumForces;
     }
 
-    // takes the neighbors and returns the NN-sheep-centirc-inputs
-    private ShepherdInputs getSheepCentricInputs(Object[] neighbors, Continuous2D yard) {
+    private Double2D getSheepCenter(Continuous2D yard) {
+        List<Sheep> allSheep = new ArrayList<>();
+        for (Object agent : yard.getAllObjects()) {
+            if (agent instanceof Sheep) {
+                allSheep.add((Sheep) agent);
+            }
+        }
 
-        Shepherd shepherd = (Shepherd) neighbors[0];
-        Sheep sheep = (Sheep) neighbors[1];
-        Predator predator = (Predator) neighbors[2]; // might be null
+        Double2D center = new Double2D(0, 0);
+        for (Sheep sheep : allSheep) {
+            center.add(yard.getObjectLocation(sheep));
+        }
+        return new Double2D(center.x / allSheep.size(), center.y / allSheep.size());
+    }
 
-        //TODO: find better corral positoning system
+    private double getSheepDistance(Continuous2D yard, Shepherd shepherd, Double2D sheepCenter) {
+        Double2D shepherdPos = yard.getObjectLocation(shepherd);
+        return sheepCenter.distance(shepherdPos);
+    }
+
+    private double getSheepBearing(Continuous2D yard, Shepherd shepherd, Double2D sheepCenter) {
+        Double2D shepherdPos = yard.getObjectLocation(shepherd);
+        // TODO: implement me! & find better corral position
         Double2D corralPosition = new Double2D(yard.getHeight() * 0.5, yard.getWidth());
+        return 0;
+    }
 
-        ShepherdInputs inputs = new ShepherdInputs(0.0, 0.0, null, null);
-        return inputs;
+    private ShepherdInputs getInputs(Continuous2D yard) {
+        Double2D sheepCenter = getSheepCenter(yard);
+        double shepherd_r = getSheepDistance(yard, this, sheepCenter);
+        double shepherd_b = getSheepBearing(yard, this, sheepCenter);
+
+        Object[] neighbors = detectNearestNeighbors(yard);
+        double otherShep_r = getSheepDistance(yard, (Shepherd) neighbors[0], sheepCenter);
+        double otherShep_b = getSheepBearing(yard, (Shepherd) neighbors[0], sheepCenter);
+
+        return new ShepherdInputs(shepherd_r, shepherd_b, otherShep_r, otherShep_b);
     }
 
     // returns, in order, closest shepard, sheep and predator. Last one could be null

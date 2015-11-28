@@ -1,6 +1,7 @@
 package nl.vu.ai.aso.simulation.agents;
 
 import nl.vu.ai.aso.simulation.Herding;
+import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import sim.util.MutableDouble2D;
 
@@ -108,4 +109,20 @@ public abstract class Entity extends OvalPortrayal2D {
             velocity = velocity.resize(cap);
     }
 
+    @Override
+    public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
+        // draw the circle
+        super.draw(object, graphics, info);
+
+        // draw our line as well
+        final double width = info.draw.width * radius * 2;
+        final double height = info.draw.height * radius * 2;
+
+        graphics.setColor(Color.white);
+        double d = velocity.angle();
+        graphics.drawLine((int)info.draw.x,
+            (int)info.draw.y,
+            (int)(info.draw.x) + (int)(width/2 * /*Strict*/Math.cos(d)),
+            (int)(info.draw.y) + (int)(height/2 * /*Strict*/Math.sin(d)));
+    }
 }
