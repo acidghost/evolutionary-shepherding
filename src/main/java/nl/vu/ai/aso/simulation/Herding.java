@@ -18,6 +18,7 @@ public class Herding extends SimState {
     public final int HEIGHT = 37;
 
     public Continuous2D yard = new Continuous2D(1, WIDTH, HEIGHT); //37x37 foot pasture
+    public Double2D  corralPosition = new Double2D(yard.getWidth(), yard.getHeight() * 0.5); // left centered corral
     public List<double[]> shepherds;
     public List<double[]> sheep;
     private boolean predatorPresent;
@@ -35,7 +36,7 @@ public class Herding extends SimState {
         // clear the yard
         yard.clear();
 
-        //TODO: set another spawn postion
+        //TODO: set another spawn position
         final Double2D[] shepherdsPositions = new Double2D[] {
             new Double2D(yard.getWidth() * 0.5 - 8, yard.getHeight() * 0.5),
             new Double2D(yard.getWidth() * 0.5 - 8, yard.getHeight() * 0.5),
@@ -68,8 +69,15 @@ public class Herding extends SimState {
         System.out.println("Starting simulation with " + shepherds.size() + " shepherds and " + sheep.size() + " sheep.");
     }
 
+    // for fitness function
     public double sheepDistance() {
-        return 0.5; //TODO: temp parameter
+        double totalDistance = 0.0;
+        for (int i = 0; i < sheep.size(); i++){
+            //Double2D sheepPosition = yard.getObjectLocation(sheep);
+            //double individualDistance = corralPosition.distance(sheepPosition);
+            //totalDistance += individualDistance;
+        }
+        return totalDistance; //TODO: temp parameter
     }
 
     // development's convenient method
