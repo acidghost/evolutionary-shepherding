@@ -1,10 +1,12 @@
 package nl.vu.ai.aso.simulation;
 
 import nl.vu.ai.aso.shared.EvaluationResults;
+import nl.vu.ai.aso.simulation.agents.Predator;
 import nl.vu.ai.aso.simulation.agents.Sheep;
 import nl.vu.ai.aso.simulation.agents.Shepherd;
 import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;
+import sim.util.Bag;
 import sim.util.Double2D;
 
 import java.util.ArrayList;
@@ -72,12 +74,37 @@ public class Herding extends SimState {
     // for fitness function
     public double sheepDistance() {
         double totalDistance = 0.0;
-        for (int i = 0; i < sheep.size(); i++){
-            //Double2D sheepPosition = yard.getObjectLocation(sheep);
+        Object[] agents = sortAgents();
+        ArrayList<Sheep> sheepAgents = (ArrayList) agents[1];
+
+        for (int i = 0; i < sheepAgents.size(); i++){
+            Double2D sheepPosition = yard.getObjectLocation(sheep);
             //double individualDistance = corralPosition.distance(sheepPosition);
             //totalDistance += individualDistance;
         }
-        return totalDistance; //TODO: temp parameter
+        return totalDistance; //TODO: check it makes sense
+    }
+
+    public Object[] sortAgents(){
+        Bag allAgents = yard.getAllObjects();
+
+        // split agents based on their types
+        ArrayList<Shepherd> shepherds = new ArrayList<Shepherd>();
+        ArrayList<Sheep> sheep = new ArrayList<Sheep>();
+        Predator predator = null;
+
+        for (int i = 0; i < allAgents.size(); i++) {
+            Object retrivedObj = allAgents.get(i);
+            if (retrivedObj instanceof Shepherd){
+                shepherds.add((Shepherd) retrivedObj);
+            } else if (retrivedObj instanceof Sheep) {
+                sheep.add((Sheep) retrivedObj);
+            } else {
+                // it is (the only) predator
+                predator = (Predator) retrivedObj;
+            }
+        }
+        return new Object[] {shepherds, sheep, predator}; // last one could be null
     }
 
     // development's convenient method

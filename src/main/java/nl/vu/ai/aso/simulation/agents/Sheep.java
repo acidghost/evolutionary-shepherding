@@ -24,7 +24,16 @@ public class Sheep extends AgentWithNetwork {
     }
 
     @Override
-    protected SheepInputs getInputs(Continuous2D yard) {
-        return new SheepInputs(0.0, 0.0, null, null);
+    protected SheepInputs getInputs(Continuous2D yard, Double2D corralPosition) {
+        Double2D sheepCenter = getSheepCenter(yard);
+        double sheep_r = getDistanceFromSheep(yard, this, sheepCenter);
+        double sheep_b = getBearingFromSheep(yard, this, sheepCenter, corralPosition);
+
+        Object[] neighbors = detectNearestNeighbors(yard);
+        double closestShep_r = getDistanceFromSheep(yard, (Shepherd) neighbors[0], sheepCenter);
+        double closestShep_b = getBearingFromSheep(yard, (Shepherd) neighbors[0], sheepCenter, corralPosition);
+
+        // TODO: check number of inputs
+        return new SheepInputs(sheep_r, sheep_b, null, null);
     }
 }

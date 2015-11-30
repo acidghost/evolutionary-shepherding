@@ -11,7 +11,8 @@ import sim.util.Double2D;
 import sim.util.MutableDouble2D;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
+import java.lang.*;
 
 /**
  * Created by acidghost on 24/11/15.
@@ -29,23 +30,30 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
         this(newX, newY, newRadius, c, weights, inputs, inputs > 2 ? 5 : 3);
     }
 
-    protected Double2D getNewPosition(INetInputs inputs) {
+    protected Double2D getNewPosition(INetInputs inputs, Continuous2D yard) {
         // System.out.println("Requesting new position to NN -> " + this.getClass().getSimpleName());
         double[] output = network.feedforward(inputs.toArray());
         System.out.println("NN output is " + output[0] + ", " + output[1]);
+        //TODO: check this makes sense
+        // output -> re-scale -> cartesian -> absolute centered
+        double radius = 37 * output[0];
+        double angle = (2 * Math.PI * output[1]) - Math.PI;
 
-        //TODO: transform the out of the NN in x,y coordinates
-        return new Double2D(output[0], output[1]); //this returns the actual x,y as new computed position
+        Double2D cartesian = new Double2D((radius * Math.cos(angle)), (radius * Math.sin(angle)));
+
+        Double2D newPosition = cartesian.add(getSheepCenter(yard));
+
+        return newPosition; //this returns the actual x,y as new computed position
     }
 
-    abstract protected INetInputs getInputs(Continuous2D yard);
+    abstract protected INetInputs getInputs(Continuous2D yard, Double2D corralPosition);
 
-    public MutableDouble2D getForces(Continuous2D yard) {
+    public MutableDouble2D getForces(Continuous2D yard, Double2D corralPosition) {
         MutableDouble2D sumForces = new MutableDouble2D();
         sumForces.setTo(0.0, 0.0);
 
-        INetInputs inputs = getInputs(yard);
-        Double2D newTargetPosition = getNewPosition(inputs);
+        INetInputs inputs = getInputs(yard, corralPosition);
+        Double2D newTargetPosition = getNewPosition(inputs, yard);
         sumForces.addIn(newTargetPosition);
 
         return sumForces;
@@ -55,8 +63,9 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
     public void step(SimState simState) {
         Herding herding = (Herding) simState;
         Continuous2D yard = herding.yard;
+        Double2D corralPosition = herding.corralPosition;
 
-        MutableDouble2D force = getForces(yard);
+        MutableDouble2D force = getForces(yard, corralPosition);
         // System.out.println("Force on " + this.getClass().getSimpleName() + " is " + force.toCoordinates());
 
         // acceleration = f/m
@@ -80,26 +89,36 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
         yard.setObjectLocation(this, new Double2D(loc));
     }
 
-    // returns, in order, closest shepard, sheep and predator. Last one could be null
-    protected Object[] detectNearestNeighbors(Continuous2D yard) {
+    // return agents by type, in order shepherds, sheep and predator
+    protected Object[] sortAgents(Continuous2D yard){
         Bag allAgents = yard.getAllObjects();
 
         // split agents based on their types
-        ArrayList<Shepherd> otherShepherds = new ArrayList<Shepherd>();
-        ArrayList<Sheep> otherSheep = new ArrayList<Sheep>();
-        Predator nearestPredator = null;
+        ArrayList<Shepherd> shepherds = new ArrayList<Shepherd>();
+        ArrayList<Sheep> sheep = new ArrayList<Sheep>();
+        Predator predator = null;
 
         for (int i = 0; i < allAgents.size(); i++) {
             Object retrivedObj = allAgents.get(i);
             if (retrivedObj instanceof Shepherd){
-                otherShepherds.add((Shepherd) retrivedObj);
+                shepherds.add((Shepherd) retrivedObj);
             } else if (retrivedObj instanceof Sheep) {
-                otherSheep.add((Sheep) retrivedObj);
+                sheep.add((Sheep) retrivedObj);
             } else {
                 // it is (the only) predator
-                nearestPredator = (Predator) retrivedObj;
+                predator = (Predator) retrivedObj;
             }
         }
+        return new Object[] {shepherds, sheep, predator}; // last one could be null
+    }
+
+    // returns, in order, closest shepard, sheep and predator. Last one could be null
+    protected Object[] detectNearestNeighbors(Continuous2D yard) {
+        // split agents based on their types
+        Object[] agents = sortAgents(yard);
+        ArrayList<Shepherd> otherShepherds = (ArrayList) agents[0];
+        ArrayList<Sheep> otherSheep = (ArrayList) agents[1];
+        Predator nearestPredator = (Predator) agents[2];
 
         // get the nearest shepard
         Shepherd nearestShepard = otherShepherds.get(0);
@@ -128,5 +147,28 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
         }
 
         return new Object[] {nearestShepard, nearestSheep, nearestPredator}; // last one could be null
+    }
+
+    protected Double2D getSheepCenter(Continuous2D yard) {
+        Object[] agents = sortAgents(yard);
+        ArrayList<Sheep> allSheep = (ArrayList) agents[1];
+
+        Double2D center = new Double2D(0, 0);
+        for (Sheep sheep : allSheep) {
+            center.add(yard.getObjectLocation(sheep));
+        }
+        return new Double2D(center.x / allSheep.size(), center.y / allSheep.size());
+    }
+
+    protected double getDistanceFromSheep(Continuous2D yard, AgentWithNetwork agent, Double2D sheepCenter) {
+        Double2D agentPos = yard.getObjectLocation(agent);
+        return sheepCenter.distance(agentPos);
+    }
+
+    protected double getBearingFromSheep(Continuous2D yard, AgentWithNetwork agent, Double2D sheepCenter, Double2D corralPosition) {
+        Double2D agentPos = yard.getObjectLocation(agent);
+
+        // TODO: implement me! & find better corral position
+        return 0;
     }
 }
