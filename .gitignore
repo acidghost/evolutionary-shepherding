@@ -17,3 +17,6 @@ mason
 *.iml
 target
 *.stat
+
+report/.texpadtmp/
+report/*.pdf
