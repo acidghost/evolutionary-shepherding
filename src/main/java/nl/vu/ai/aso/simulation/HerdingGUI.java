@@ -59,7 +59,7 @@ public class HerdingGUI extends GUIState {
         for (int i = 0; i < totalSteps; i++) {
             console.pressPlay();
             console.pressPause();
-            Herding.cumulativeSheepDist += herding.yard.allSheepDistance();
+            herding.insideLoopStuff();
             try {
                 Thread.sleep((long) timeToSleep);
             } catch (InterruptedException e) {
@@ -71,8 +71,13 @@ public class HerdingGUI extends GUIState {
         herdingGUI.quit();
         console.dispose();
 
+<<<<<<< HEAD
         EvaluationResults results = new EvaluationResults(-Herding.cumulativeSheepDist, herding.individualSheepDistances());
         Herding.cumulativeSheepDist = 0;
+=======
+        EvaluationResults results = new EvaluationResults(-Herding.cumulativeSheepDist, herding.sheepDistances());
+        herding.endLoopStuff();
+>>>>>>> origin/simulation-mason
         return results;
     }
 

@@ -12,6 +12,12 @@ import java.util.List;
 
 public class Herding extends SimState {
 
+    public enum EndSimulation {
+        SHEEP_ESCAPES,
+        SHEEP_CORRALED,
+        CONTINUE
+    }
+
     private final double TIME_STEP_PERIOD = 1;
     public final int WIDTH = 37;
     public final int HEIGHT = 37;
@@ -122,12 +128,23 @@ public class Herding extends SimState {
 
         herding.loop(totalSteps);
 
+
         double shepherdFitness = -Herding.cumulativeSheepDist;
-        double[] sheepFitness = herding.individualSheepDistances() + getSheepRatio();
+        double[] sheepFitness = herding.individualSheepDistances(); // + getSheepRatio();
 
         EvaluationResults results = new EvaluationResults(shepherdFitness, sheepFitness);
-        cumulativeSheepDist = 0;
+        herding.endLoopStuff();
+
         return results;
+    }
+
+    public EndSimulation insideLoopStuff() {
+        cumulativeSheepDist += yard.allSheepDistance();
+        return EndSimulation.CONTINUE;
+    }
+
+    public void endLoopStuff() {
+        cumulativeSheepDist = 0;
     }
 
     public void loop(int totalSteps) {
@@ -135,7 +152,7 @@ public class Herding extends SimState {
         start();
         do {
             // System.out.println(schedule.getSteps());
-            cumulativeSheepDist += yard.allSheepDistance();
+            insideLoopStuff();
             if (!schedule.step(this)) break;
         } while(schedule.getSteps() < totalSteps);
 
