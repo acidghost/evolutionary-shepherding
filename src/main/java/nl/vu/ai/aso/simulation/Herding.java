@@ -67,12 +67,14 @@ public class Herding extends SimState {
 
         // add sheep to the yard
         sheepAgents = new ArrayList<>();
+        System.out.println("number of sheep is " + sheep.size());
+
         for (int i = 0; i < sheep.size(); i++) {
             double[] sheepWeights = sheep.get(i);
-            Sheep sheep = new Sheep(sheepPositions[i], sheepWeights, this.sheep.size() > 1 ? 4 : 2);
-            sheepAgents.add(sheep);
-            yard.setObjectLocation(sheep, sheepPositions[i]);
-            schedule.scheduleRepeating(sheep, TIME_STEP_PERIOD);
+            Sheep aSheep = new Sheep(sheepPositions[i], sheepWeights, this.sheep.size() > 1 ? 4 : 2);
+            sheepAgents.add(aSheep);
+            yard.setObjectLocation(aSheep, sheepPositions[i]);
+            schedule.scheduleRepeating(aSheep, TIME_STEP_PERIOD);
         }
 
         System.out.println("Starting simulation with " + shepherds.size() + " shepherds and " + sheep.size() + " sheep.");
