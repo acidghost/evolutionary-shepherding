@@ -26,6 +26,8 @@ public class Herding extends SimState {
     public List<double[]> sheep;
     private boolean predatorPresent;
 
+    public static double cummulativeSheepDist = 0;
+
     public Herding(long seed, List<double[]> shepherds, List<double[]> sheeps, boolean predatorPresent) {
         super(seed);
         this.shepherds = shepherds;
@@ -54,7 +56,7 @@ public class Herding extends SimState {
             schedule.scheduleRepeating(shepherd, TIME_STEP_PERIOD);
         }
 
-        //TODO: set another spawn postion
+        //TODO: set another spawn position
         final Double2D[] sheepPositions = new Double2D[] {
             new Double2D(yard.getWidth() * 0.5 + 8, yard.getHeight() * 0.5 - Sheep.AGENT_RADIUS),
             new Double2D(yard.getWidth() * 0.5 + 8, yard.getHeight() * 0.5),
@@ -73,15 +75,15 @@ public class Herding extends SimState {
     }
 
     // for fitness function
-    public double sheepDistance() {
+    public double allSheepDistance() {
         double totalDistance = 0.0;
         Object[] agents = sortAgents();
-        ArrayList<Sheep> sheepAgents = (ArrayList) agents[1];
+        ArrayList<Sheep> allSheep = (ArrayList) agents[1];
 
-        for (int i = 0; i < sheepAgents.size(); i++){
+        for (Sheep sheep : allSheep){
             Double2D sheepPosition = yard.getObjectLocation(sheep);
-            //double individualDistance = corralPosition.distance(sheepPosition);
-            //totalDistance += individualDistance;
+            double individualDistance = corralPosition.distance(sheepPosition);
+            totalDistance += individualDistance;
         }
         return totalDistance; //TODO: check it makes sense
     }
@@ -130,8 +132,7 @@ public class Herding extends SimState {
 
         herding.loop(totalSteps);
 
-        double sheepDist = herding.sheepDistance();
-        return new EvaluationResults(0.0, sheepDist);
+        return new EvaluationResults(herding.cummulativeSheepDist, 0.0);
     }
 
     public void loop(int totalSteps) {
@@ -141,6 +142,8 @@ public class Herding extends SimState {
             // System.out.println(schedule.getSteps());
             if (!schedule.step(this)) break;
         } while(schedule.getSteps() < totalSteps);
+
+
         finish();
     }
 

@@ -65,6 +65,8 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
         Continuous2D yard = herding.yard;
         Double2D corralPosition = herding.corralPosition;
 
+        herding.cummulativeSheepDist =+ herding.allSheepDistance();
+
         MutableDouble2D force = getForces(yard, corralPosition);
         // log("Force on  is " + force.toCoordinates());
 
