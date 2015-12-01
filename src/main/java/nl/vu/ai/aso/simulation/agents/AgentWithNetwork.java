@@ -168,7 +168,9 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
     protected double getBearingFromSheep(Continuous2D yard, AgentWithNetwork agent, Double2D sheepCenter, Double2D corralPosition) {
         Double2D agentPos = yard.getObjectLocation(agent);
 
-        // TODO: implement me! & find better corral position
-        return 0;
+        double angle1 = Math.atan2((sheepCenter.y - corralPosition.y), (sheepCenter.x - corralPosition.x));
+        double angle2 = Math.atan2((agentPos.y - corralPosition.y), (agentPos.x - corralPosition.x));
+
+        return angle1 - angle2;
     }
 }

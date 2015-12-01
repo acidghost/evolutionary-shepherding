@@ -28,7 +28,7 @@ public class Mlp {
         mlp.setInput(inputs);
         mlp.calculate();
 
-        return mlp.getOutput(); //// Array: [0] is radius from the center of mass of the sheep, [1] is bearing relative to center of mass and corral
+        return mlp.getOutput(); // [0]: normalized radius from the center of mass of the sheep, [1] is normalized bearing relative to corral and center of mass and corral
     }
 
 }
