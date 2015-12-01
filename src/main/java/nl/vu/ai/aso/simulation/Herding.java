@@ -31,6 +31,7 @@ public class Herding extends SimState {
     public List<Shepherd> shepherdAgents;
 
     public static double cumulativeSheepDist = 0;
+    public static double cummulativeSheepRatio = 0;
 
     public Herding(long seed, List<double[]> shepherds, List<double[]> sheeps, boolean predatorPresent) {
         super(seed);
@@ -108,29 +109,18 @@ public class Herding extends SimState {
         return distances;
     }
 
-    public double getSheepRatio(){
-        Object[] agents = yard.sortAgents();
-        ArrayList<Sheep> allSheep = (ArrayList) agents[1];
-
-        double ratio = 0.0;
-
-        for (Sheep sheep : allSheep){
-            double currentSheepDistance = yard.getObjectLocationAsDouble2D(sheep).distance(yard.getSheepCenter());
-            if (ratio < currentSheepDistance) {
-                ratio = currentSheepDistance;
-            }
-        }
-        return ratio;
-    }
 
     public static EvaluationResults runSimulation(int totalSteps, List<double[]> shepherd, List<double[]> sheep, boolean predator) {
         Herding herding = new Herding(System.currentTimeMillis(), shepherd, sheep, predator);
 
         herding.loop(totalSteps);
 
-
         double shepherdFitness = -Herding.cumulativeSheepDist;
-        double[] sheepFitness = herding.individualSheepDistances(); // + getSheepRatio();
+        double[] sheepFitness = herding.individualSheepDistances();
+
+        for (int i = 1; i < sheepFitness.length ; i++){
+            sheepFitness[i] =- Herding.cummulativeSheepRatio;
+        }
 
         EvaluationResults results = new EvaluationResults(shepherdFitness, sheepFitness);
         herding.endLoopStuff();
@@ -140,11 +130,13 @@ public class Herding extends SimState {
 
     public EndSimulation insideLoopStuff() {
         cumulativeSheepDist += yard.allSheepDistance();
+        cummulativeSheepRatio += yard.getSheepRatio();
         return EndSimulation.CONTINUE;
     }
 
     public void endLoopStuff() {
         cumulativeSheepDist = 0;
+        cummulativeSheepRatio = 0;
     }
 
     public void loop(int totalSteps) {

@@ -8,7 +8,7 @@ import ec.Evolve;
 public class EvolutionaryShepherding {
 
     public static void main(String[] args) {
-        String filename = EvolutionaryShepherding.class.getClassLoader().getResource("ecj.three.shep.two.sheep.params").getPath();
+        String filename = EvolutionaryShepherding.class.getClassLoader().getResource("ecj.three.shep.three.sheep.params").getPath();
         Evolve.main(new String[] { "-file", filename });
     }
 

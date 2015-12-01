@@ -34,6 +34,21 @@ public class Yard extends Continuous2D {
         return totalDistance; //TODO: check it makes sense
     }
 
+    public double getSheepRatio() {
+        Object[] agents = sortAgents();
+        ArrayList<Sheep> allSheep = (ArrayList) agents[1];
+
+        double ratio = 0.0;
+
+        for (Sheep sheep : allSheep){
+            double currentSheepDistance = getObjectLocationAsDouble2D(sheep).distance(getSheepCenter());
+            if (ratio < currentSheepDistance) {
+                ratio = currentSheepDistance;
+            }
+        }
+        return ratio;
+    }
+
     // returns, in order, closest shepard, sheep and predator. Last one could be null
     public Object[] detectNearestNeighbors(Object agent) {
         // split agents based on their types
