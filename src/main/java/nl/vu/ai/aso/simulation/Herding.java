@@ -28,6 +28,7 @@ public class Herding extends SimState {
     public List<Shepherd> shepherdAgents;
 
     public static double cumulativeSheepDist = 0;
+    public static double cummulativeSheepRatio = 0;
 
     public Herding(long seed, List<double[]> shepherds, List<double[]> sheeps, boolean predatorPresent) {
         super(seed);
@@ -68,7 +69,6 @@ public class Herding extends SimState {
 
         // add sheep to the yard
         sheepAgents = new ArrayList<>();
-        System.out.println("number of sheep is " + sheep.size());
 
         for (int i = 0; i < sheep.size(); i++) {
             double[] sheepWeights = sheep.get(i);
@@ -98,7 +98,7 @@ public class Herding extends SimState {
         System.exit(0);
     }
 
-    public double[] sheepDistances() {
+    public double[] individualSheepDistances() {
         double[] distances = new double[this.sheep.size()];
         for (int i = 0; i < sheepAgents.size(); i++) {
             distances[i] = sheepAgents.get(i).travelledDistance;
@@ -106,18 +106,28 @@ public class Herding extends SimState {
         return distances;
     }
 
+
     public static EvaluationResults runSimulation(int totalSteps, List<double[]> shepherd, List<double[]> sheep, boolean predator) {
         Herding herding = new Herding(System.currentTimeMillis(), shepherd, sheep, predator);
 
         herding.loop(totalSteps);
 
-        EvaluationResults results = new EvaluationResults(-Herding.cumulativeSheepDist, herding.sheepDistances());
+        double shepherdFitness = -Herding.cumulativeSheepDist;
+        double[] sheepFitness = herding.individualSheepDistances();
+
+        for (int i = 1; i < sheepFitness.length ; i++){
+            sheepFitness[i] =- Herding.cummulativeSheepRatio;
+        }
+
+        EvaluationResults results = new EvaluationResults(shepherdFitness, sheepFitness);
         herding.endLoopStuff();
+
         return results;
     }
 
     public boolean insideLoopStuff() {
         cumulativeSheepDist += yard.allSheepDistance();
+        cummulativeSheepRatio += yard.getSheepRatio();
 
         if (sheep.size() > 1 && sheepAgents.size() < 2) {
             // System.out.println("Not enough sheep.");
@@ -150,6 +160,7 @@ public class Herding extends SimState {
 
     public void endLoopStuff() {
         cumulativeSheepDist = 0;
+        cummulativeSheepRatio = 0;
     }
 
     public void loop(int totalSteps) {

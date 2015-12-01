@@ -76,6 +76,7 @@ public class HerdingGUI extends GUIState {
         EvaluationResults results = new EvaluationResults(-Herding.cumulativeSheepDist, herding.sheepDistances());
 
         herding.endLoopStuff();
+
         return results;
     }
 
