@@ -3,7 +3,6 @@ package nl.vu.ai.aso.simulation.agents;
 import nl.vu.ai.aso.shared.ShepherdInputs;
 import nl.vu.ai.aso.simulation.Herding;
 import nl.vu.ai.aso.simulation.Yard;
-import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
 
 import java.awt.*;

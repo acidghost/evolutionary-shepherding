@@ -4,7 +4,6 @@ import nl.vu.ai.aso.shared.EvaluationResults;
 import nl.vu.ai.aso.simulation.agents.Sheep;
 import nl.vu.ai.aso.simulation.agents.Shepherd;
 import sim.engine.SimState;
-import sim.util.Bag;
 import sim.util.Double2D;
 
 import java.util.ArrayList;
@@ -13,16 +12,13 @@ import java.util.List;
 
 public class Herding extends SimState {
 
-    public enum EndSimulation {
-        SHEEP_ESCAPES,
-        SHEEP_CORRALED,
-        CONTINUE
-    }
-
     private final double TIME_STEP_PERIOD = 1;
     public final int WIDTH = 37;
     public final int HEIGHT = 37;
     public final double RESOLUTION = 1;
+
+    public final int CORRALED_BONUS = 200000;
+    public final int ESCAPED_BONUS = 200000;
 
     public Yard yard = new Yard(RESOLUTION, WIDTH, HEIGHT); //37x37 foot pasture
     public List<double[]> shepherds;
@@ -120,9 +116,36 @@ public class Herding extends SimState {
         return results;
     }
 
-    public EndSimulation insideLoopStuff() {
+    public boolean insideLoopStuff() {
         cumulativeSheepDist += yard.allSheepDistance();
-        return EndSimulation.CONTINUE;
+
+        if (sheep.size() > 1 && sheepAgents.size() < 2) {
+            // System.out.println("Not enough sheep.");
+            return false;
+        }
+
+        List<Sheep> copiedSheep = new ArrayList<>(sheepAgents);
+        for (Sheep sheep : copiedSheep) {
+            SheepStatus sheepStatus = yard.getSheepStatus(sheep);
+            switch (sheepStatus) {
+                case CORRALED:
+                    System.out.println("\n\nOne sheep is corraled!!!\n\n");
+                    cumulativeSheepDist -= CORRALED_BONUS;
+                    yard.remove(sheep);
+                    sheepAgents.remove(sheep);
+                    return false;
+                case ESCAPED:
+                    System.out.println("One sheep is escaped!");
+                    cumulativeSheepDist += ESCAPED_BONUS;
+                    yard.remove(sheep);
+                    sheepAgents.remove(sheep);
+                    return false;
+                case NORMAL:
+                    break;
+            }
+        }
+
+        return true;
     }
 
     public void endLoopStuff() {
@@ -134,7 +157,9 @@ public class Herding extends SimState {
         start();
         do {
             // System.out.println(schedule.getSteps());
-            insideLoopStuff();
+            if (!insideLoopStuff()) {
+                break;
+            }
             if (!schedule.step(this)) break;
         } while(schedule.getSteps() < totalSteps);
 

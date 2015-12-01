@@ -1,7 +1,6 @@
 package nl.vu.ai.aso.simulation.agents;
 
 import nl.vu.ai.aso.simulation.Herding;
-import sim.field.continuous.Continuous2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import sim.util.Bag;
@@ -10,8 +9,6 @@ import sim.util.MutableDouble2D;
 
 import java.awt.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 /**

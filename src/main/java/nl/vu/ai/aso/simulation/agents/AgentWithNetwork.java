@@ -11,8 +11,6 @@ import sim.util.Double2D;
 import sim.util.MutableDouble2D;
 
 import java.awt.*;
-import java.lang.*;
-import java.util.Arrays;
 
 /**
  * Created by acidghost on 24/11/15.

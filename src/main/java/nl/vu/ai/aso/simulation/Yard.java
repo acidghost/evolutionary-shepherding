@@ -120,4 +120,30 @@ public class Yard extends Continuous2D {
         return ratio;
     }
 
+    public SheepStatus getSheepStatus(Sheep sheep) {
+        if (isInsideYard(sheep)) {
+            return SheepStatus.NORMAL;
+        } else {
+            if (sheep.loc.x >= getWidth() - sheep.agentRadius) {
+                return SheepStatus.CORRALED;
+            }
+            return SheepStatus.ESCAPED;
+        }
+    }
+
+    public boolean isInsideYard(Object agent) {
+        Double2D loc = getObjectLocationAsDouble2D(agent);
+        if (loc.x > getWidth()) {
+            return false;
+        } else if (loc.x < 0) {
+            return false;
+        } else if (loc.y > getHeight()) {
+            return false;
+        } else if (loc.y < 0) {
+            return false;
+        }
+
+        return true;
+    }
+
 }
