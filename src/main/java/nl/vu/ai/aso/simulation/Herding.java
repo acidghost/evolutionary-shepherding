@@ -17,7 +17,7 @@ public class Herding extends SimState {
     private final double TIME_STEP_PERIOD = 1;
     public final int WIDTH = 37;
     public final int HEIGHT = 37;
-    public final double RESOLUTION = 0.01;
+    public final double RESOLUTION = 1;
 
     public Yard yard = new Yard(RESOLUTION, WIDTH, HEIGHT); //37x37 foot pasture
     public List<double[]> shepherds;
