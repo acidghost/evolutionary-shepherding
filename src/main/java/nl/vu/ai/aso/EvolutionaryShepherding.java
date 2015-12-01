@@ -8,7 +8,15 @@ import ec.Evolve;
 public class EvolutionaryShepherding {
 
     public static void main(String[] args) {
-        String filename = EvolutionaryShepherding.class.getClassLoader().getResource("ecj.three.shep.three.sheep.params").getPath();
+        String nSheep = "one";
+        String nSheph = "one";
+
+        if (args.length == 2) {
+            nSheph = args[0];
+            nSheep = args[1];
+        }
+
+        String filename = EvolutionaryShepherding.class.getClassLoader().getResource("ecj." + nSheph + ".shep." + nSheep + ".sheep.params").getPath();
         Evolve.main(new String[] { "-file", filename });
     }
 

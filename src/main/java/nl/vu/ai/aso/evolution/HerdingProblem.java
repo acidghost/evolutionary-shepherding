@@ -51,6 +51,9 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
                 }
             }
         }
+
+        evolutionState.output.message("Finished generation " + evolutionState.generation);
+
     }
 
     public void evaluate(EvolutionState evolutionState, Individual[] individuals, boolean[] updateFitness, boolean countVictoriesOnly, int[] subpops, int threadnum) {
@@ -74,8 +77,8 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
             }
         }
 
-        // EvaluationResults results = Herding.runSimulation(evaluations, shepherd, sheep, predator);
-        EvaluationResults results = HerdingGUI.runSimulation(evaluations, 1, shepherd, sheep, predator);
+        EvaluationResults results = Herding.runSimulation(evaluations, shepherd, sheep, predator);
+        // EvaluationResults results = HerdingGUI.runSimulation(evaluations, 1, shepherd, sheep, predator);
         evolutionState.output.message("Evaluation finished.\n" + results.toString());
 
         int sheepCounter = 0;

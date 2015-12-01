@@ -1,4 +1,6 @@
 CLASS=EvolutionaryShepherding
+SHEEP=one
+SHEPH=three
 
 all: run
 
@@ -12,4 +14,4 @@ package:
 	mvn clean package
 
 run: package
-	mvn exec:java -Dexec.classpathScope=compile -Dexec.mainClass=nl.vu.ai.aso.$(CLASS)
+	mvn exec:java -Dexec.classpathScope=compile -Dexec.mainClass=nl.vu.ai.aso.$(CLASS) -Dexec.args="$(SHEPH) $(SHEEP)"
