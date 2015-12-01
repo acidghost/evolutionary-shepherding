@@ -1,7 +1,6 @@
 package nl.vu.ai.aso.simulation;
 
 import nl.vu.ai.aso.shared.EvaluationResults;
-import nl.vu.ai.aso.simulation.agents.Predator;
 import nl.vu.ai.aso.simulation.agents.Sheep;
 import nl.vu.ai.aso.simulation.agents.Shepherd;
 import sim.engine.SimState;
@@ -13,6 +12,12 @@ import java.util.List;
 
 
 public class Herding extends SimState {
+
+    public enum EndSimulation {
+        SHEEP_ESCAPES,
+        SHEEP_CORRALED,
+        CONTINUE
+    }
 
     private final double TIME_STEP_PERIOD = 1;
     public final int WIDTH = 37;
@@ -111,8 +116,17 @@ public class Herding extends SimState {
         herding.loop(totalSteps);
 
         EvaluationResults results = new EvaluationResults(-Herding.cumulativeSheepDist, herding.sheepDistances());
-        cumulativeSheepDist = 0;
+        herding.endLoopStuff();
         return results;
+    }
+
+    public EndSimulation insideLoopStuff() {
+        cumulativeSheepDist += yard.allSheepDistance();
+        return EndSimulation.CONTINUE;
+    }
+
+    public void endLoopStuff() {
+        cumulativeSheepDist = 0;
     }
 
     public void loop(int totalSteps) {
@@ -120,7 +134,7 @@ public class Herding extends SimState {
         start();
         do {
             // System.out.println(schedule.getSteps());
-            cumulativeSheepDist += yard.allSheepDistance();
+            insideLoopStuff();
             if (!schedule.step(this)) break;
         } while(schedule.getSteps() < totalSteps);
 
