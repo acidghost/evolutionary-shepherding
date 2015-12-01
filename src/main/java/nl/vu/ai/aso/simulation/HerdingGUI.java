@@ -1,5 +1,6 @@
 package nl.vu.ai.aso.simulation;
 
+import nl.vu.ai.aso.EvolutionaryShepherding;
 import nl.vu.ai.aso.shared.EvaluationResults;
 import nl.vu.ai.aso.simulation.agents.Sheep;
 import nl.vu.ai.aso.simulation.agents.Shepherd;
@@ -59,6 +60,7 @@ public class HerdingGUI extends GUIState {
         for (int i = 0; i < totalSteps; i++) {
             console.pressPlay();
             console.pressPause();
+            Herding.cumulativeSheepDist += herding.yard.allSheepDistance();
             try {
                 Thread.sleep((long) timeToSleep);
             } catch (InterruptedException e) {
@@ -70,7 +72,9 @@ public class HerdingGUI extends GUIState {
         herdingGUI.quit();
         console.dispose();
 
-        return new EvaluationResults(herding.cummulativeSheepDist, 0.0);
+        EvaluationResults results = new EvaluationResults(-Herding.cumulativeSheepDist, 0.0);
+        Herding.cumulativeSheepDist = 0;
+        return results;
     }
 
     @Override

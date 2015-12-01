@@ -5,7 +5,6 @@ import nl.vu.ai.aso.simulation.agents.Predator;
 import nl.vu.ai.aso.simulation.agents.Sheep;
 import nl.vu.ai.aso.simulation.agents.Shepherd;
 import sim.engine.SimState;
-import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
 import sim.util.Double2D;
 
@@ -20,13 +19,12 @@ public class Herding extends SimState {
     public final int HEIGHT = 37;
     public final double RESOLUTION = 0.01;
 
-    public Continuous2D yard = new Continuous2D(RESOLUTION, WIDTH, HEIGHT); //37x37 foot pasture
-    public Double2D  corralPosition = new Double2D(yard.getWidth(), yard.getHeight() * 0.5); // left centered corral
+    public Yard yard = new Yard(RESOLUTION, WIDTH, HEIGHT); //37x37 foot pasture
     public List<double[]> shepherds;
     public List<double[]> sheep;
     private boolean predatorPresent;
 
-    public static double cummulativeSheepDist = 0;
+    public static double cumulativeSheepDist = 0;
 
     public Herding(long seed, List<double[]> shepherds, List<double[]> sheeps, boolean predatorPresent) {
         super(seed);
@@ -74,42 +72,6 @@ public class Herding extends SimState {
         System.out.println("Starting simulation with " + shepherds.size() + " shepherds and " + sheep.size() + " sheep.");
     }
 
-    // for fitness function
-    public double allSheepDistance() {
-        double totalDistance = 0.0;
-        Object[] agents = sortAgents();
-        ArrayList<Sheep> allSheep = (ArrayList) agents[1];
-
-        for (Sheep sheep : allSheep){
-            Double2D sheepPosition = yard.getObjectLocation(sheep);
-            double individualDistance = corralPosition.distance(sheepPosition);
-            totalDistance += individualDistance;
-        }
-        return totalDistance; //TODO: check it makes sense
-    }
-
-    public Object[] sortAgents(){
-        Bag allAgents = yard.getAllObjects();
-
-        // split agents based on their types
-        ArrayList<Shepherd> shepherds = new ArrayList<Shepherd>();
-        ArrayList<Sheep> sheep = new ArrayList<Sheep>();
-        Predator predator = null;
-
-        for (int i = 0; i < allAgents.size(); i++) {
-            Object retrivedObj = allAgents.get(i);
-            if (retrivedObj instanceof Shepherd){
-                shepherds.add((Shepherd) retrivedObj);
-            } else if (retrivedObj instanceof Sheep) {
-                sheep.add((Sheep) retrivedObj);
-            } else {
-                // it is (the only) predator
-                predator = (Predator) retrivedObj;
-            }
-        }
-        return new Object[] {shepherds, sheep, predator}; // last one could be null
-    }
-
     // development's convenient method
     public static void main(String[] args ) {
 
@@ -132,7 +94,9 @@ public class Herding extends SimState {
 
         herding.loop(totalSteps);
 
-        return new EvaluationResults(herding.cummulativeSheepDist, 0.0);
+        EvaluationResults results =  new EvaluationResults(-Herding.cumulativeSheepDist, 0.0);
+        cumulativeSheepDist = 0;
+        return results;
     }
 
     public void loop(int totalSteps) {
@@ -140,9 +104,9 @@ public class Herding extends SimState {
         start();
         do {
             // System.out.println(schedule.getSteps());
+            cumulativeSheepDist += yard.allSheepDistance();
             if (!schedule.step(this)) break;
         } while(schedule.getSteps() < totalSteps);
-
 
         finish();
     }

@@ -1,6 +1,7 @@
 package nl.vu.ai.aso.simulation.agents;
 
 import nl.vu.ai.aso.shared.ShepherdInputs;
+import nl.vu.ai.aso.simulation.Yard;
 import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
 
@@ -23,12 +24,12 @@ public class Shepherd extends AgentWithNetwork {
     }
 
     @Override
-    protected ShepherdInputs getInputs(Continuous2D yard, Double2D corralPosition) {
-        Double2D sheepCenter = getSheepCenter(yard);
+    protected ShepherdInputs getInputs(Yard yard, Double2D corralPosition) {
+        Double2D sheepCenter = yard.getSheepCenter();
         double shepherd_r = getDistanceFromSheep(yard, this, sheepCenter);
         double shepherd_b = getBearingFromSheep(yard, this, sheepCenter, corralPosition);
 
-        Object[] neighbors = detectNearestNeighbors(yard);
+        Object[] neighbors = yard.detectNearestNeighbors(this);
         double otherShep_r = getDistanceFromSheep(yard, (Shepherd) neighbors[0], sheepCenter);
         double otherShep_b = getBearingFromSheep(yard, (Shepherd) neighbors[0], sheepCenter, corralPosition);
 

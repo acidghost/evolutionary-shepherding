@@ -76,6 +76,7 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
 
         // EvaluationResults results = Herding.runSimulation(evaluations, shepherd, sheep, predator);
         EvaluationResults results = HerdingGUI.runSimulation(evaluations, 100, shepherd, sheep, predator);
+        evolutionState.output.message("Evaluation finished." + results.toString());
 
         for (int i = 0; i < individuals.length; i++) {
             if (updateFitness[i]) {

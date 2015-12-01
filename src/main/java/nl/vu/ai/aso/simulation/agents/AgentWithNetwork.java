@@ -3,15 +3,14 @@ package nl.vu.ai.aso.simulation.agents;
 import nl.vu.ai.aso.neuralnetwork.Mlp;
 import nl.vu.ai.aso.shared.INetInputs;
 import nl.vu.ai.aso.simulation.Herding;
+import nl.vu.ai.aso.simulation.Yard;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.continuous.Continuous2D;
-import sim.util.Bag;
 import sim.util.Double2D;
 import sim.util.MutableDouble2D;
 
 import java.awt.*;
-import java.util.*;
 import java.lang.*;
 
 /**
@@ -30,7 +29,7 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
         this(newX, newY, newRadius, c, agentRadius, weights, inputs, inputs > 2 ? 5 : 3);
     }
 
-    protected Double2D getNewPosition(INetInputs inputs, Continuous2D yard) {
+    protected Double2D getNewPosition(INetInputs inputs, Yard yard) {
         // System.out.println("Requesting new position to NN -> " + this.getClass().getSimpleName());
         double[] output = network.feedforward(inputs.toArray());
         // System.out.println("NN output is " + output[0] + ", " + output[1]);
@@ -41,14 +40,14 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
 
         Double2D cartesian = new Double2D((radius * Math.cos(angle)), (radius * Math.sin(angle)));
 
-        Double2D newPosition = cartesian.add(getSheepCenter(yard));
+        Double2D newPosition = cartesian.add(yard.getSheepCenter());
 
         return newPosition; //this returns the actual x,y as new computed position
     }
 
-    abstract protected INetInputs getInputs(Continuous2D yard, Double2D corralPosition);
+    abstract protected INetInputs getInputs(Yard yard, Double2D corralPosition);
 
-    public MutableDouble2D getForces(Continuous2D yard, Double2D corralPosition) {
+    public MutableDouble2D getForces(Yard yard, Double2D corralPosition) {
         MutableDouble2D sumForces = new MutableDouble2D();
         sumForces.setTo(0.0, 0.0);
 
@@ -62,10 +61,8 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
     @Override
     public void step(SimState simState) {
         Herding herding = (Herding) simState;
-        Continuous2D yard = herding.yard;
-        Double2D corralPosition = herding.corralPosition;
-
-        herding.cummulativeSheepDist =+ herding.allSheepDistance();
+        Yard yard = herding.yard;
+        Double2D corralPosition = yard.corralPosition;
 
         MutableDouble2D force = getForces(yard, corralPosition);
         // log("Force on  is " + force.toCoordinates());

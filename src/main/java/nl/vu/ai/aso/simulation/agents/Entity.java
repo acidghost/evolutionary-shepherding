@@ -111,82 +111,11 @@ public abstract class Entity extends OvalPortrayal2D {
         this(loc.x, loc.y, newRadius, c, agentRadius);
     }
 
-    // returns, in order, closest shepard, sheep and predator. Last one could be null
-    protected Object[] detectNearestNeighbors(Continuous2D yard) {
-        // split agents based on their types
-        Object[] agents = sortAgents(yard);
-        ArrayList<Shepherd> otherShepherds = (ArrayList) agents[0];
-        ArrayList<Sheep> otherSheep = (ArrayList) agents[1];
-        Predator nearestPredator = (Predator) agents[2];
-
-        // get the nearest shepard
-        Shepherd nearestShepard = otherShepherds.get(0);
-        double distanceNearestShepard = yard.getObjectLocationAsDouble2D(this).distance(yard.getObjectLocationAsDouble2D(nearestShepard));
-
-        for (int i = 1; i < otherShepherds.size(); i++){
-            //check if the distance is bigger than nearestShepherds
-            double currentShepardDistance = yard.getObjectLocationAsDouble2D(this).distance(yard.getObjectLocationAsDouble2D(otherShepherds.get(i)));
-            if (distanceNearestShepard > currentShepardDistance) {
-                nearestShepard = otherShepherds.get(i);
-                distanceNearestShepard = currentShepardDistance;
-            }
-        }
-
-        // get the nearest sheep
-        Sheep nearestSheep = otherSheep.get(0);
-        double distanceNearestSheep= yard.getObjectLocationAsDouble2D(this).distance(yard.getObjectLocationAsDouble2D(nearestSheep));
-
-        for (int i = 1; i < otherSheep.size(); i++){
-            //check if the distance is bigger than nearestSheep
-            double currentSheepDistance = yard.getObjectLocationAsDouble2D(this).distance(yard.getObjectLocationAsDouble2D(otherSheep.get(i)));
-            if (distanceNearestSheep > currentSheepDistance) {
-                nearestSheep = otherSheep.get(i);
-                distanceNearestSheep = currentSheepDistance;
-            }
-        }
-
-        return new Object[] {nearestShepard, nearestSheep, nearestPredator}; // last one could be null
-    }
-
-    // return agents by type, in order shepherds, sheep and predator
-    protected Object[] sortAgents(Continuous2D yard){
-        Bag allAgents = yard.getAllObjects();
-
-        // split agents based on their types
-        ArrayList<Shepherd> shepherds = new ArrayList<Shepherd>();
-        ArrayList<Sheep> sheep = new ArrayList<Sheep>();
-        Predator predator = null;
-
-        for (int i = 0; i < allAgents.size(); i++) {
-            Object retrivedObj = allAgents.get(i);
-            if (retrivedObj instanceof Shepherd){
-                shepherds.add((Shepherd) retrivedObj);
-            } else if (retrivedObj instanceof Sheep) {
-                sheep.add((Sheep) retrivedObj);
-            } else {
-                // it is (the only) predator
-                predator = (Predator) retrivedObj;
-            }
-        }
-        return new Object[] {shepherds, sheep, predator}; // last one could be null
-    }
-
-    protected Double2D getSheepCenter(Continuous2D yard) {
-        Object[] agents = sortAgents(yard);
-        ArrayList<Sheep> allSheep = (ArrayList) agents[1];
-
-        Double2D center = new Double2D(0, 0);
-        for (Sheep sheep : allSheep) {
-            center.add(yard.getObjectLocation(sheep));
-        }
-        return new Double2D(center.x / allSheep.size(), center.y / allSheep.size());
-    }
-
     public boolean isValidMove(final Herding herding, final MutableDouble2D newLoc) {
         // check collisions with other agents?
         Bag inRadius = herding.yard.getNeighborsExactlyWithinDistance(new Double2D(loc), agentRadius);
         if (inRadius.size() > 1) {
-            // velocity = velocity.negate();
+            velocity = velocity.negate();
             boolean checkNewPos = true;
             Double2D nearestAgentPos = new Double2D(herding.WIDTH + herding.RESOLUTION, herding.HEIGHT + herding.RESOLUTION);
             for (Object agent : inRadius) {
@@ -199,19 +128,19 @@ public abstract class Entity extends OvalPortrayal2D {
                 }
             }
             if (checkNewPos) {
-                log("Valid colliding position: " + newLoc.toCoordinates());
+                // log("Valid colliding position: " + newLoc.toCoordinates());
                 loc = newLoc;
             } else {
-                log("Invalid colliding position: " + newLoc.toCoordinates());
+                // log("Invalid colliding position: " + newLoc.toCoordinates());
                 if (loc.x > nearestAgentPos.x) {
-                    loc.x += 1;
+                    loc.x += herding.RESOLUTION;
                 } else if (loc.x < nearestAgentPos.x) {
-                    loc.x -= 1;
+                    loc.x -= herding.RESOLUTION;
                 }
                 if (loc.y > nearestAgentPos.y) {
-                    loc.y += 1;
+                    loc.y += herding.RESOLUTION;
                 } else if (loc.y < nearestAgentPos.y) {
-                    loc.y -= 1;
+                    loc.y -= herding.RESOLUTION;
                 }
                 return false;
             }
@@ -221,11 +150,11 @@ public abstract class Entity extends OvalPortrayal2D {
         // check walls X axis
         boolean checkXAxis = true;
         if (newLoc.x > herding.WIDTH) {
-            // if (velocity.x > 0) velocity.x = -velocity.x;
+            if (velocity.x > 0) velocity.x = -velocity.x;
             loc.x = herding.WIDTH - getRadius();
             checkXAxis = false;
         } else if (newLoc.x < 0) {
-            // if (velocity.x < 0) velocity.x = -velocity.x;
+            if (velocity.x < 0) velocity.x = -velocity.x;
             loc.x = getRadius();
             checkXAxis = false;
         }
@@ -233,11 +162,11 @@ public abstract class Entity extends OvalPortrayal2D {
         // check walls Y axis
         boolean checkYAxis = true;
         if (newLoc.y > herding.HEIGHT) {
-            // if (velocity.y > 0) velocity.y = -velocity.y;
+            if (velocity.y > 0) velocity.y = -velocity.y;
             loc.y = herding.HEIGHT - getRadius();
             checkYAxis = false;
         } else if (newLoc.y < 0) {
-            // if (velocity.y < 0) velocity.y = -velocity.y;
+            if (velocity.y < 0) velocity.y = -velocity.y;
             loc.y = getRadius();
             checkYAxis = false;
         }
@@ -275,7 +204,6 @@ public abstract class Entity extends OvalPortrayal2D {
 
     protected void log(String string) {
         Date date = Date.from(Instant.now());
-        Calendar calendar = Calendar.getInstance();
         System.out.println(date + " : " + System.currentTimeMillis() + " " + this.getClass().getSimpleName() + " >> " + string);
     }
 
