@@ -72,7 +72,7 @@ public class HerdingGUI extends GUIState {
         herdingGUI.quit();
         console.dispose();
 
-        EvaluationResults results = new EvaluationResults(-Herding.cumulativeSheepDist, new double[]{});
+        EvaluationResults results = new EvaluationResults(-Herding.cumulativeSheepDist, herding.sheepDistances());
         Herding.cumulativeSheepDist = 0;
         return results;
     }

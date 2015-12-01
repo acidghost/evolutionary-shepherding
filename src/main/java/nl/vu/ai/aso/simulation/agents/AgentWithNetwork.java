@@ -31,9 +31,9 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
     }
 
     protected Double2D getNewPosition(INetInputs inputs, Yard yard) {
-        log("Requesting new position to NN -> " + Arrays.toString(inputs.toArray()));
+        // log("Requesting new position to NN -> " + Arrays.toString(inputs.toArray()));
         double[] output = network.feedforward(inputs.toArray());
-        log("NN output is " + output[0] + ", " + output[1]);
+        // log("NN output is " + output[0] + ", " + output[1]);
         //TODO: check this makes sense
         // output -> re-scale -> cartesian -> absolute centered
         double radius = 37 * output[0];

@@ -23,6 +23,8 @@ public class Herding extends SimState {
     public List<double[]> shepherds;
     public List<double[]> sheep;
     private boolean predatorPresent;
+    public List<Sheep> sheepAgents;
+    public List<Shepherd> shepherdAgents;
 
     public static double cumulativeSheepDist = 0;
 
@@ -47,9 +49,11 @@ public class Herding extends SimState {
         };
 
         // add shepherds to the yard
+        shepherdAgents = new ArrayList<>();
         for (int i = 0; i < shepherds.size(); i++) {
             double[] shepherdWeights = shepherds.get(i);
             Shepherd shepherd = new Shepherd(shepherdsPositions[i], shepherdWeights, 4);
+            shepherdAgents.add(shepherd);
             yard.setObjectLocation(shepherd, shepherdsPositions[i]);
             schedule.scheduleRepeating(shepherd, TIME_STEP_PERIOD);
         }
@@ -62,9 +66,11 @@ public class Herding extends SimState {
         };
 
         // add sheep to the yard
+        sheepAgents = new ArrayList<>();
         for (int i = 0; i < sheep.size(); i++) {
             double[] sheepWeights = sheep.get(i);
             Sheep sheep = new Sheep(sheepPositions[i], sheepWeights, this.sheep.size() > 1 ? 4 : 2);
+            sheepAgents.add(sheep);
             yard.setObjectLocation(sheep, sheepPositions[i]);
             schedule.scheduleRepeating(sheep, TIME_STEP_PERIOD);
         }
@@ -89,12 +95,20 @@ public class Herding extends SimState {
         System.exit(0);
     }
 
+    public double[] sheepDistances() {
+        double[] distances = new double[this.sheep.size()];
+        for (int i = 0; i < sheepAgents.size(); i++) {
+            distances[i] = sheepAgents.get(i).travelledDistance;
+        }
+        return distances;
+    }
+
     public static EvaluationResults runSimulation(int totalSteps, List<double[]> shepherd, List<double[]> sheep, boolean predator) {
         Herding herding = new Herding(System.currentTimeMillis(), shepherd, sheep, predator);
 
         herding.loop(totalSteps);
 
-        EvaluationResults results = new EvaluationResults(-Herding.cumulativeSheepDist, new double[]{});
+        EvaluationResults results = new EvaluationResults(-Herding.cumulativeSheepDist, herding.sheepDistances());
         cumulativeSheepDist = 0;
         return results;
     }

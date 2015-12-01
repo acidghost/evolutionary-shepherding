@@ -3,6 +3,7 @@ package nl.vu.ai.aso.simulation.agents;
 import nl.vu.ai.aso.shared.SheepInputs;
 import nl.vu.ai.aso.simulation.Herding;
 import nl.vu.ai.aso.simulation.Yard;
+import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
 
@@ -14,6 +15,7 @@ import java.awt.*;
 public class Sheep extends AgentWithNetwork {
 
     public static final double AGENT_RADIUS = 5;
+    public double travelledDistance;
 
     public Sheep(double[] weights, int inputs) {
         this(0, 0, weights, inputs);
@@ -21,6 +23,7 @@ public class Sheep extends AgentWithNetwork {
 
     public Sheep(double newX, double newY, double[] weights, int inputs) {
         super(newX, newY, 1, Color.lightGray, AGENT_RADIUS, weights, inputs);
+        travelledDistance = 0;
     }
 
     public Sheep(Double2D location, double[] weights, int inputs) {
@@ -43,5 +46,12 @@ public class Sheep extends AgentWithNetwork {
         } else {
             return new SheepInputs(closestShep_r, closestShep_b, null, null);
         }
+    }
+
+    @Override
+    public void step(SimState simState) {
+        super.step(simState);
+        Herding herding = (Herding) simState;
+        travelledDistance += herding.yard.corralPosition.distance(new Double2D(loc));
     }
 }
