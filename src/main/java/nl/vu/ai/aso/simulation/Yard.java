@@ -105,19 +105,4 @@ public class Yard extends Continuous2D {
         return new Double2D(center.x / allSheep.size(), center.y / allSheep.size());
     }
 
-    public double getSheepRatio(){
-        Object[] agents = sortAgents();
-        ArrayList<Sheep> allSheep = (ArrayList) agents[1];
-
-        double ratio = 0.0;
-
-        for (Sheep sheep : allSheep){
-            double currentSheepDistance = getObjectLocationAsDouble2D(sheep).distance(getSheepCenter());
-            if (ratio < currentSheepDistance) {
-                ratio = currentSheepDistance;
-            }
-        }
-        return ratio;
-    }
-
 }

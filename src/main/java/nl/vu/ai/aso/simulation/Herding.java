@@ -1,11 +1,9 @@
 package nl.vu.ai.aso.simulation;
 
 import nl.vu.ai.aso.shared.EvaluationResults;
-import nl.vu.ai.aso.simulation.agents.Predator;
 import nl.vu.ai.aso.simulation.agents.Sheep;
 import nl.vu.ai.aso.simulation.agents.Shepherd;
 import sim.engine.SimState;
-import sim.util.Bag;
 import sim.util.Double2D;
 
 import java.util.ArrayList;
@@ -67,7 +65,6 @@ public class Herding extends SimState {
 
         // add sheep to the yard
         sheepAgents = new ArrayList<>();
-        System.out.println("number of sheep is " + sheep.size());
 
         for (int i = 0; i < sheep.size(); i++) {
             double[] sheepWeights = sheep.get(i);
@@ -97,7 +94,7 @@ public class Herding extends SimState {
         System.exit(0);
     }
 
-    public double[] sheepDistances() {
+    public double[] individualSheepDistances() {
         double[] distances = new double[this.sheep.size()];
         for (int i = 0; i < sheepAgents.size(); i++) {
             distances[i] = sheepAgents.get(i).travelledDistance;
@@ -105,12 +102,30 @@ public class Herding extends SimState {
         return distances;
     }
 
+    public double getSheepRatio(){
+        Object[] agents = yard.sortAgents();
+        ArrayList<Sheep> allSheep = (ArrayList) agents[1];
+
+        double ratio = 0.0;
+
+        for (Sheep sheep : allSheep){
+            double currentSheepDistance = yard.getObjectLocationAsDouble2D(sheep).distance(yard.getSheepCenter());
+            if (ratio < currentSheepDistance) {
+                ratio = currentSheepDistance;
+            }
+        }
+        return ratio;
+    }
+
     public static EvaluationResults runSimulation(int totalSteps, List<double[]> shepherd, List<double[]> sheep, boolean predator) {
         Herding herding = new Herding(System.currentTimeMillis(), shepherd, sheep, predator);
 
         herding.loop(totalSteps);
 
-        EvaluationResults results = new EvaluationResults(-Herding.cumulativeSheepDist, herding.sheepDistances());
+        double shepherdFitness = -Herding.cumulativeSheepDist;
+        double[] sheepFitness = herding.individualSheepDistances() + getSheepRatio();
+
+        EvaluationResults results = new EvaluationResults(shepherdFitness, sheepFitness);
         cumulativeSheepDist = 0;
         return results;
     }
