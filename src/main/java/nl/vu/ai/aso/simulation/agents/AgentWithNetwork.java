@@ -12,6 +12,7 @@ import sim.util.MutableDouble2D;
 
 import java.awt.*;
 import java.lang.*;
+import java.util.Arrays;
 
 /**
  * Created by acidghost on 24/11/15.
@@ -30,9 +31,9 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
     }
 
     protected Double2D getNewPosition(INetInputs inputs, Yard yard) {
-        // System.out.println("Requesting new position to NN -> " + this.getClass().getSimpleName());
+        log("Requesting new position to NN -> " + Arrays.toString(inputs.toArray()));
         double[] output = network.feedforward(inputs.toArray());
-        // System.out.println("NN output is " + output[0] + ", " + output[1]);
+        log("NN output is " + output[0] + ", " + output[1]);
         //TODO: check this makes sense
         // output -> re-scale -> cartesian -> absolute centered
         double radius = 37 * output[0];
@@ -45,14 +46,14 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
         return newPosition; //this returns the actual x,y as new computed position
     }
 
-    abstract protected INetInputs getInputs(Yard yard, Double2D corralPosition);
+    abstract protected INetInputs getInputs(Herding herding);
 
-    public MutableDouble2D getForces(Yard yard, Double2D corralPosition) {
+    public MutableDouble2D getForces(Herding herding) {
         MutableDouble2D sumForces = new MutableDouble2D();
         sumForces.setTo(0.0, 0.0);
 
-        INetInputs inputs = getInputs(yard, corralPosition);
-        Double2D newTargetPosition = getNewPosition(inputs, yard);
+        INetInputs inputs = getInputs(herding);
+        Double2D newTargetPosition = getNewPosition(inputs, herding.yard);
         sumForces.addIn(newTargetPosition);
 
         return sumForces;
@@ -62,9 +63,8 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
     public void step(SimState simState) {
         Herding herding = (Herding) simState;
         Yard yard = herding.yard;
-        Double2D corralPosition = yard.corralPosition;
 
-        MutableDouble2D force = getForces(yard, corralPosition);
+        MutableDouble2D force = getForces(herding);
         // log("Force on  is " + force.toCoordinates());
 
         // acceleration = f/m

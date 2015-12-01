@@ -1,14 +1,16 @@
 package nl.vu.ai.aso.shared;
 
+import java.util.Arrays;
+
 /**
  * Created by acidghost on 24/11/15.
  */
 public class EvaluationResults {
 
     private double shepherdScore;
-    private double sheepScore;
+    private double[] sheepScore;
 
-    public EvaluationResults(double shepherdScore, double sheepScore) {
+    public EvaluationResults(double shepherdScore, double[] sheepScore) {
         this.shepherdScore = shepherdScore;
         this.sheepScore = sheepScore;
     }
@@ -17,12 +19,13 @@ public class EvaluationResults {
         return shepherdScore;
     }
 
-    public double getSheepScore() {
+    public double[] getSheepScore() {
         return sheepScore;
     }
 
     @Override
     public String toString() {
-        return "Shepherd score: " + shepherdScore + "\nSheep score: " + sheepScore;
+        return "Shepherd score: " + shepherdScore + "\nSheep score: " + Arrays.toString(sheepScore);
     }
+
 }

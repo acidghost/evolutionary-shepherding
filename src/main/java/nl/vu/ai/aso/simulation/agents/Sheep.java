@@ -1,6 +1,7 @@
 package nl.vu.ai.aso.simulation.agents;
 
 import nl.vu.ai.aso.shared.SheepInputs;
+import nl.vu.ai.aso.simulation.Herding;
 import nl.vu.ai.aso.simulation.Yard;
 import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
@@ -27,16 +28,20 @@ public class Sheep extends AgentWithNetwork {
     }
 
     @Override
-    protected SheepInputs getInputs(Yard yard, Double2D corralPosition) {
+    protected SheepInputs getInputs(Herding herding) {
+        Yard yard = herding.yard;
         Double2D sheepCenter = yard.getSheepCenter();
         double sheep_r = getDistanceFromSheep(yard, this, sheepCenter);
-        double sheep_b = getBearingFromSheep(yard, this, sheepCenter, corralPosition);
+        double sheep_b = getBearingFromSheep(yard, this, sheepCenter, yard.corralPosition);
 
         Object[] neighbors = yard.detectNearestNeighbors(this);
         double closestShep_r = getDistanceFromSheep(yard, (Shepherd) neighbors[0], sheepCenter);
-        double closestShep_b = getBearingFromSheep(yard, (Shepherd) neighbors[0], sheepCenter, corralPosition);
+        double closestShep_b = getBearingFromSheep(yard, (Shepherd) neighbors[0], sheepCenter, yard.corralPosition);
 
-        // TODO: check number of inputs
-        return new SheepInputs(sheep_r, sheep_b, null, null);
+        if (herding.sheep.size() > 1) {
+            return new SheepInputs(closestShep_r, closestShep_b, sheep_r, sheep_b);
+        } else {
+            return new SheepInputs(closestShep_r, closestShep_b, null, null);
+        }
     }
 }

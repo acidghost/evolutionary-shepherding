@@ -18,7 +18,7 @@ public class SheepInputs implements INetInputs {
     }
 
     public double[] toArray() {
-        if (sheep_r == null) {
+        if (sheep_r == null || sheep_b == null) {
             return new double[] {
                 shepherd_r,
                 shepherd_b

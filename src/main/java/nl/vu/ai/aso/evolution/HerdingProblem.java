@@ -76,8 +76,10 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
 
         // EvaluationResults results = Herding.runSimulation(evaluations, shepherd, sheep, predator);
         EvaluationResults results = HerdingGUI.runSimulation(evaluations, 100, shepherd, sheep, predator);
-        evolutionState.output.message("Evaluation finished." + results.toString());
+        evolutionState.output.message("Evaluation finished.\n" + results.toString());
 
+        int sheepCounter = 0;
+        double[] sheepScores = results.getSheepScore();
         for (int i = 0; i < individuals.length; i++) {
             if (updateFitness[i]) {
                 Individual individual = individuals[i];
@@ -86,9 +88,10 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
                     individual.fitness.trials.add(score);
                     ((SimpleFitness) individual.fitness).setFitness(evolutionState, score, false);
                 } else {
-                    double score = results.getSheepScore();
+                    double score = sheepScores[sheepCounter];
                     individual.fitness.trials.add(score);
                     ((SimpleFitness) individual.fitness).setFitness(evolutionState, score, false);
+                    sheepCounter++;
                 }
             }
         }
