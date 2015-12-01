@@ -19,7 +19,7 @@ public class Herding extends SimState {
     public final int WIDTH = 37;
     public final int HEIGHT = 37;
 
-    public Continuous2D yard = new Continuous2D(1, WIDTH, HEIGHT); //37x37 foot pasture
+    public Continuous2D yard = new Continuous2D(0.01, WIDTH, HEIGHT); //37x37 foot pasture
     public Double2D  corralPosition = new Double2D(yard.getWidth(), yard.getHeight() * 0.5); // left centered corral
     public List<double[]> shepherds;
     public List<double[]> sheep;
