@@ -28,7 +28,7 @@ public class Herding extends SimState {
     public List<Shepherd> shepherdAgents;
 
     public static double cumulativeSheepDist = 0;
-    public static double cummulativeSheepRatio = 0;
+    public static double cumulativeSheepRatio = 0;
 
     public Herding(long seed, List<double[]> shepherds, List<double[]> sheeps, boolean predatorPresent) {
         super(seed);
@@ -115,10 +115,6 @@ public class Herding extends SimState {
         double shepherdFitness = -Herding.cumulativeSheepDist;
         double[] sheepFitness = herding.individualSheepDistances();
 
-        for (int i = 1; i < sheepFitness.length ; i++){
-            sheepFitness[i] =- Herding.cummulativeSheepRatio;
-        }
-
         EvaluationResults results = new EvaluationResults(shepherdFitness, sheepFitness);
         herding.endLoopStuff();
 
@@ -127,7 +123,7 @@ public class Herding extends SimState {
 
     public boolean insideLoopStuff() {
         cumulativeSheepDist += yard.allSheepDistance();
-        cummulativeSheepRatio += yard.getSheepRatio();
+        cumulativeSheepRatio += yard.getSheepRatio();
 
         if (sheep.size() > 1 && sheepAgents.size() < 2) {
             // System.out.println("Not enough sheep.");
@@ -160,7 +156,7 @@ public class Herding extends SimState {
 
     public void endLoopStuff() {
         cumulativeSheepDist = 0;
-        cummulativeSheepRatio = 0;
+        cumulativeSheepRatio = 0;
     }
 
     public void loop(int totalSteps) {

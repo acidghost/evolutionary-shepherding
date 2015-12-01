@@ -139,7 +139,7 @@ stat.file				$out.stat
 eval =                                  nl.vu.ai.aso.evolution.CoESEvaluator
 eval.problem =                          nl.vu.ai.aso.evolution.HerdingProblem
 
-eval.evaluations =                      80
+eval.evaluations =                      5000
 
 eval.num-shuffled=		            	0
 eval.num-current=                       0
