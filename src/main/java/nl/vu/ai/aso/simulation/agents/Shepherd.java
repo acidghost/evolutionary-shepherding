@@ -8,12 +8,14 @@ import java.awt.*;
 
 public class Shepherd extends AgentWithNetwork {
 
+    public static final double AGENT_RADIUS = 3;
+
     public Shepherd(double[] weights, int inputs) {
         this(0, 0, weights, inputs);
     }
 
     public Shepherd(double newX, double newY, double[] weights, int inputs) {
-        super(newX, newY, 1, Color.blue, weights, inputs);
+        super(newX, newY, 1, Color.blue, AGENT_RADIUS, weights, inputs);
     }
 
     public Shepherd(Double2D location, double[] weights, int inputs) {

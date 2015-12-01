@@ -18,8 +18,9 @@ public class Herding extends SimState {
     private final double TIME_STEP_PERIOD = 1;
     public final int WIDTH = 37;
     public final int HEIGHT = 37;
+    public final double RESOLUTION = 0.01;
 
-    public Continuous2D yard = new Continuous2D(0.01, WIDTH, HEIGHT); //37x37 foot pasture
+    public Continuous2D yard = new Continuous2D(RESOLUTION, WIDTH, HEIGHT); //37x37 foot pasture
     public Double2D  corralPosition = new Double2D(yard.getWidth(), yard.getHeight() * 0.5); // left centered corral
     public List<double[]> shepherds;
     public List<double[]> sheep;
@@ -40,9 +41,9 @@ public class Herding extends SimState {
 
         //TODO: set another spawn position
         final Double2D[] shepherdsPositions = new Double2D[] {
+            new Double2D(yard.getWidth() * 0.5 - 8, yard.getHeight() * 0.5 - Shepherd.AGENT_RADIUS),
             new Double2D(yard.getWidth() * 0.5 - 8, yard.getHeight() * 0.5),
-            new Double2D(yard.getWidth() * 0.5 - 8, yard.getHeight() * 0.5),
-            new Double2D(yard.getWidth() * 0.5 - 8, yard.getHeight() * 0.5)
+            new Double2D(yard.getWidth() * 0.5 - 8, yard.getHeight() * 0.5 + Shepherd.AGENT_RADIUS)
         };
 
         // add shepherds to the yard
@@ -55,9 +56,9 @@ public class Herding extends SimState {
 
         //TODO: set another spawn postion
         final Double2D[] sheepPositions = new Double2D[] {
+            new Double2D(yard.getWidth() * 0.5 + 8, yard.getHeight() * 0.5 - Sheep.AGENT_RADIUS),
             new Double2D(yard.getWidth() * 0.5 + 8, yard.getHeight() * 0.5),
-            new Double2D(yard.getWidth() * 0.5 + 8, yard.getHeight() * 0.5),
-            new Double2D(yard.getWidth() * 0.5 + 8, yard.getHeight() * 0.5)
+            new Double2D(yard.getWidth() * 0.5 + 8, yard.getHeight() * 0.5 + Sheep.AGENT_RADIUS)
         };
 
         // add sheep to the yard

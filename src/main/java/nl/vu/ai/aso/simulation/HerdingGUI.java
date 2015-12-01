@@ -104,7 +104,7 @@ public class HerdingGUI extends GUIState {
     @Override
     public void init(Controller controller) {
         super.init(controller);
-        display = new Display2D(400, 400, this);
+        display = new Display2D(600, 600, this);
         displayFrame = display.createFrame();
         displayFrame.setTitle("Herding Display");
         controller.registerFrame(displayFrame);

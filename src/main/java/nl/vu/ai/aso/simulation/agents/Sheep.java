@@ -11,12 +11,14 @@ import java.awt.*;
  */
 public class Sheep extends AgentWithNetwork {
 
+    public static final double AGENT_RADIUS = 5;
+
     public Sheep(double[] weights, int inputs) {
         this(0, 0, weights, inputs);
     }
 
     public Sheep(double newX, double newY, double[] weights, int inputs) {
-        super(newX, newY, 1, Color.lightGray, weights, inputs);
+        super(newX, newY, 1, Color.lightGray, AGENT_RADIUS, weights, inputs);
     }
 
     public Sheep(Double2D location, double[] weights, int inputs) {
