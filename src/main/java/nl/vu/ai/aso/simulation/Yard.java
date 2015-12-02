@@ -1,5 +1,7 @@
 package nl.vu.ai.aso.simulation;
 
+import nl.vu.ai.aso.shared.SheepStatus;
+import nl.vu.ai.aso.simulation.agents.Entity;
 import nl.vu.ai.aso.simulation.agents.Predator;
 import nl.vu.ai.aso.simulation.agents.Sheep;
 import nl.vu.ai.aso.simulation.agents.Shepherd;
@@ -22,16 +24,19 @@ public class Yard extends Continuous2D {
 
     // for fitness function
     public double allSheepDistance() {
-        double totalDistance = 0.0;
-        Object[] agents = sortAgents();
-        ArrayList<Sheep> allSheep = (ArrayList) agents[1];
+        // double totalDistance = 0.0;
+        // Object[] agents = sortAgents();
+        // ArrayList<Sheep> allSheep = (ArrayList) agents[1];
 
+        /*
         for (Sheep sheep : allSheep){
             Double2D sheepPosition = this.getObjectLocation(sheep);
             double individualDistance = corralPosition.distance(sheepPosition);
             totalDistance += individualDistance;
         }
-        return totalDistance; //TODO: check it makes sense
+        */
+
+        return getSheepCenter().distance(corralPosition);
     }
 
     public double getSheepRatio() {
@@ -121,25 +126,23 @@ public class Yard extends Continuous2D {
     }
 
     public SheepStatus getSheepStatus(Sheep sheep) {
-        if (isInsideYard(sheep)) {
-            return SheepStatus.NORMAL;
-        } else {
-            if (sheep.loc.x >= getWidth() - sheep.agentRadius) {
-                return SheepStatus.CORRALED;
-            }
+        if (sheep.loc.x >= getWidth() - Herding.RESOLUTION) {
+            return SheepStatus.CORRALED;
+        } else if (sheep.loc.x <= Herding.RESOLUTION) {
             return SheepStatus.ESCAPED;
+        } else {
+            return SheepStatus.NORMAL;
         }
     }
 
-    public boolean isInsideYard(Object agent) {
-        Double2D loc = getObjectLocationAsDouble2D(agent);
-        if (loc.x > getWidth()) {
+    public boolean isInsideYard(Entity agent) {
+        if (agent.loc.x > getWidth() - agent.agentRadius) {
             return false;
-        } else if (loc.x < 0) {
+        } else if (agent.loc.x < agent.agentRadius) {
             return false;
-        } else if (loc.y > getHeight()) {
+        } else if (agent.loc.y > getHeight() - agent.agentRadius) {
             return false;
-        } else if (loc.y < 0) {
+        } else if (agent.loc.y < agent.agentRadius) {
             return false;
         }
 

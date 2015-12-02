@@ -9,10 +9,12 @@ public class EvaluationResults {
 
     private double shepherdScore;
     private double[] sheepScore;
+    private SheepStatus sheepStatus;
 
-    public EvaluationResults(double shepherdScore, double[] sheepScore) {
+    public EvaluationResults(double shepherdScore, double[] sheepScore, SheepStatus sheepStatus) {
         this.shepherdScore = shepherdScore;
         this.sheepScore = sheepScore;
+        this.sheepStatus = sheepStatus;
     }
 
     public double getShepherdScore() {
@@ -23,9 +25,13 @@ public class EvaluationResults {
         return sheepScore;
     }
 
+    public SheepStatus getSheepStatus() {
+        return sheepStatus;
+    }
+
     @Override
     public String toString() {
-        return "Shepherd score: " + shepherdScore + "\nSheep score: " + Arrays.toString(sheepScore);
+        return "Shepherd score: " + shepherdScore + "\nSheep score: " + Arrays.toString(sheepScore) + "\nSheep status: " + sheepStatus;
     }
 
 }

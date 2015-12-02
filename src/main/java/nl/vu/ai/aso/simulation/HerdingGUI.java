@@ -75,7 +75,7 @@ public class HerdingGUI extends GUIState {
 
         double shepherdFitness = -Herding.cumulativeSheepDist;
         double[] sheepFitness = herding.individualSheepDistances();
-        EvaluationResults results = new EvaluationResults(shepherdFitness, sheepFitness);
+        EvaluationResults results = new EvaluationResults(shepherdFitness, sheepFitness, Herding.sheepStatus);
 
         herding.endLoopStuff();
 

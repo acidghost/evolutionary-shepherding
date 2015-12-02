@@ -1,6 +1,7 @@
 package nl.vu.ai.aso.simulation;
 
 import nl.vu.ai.aso.shared.EvaluationResults;
+import nl.vu.ai.aso.shared.SheepStatus;
 import nl.vu.ai.aso.simulation.agents.Sheep;
 import nl.vu.ai.aso.simulation.agents.Shepherd;
 import sim.engine.SimState;
@@ -15,7 +16,7 @@ public class Herding extends SimState {
     private final double TIME_STEP_PERIOD = 1;
     public final int WIDTH = 37;
     public final int HEIGHT = 37;
-    public final double RESOLUTION = 1;
+    public static final double RESOLUTION = 1;
 
     public final int CORRALED_BONUS = 200000;
     public final int ESCAPED_BONUS = 200000;
@@ -29,6 +30,7 @@ public class Herding extends SimState {
 
     public static double cumulativeSheepDist = 0;
     public static double cumulativeSheepRatio = 0;
+    public static SheepStatus sheepStatus = SheepStatus.NORMAL;
 
     public Herding(long seed, List<double[]> shepherds, List<double[]> sheeps, boolean predatorPresent) {
         super(seed);
@@ -102,6 +104,14 @@ public class Herding extends SimState {
         double[] distances = new double[this.sheep.size()];
         for (int i = 0; i < sheepAgents.size(); i++) {
             distances[i] = sheepAgents.get(i).travelledDistance;
+            switch (sheepStatus) {
+                case CORRALED:
+                    distances[i] -= CORRALED_BONUS;
+                    break;
+                case ESCAPED:
+                    distances[i] += ESCAPED_BONUS;
+                    break;
+            }
         }
         return distances;
     }
@@ -115,7 +125,7 @@ public class Herding extends SimState {
         double shepherdFitness = -Herding.cumulativeSheepDist;
         double[] sheepFitness = herding.individualSheepDistances();
 
-        EvaluationResults results = new EvaluationResults(shepherdFitness, sheepFitness);
+        EvaluationResults results = new EvaluationResults(shepherdFitness, sheepFitness, sheepStatus);
         herding.endLoopStuff();
 
         return results;
@@ -132,19 +142,17 @@ public class Herding extends SimState {
 
         List<Sheep> copiedSheep = new ArrayList<>(sheepAgents);
         for (Sheep sheep : copiedSheep) {
-            SheepStatus sheepStatus = yard.getSheepStatus(sheep);
+            sheepStatus = yard.getSheepStatus(sheep);
             switch (sheepStatus) {
                 case CORRALED:
-                    System.out.println("\n\nOne sheep is corraled!!!\n\n");
                     cumulativeSheepDist -= CORRALED_BONUS;
                     yard.remove(sheep);
-                    sheepAgents.remove(sheep);
+                    // sheepAgents.remove(sheep);
                     return false;
                 case ESCAPED:
-                    System.out.println("One sheep is escaped!");
                     cumulativeSheepDist += ESCAPED_BONUS;
                     yard.remove(sheep);
-                    sheepAgents.remove(sheep);
+                    // sheepAgents.remove(sheep);
                     return false;
                 case NORMAL:
                     break;
@@ -157,6 +165,7 @@ public class Herding extends SimState {
     public void endLoopStuff() {
         cumulativeSheepDist = 0;
         cumulativeSheepRatio = 0;
+        sheepStatus = SheepStatus.NORMAL;
     }
 
     public void loop(int totalSteps) {

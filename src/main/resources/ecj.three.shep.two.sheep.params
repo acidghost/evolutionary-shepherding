@@ -132,6 +132,8 @@ pop.subpop.0.species.mutation-type = gauss
 pop.subpop.0.size =			1000
 stat.file				$out.stat
 
+stat = nl.vu.ai.aso.evolution.CoESStatistics
+stat.do-subpops = true
 
 
 
@@ -191,7 +193,7 @@ pop.subpop.1.species.crossover-type =   one
 pop.subpop.1.species.genome-size =      37
 pop.subpop.1.species.min-gene =         -10
 pop.subpop.1.species.max-gene =         10
-pop.subpop.1.species.fitness =          ec.simple.SimpleFitness
+pop.subpop.1.species.fitness =          nl.vu.ai.aso.evolution.CoESFitness
 pop.subpop.1.species.ind =              ec.vector.DoubleVectorIndividual
 pop.subpop.1.species.pipe =             ec.vector.breed.VectorMutationPipeline
 pop.subpop.1.species.pipe.source.0 =    ec.es.ESSelection
@@ -216,7 +218,7 @@ pop.subpop.2.species.crossover-type =   one
 pop.subpop.2.species.genome-size =      37
 pop.subpop.2.species.min-gene =         -10
 pop.subpop.2.species.max-gene =         10
-pop.subpop.2.species.fitness =          ec.simple.SimpleFitness
+pop.subpop.2.species.fitness =          nl.vu.ai.aso.evolution.CoESFitness
 pop.subpop.2.species.ind =              ec.vector.DoubleVectorIndividual
 pop.subpop.2.species.pipe =             ec.vector.breed.VectorMutationPipeline
 pop.subpop.2.species.pipe.source.0 =    ec.es.ESSelection
@@ -241,7 +243,7 @@ pop.subpop.3.species.crossover-type =   one
 pop.subpop.3.species.genome-size =      37
 pop.subpop.3.species.min-gene =         -10
 pop.subpop.3.species.max-gene =         10
-pop.subpop.3.species.fitness =          ec.simple.SimpleFitness
+pop.subpop.3.species.fitness =          nl.vu.ai.aso.evolution.CoESFitness
 pop.subpop.3.species.ind =              ec.vector.DoubleVectorIndividual
 pop.subpop.3.species.pipe =             ec.vector.breed.VectorMutationPipeline
 pop.subpop.3.species.pipe.source.0 =    ec.es.ESSelection
@@ -265,7 +267,7 @@ pop.subpop.4.species.crossover-type =   one
 pop.subpop.4.species.genome-size =      37
 pop.subpop.4.species.min-gene =         -10
 pop.subpop.4.species.max-gene =         10
-pop.subpop.4.species.fitness =          ec.simple.SimpleFitness
+pop.subpop.4.species.fitness =          nl.vu.ai.aso.evolution.CoESFitness
 pop.subpop.4.species.ind =              ec.vector.DoubleVectorIndividual
 pop.subpop.4.species.pipe =             ec.vector.breed.VectorMutationPipeline
 pop.subpop.4.species.pipe.source.0 =    ec.es.ESSelection
