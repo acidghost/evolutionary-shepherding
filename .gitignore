@@ -20,3 +20,5 @@ neuroph-2.92
 *.iml
 target
 *.stat
+*.ser
+

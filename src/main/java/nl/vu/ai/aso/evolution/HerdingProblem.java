@@ -9,7 +9,9 @@ import nl.vu.ai.aso.shared.EvaluationResults;
 import nl.vu.ai.aso.simulation.Herding;
 import nl.vu.ai.aso.simulation.HerdingGUI;
 
+import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by acidghost on 24/11/15.
@@ -54,8 +56,37 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
             }
         }
 
-        evolutionState.output.message("Finished generation " + evolutionState.generation);
+        evolutionState.output.message("\n\nFinished generation " + evolutionState.generation);
 
+        List<Individual> bestOfGeneration = new ArrayList<>(evolutionState.population.subpops.length);
+        for (int i = 0; i < evolutionState.population.subpops.length; i++) {
+            Subpopulation subpop = evolutionState.population.subpops[i];
+            Individual bestIndividual = subpop.individuals[0];
+            for (int j = 1; j < subpop.individuals.length; j++) {
+                Individual individual = subpop.individuals[j];
+                if (individual.evaluated && individual.fitness.betterThan(bestIndividual.fitness)) {
+                    bestIndividual = individual;
+                }
+            }
+            bestOfGeneration.add(bestIndividual);
+        }
+
+        for (int i = 0; i < bestOfGeneration.size(); i++) {
+            Individual individual = bestOfGeneration.get(i);
+            evolutionState.output.message("Subpop " + i + ": " + individual.fitness.fitnessToStringForHumans());
+        }
+
+        try {
+            OutputStream file = new FileOutputStream("serialized/best." + evolutionState.generation + ".ser");
+            OutputStream buffer = new BufferedOutputStream(file);
+            ObjectOutput output = new ObjectOutputStream(buffer);
+            output.writeObject(bestOfGeneration);
+        } catch (IOException ioe) {
+            evolutionState.output.fatal("Error serializing best of generation!");
+            ioe.printStackTrace();
+        }
+
+        evolutionState.output.message("\n");
     }
 
     public void evaluate(EvolutionState evolutionState, Individual[] individuals, boolean[] updateFitness, boolean countVictoriesOnly, int[] subpops, int threadnum) {

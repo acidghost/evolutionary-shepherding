@@ -18,8 +18,8 @@ public class Herding extends SimState {
     public final int HEIGHT = 37;
     public static final double RESOLUTION = 1;
 
-    public final int CORRALED_BONUS = 200000;
-    public final int ESCAPED_BONUS = 200000;
+    public final int CORRALED_BONUS = 20000;
+    public final int ESCAPED_BONUS = 20000;
 
     public Yard yard = new Yard(RESOLUTION, WIDTH, HEIGHT); //37x37 foot pasture
     public List<double[]> shepherds;
