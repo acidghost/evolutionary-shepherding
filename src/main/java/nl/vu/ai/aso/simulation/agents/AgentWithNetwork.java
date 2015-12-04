@@ -15,7 +15,7 @@ import java.awt.*;
 /**
  * Created by acidghost on 24/11/15.
  */
-public abstract class AgentWithNetwork extends Entity implements Steppable {
+public abstract class AgentWithNetwork extends Entity {
 
     private Mlp network;
 
@@ -46,6 +46,7 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
 
     abstract protected INetInputs getInputs(Herding herding);
 
+    @Override
     public MutableDouble2D getForces(Herding herding) {
         MutableDouble2D sumForces = new MutableDouble2D();
         sumForces.setTo(0.0, 0.0);
@@ -55,35 +56,6 @@ public abstract class AgentWithNetwork extends Entity implements Steppable {
         sumForces.addIn(newTargetPosition);
 
         return sumForces;
-    }
-
-    @Override
-    public void step(SimState simState) {
-        Herding herding = (Herding) simState;
-        Yard yard = herding.yard;
-
-        MutableDouble2D force = getForces(herding);
-        // log("Force on  is " + force.toCoordinates());
-
-        // acceleration = f/m
-        acceleration.multiply(force, 1 / mass); // resets acceleration
-        // log("Acc on is " + acceleration.toCoordinates());
-        // v = v + a
-        velocity.addIn(acceleration);
-        capVelocity();
-        // log("Vel on is " + velocity.toCoordinates());
-        // L = L + v
-        newLoc.add(loc, velocity);  // resets newLoc
-
-        // is new location valid?
-        if (isValidMove(herding, newLoc)) {
-            loc = newLoc;
-            // log("New agent location @ " + loc.toCoordinates());
-        } else {
-            // log("hit something @ " + newLoc.toCoordinates());
-        }
-
-        yard.setObjectLocation(this, new Double2D(loc));
     }
 
     protected double getDistanceFromSheep(Continuous2D yard, AgentWithNetwork agent, Double2D sheepCenter) {

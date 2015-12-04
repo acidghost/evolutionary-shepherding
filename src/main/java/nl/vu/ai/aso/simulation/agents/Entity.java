@@ -1,6 +1,9 @@
 package nl.vu.ai.aso.simulation.agents;
 
 import nl.vu.ai.aso.simulation.Herding;
+import nl.vu.ai.aso.simulation.Yard;
+import sim.engine.SimState;
+import sim.engine.Steppable;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import sim.util.Bag;
@@ -14,7 +17,7 @@ import java.util.Date;
 /**
  * Created by acidghost on 27/11/15.
  */
-public abstract class Entity extends OvalPortrayal2D {
+public abstract class Entity extends OvalPortrayal2D implements Steppable {
 
     private static final long serialVersionUID = 1;
 
@@ -197,6 +200,37 @@ public abstract class Entity extends OvalPortrayal2D {
         // add the agent radius
         graphics.setColor(Color.yellow);
         graphics.drawOval((int) (info.draw.x - agentRadius), (int) (info.draw.y - agentRadius), (int) (agentRadius * 2), (int) (agentRadius * 2));
+    }
+
+    abstract public MutableDouble2D getForces(Herding herding);
+
+    @Override
+    public void step(SimState simState) {
+        Herding herding = (Herding) simState;
+        Yard yard = herding.yard;
+
+        MutableDouble2D force = getForces(herding);
+        // log("Force on  is " + force.toCoordinates());
+
+        // acceleration = f/m
+        acceleration.multiply(force, 1 / mass); // resets acceleration
+        // log("Acc on is " + acceleration.toCoordinates());
+        // v = v + a
+        velocity.addIn(acceleration);
+        capVelocity();
+        // log("Vel on is " + velocity.toCoordinates());
+        // L = L + v
+        newLoc.add(loc, velocity);  // resets newLoc
+
+        // is new location valid?
+        if (isValidMove(herding, newLoc)) {
+            loc = newLoc;
+            // log("New agent location @ " + loc.toCoordinates());
+        } else {
+            // log("hit something @ " + newLoc.toCoordinates());
+        }
+
+        yard.setObjectLocation(this, new Double2D(loc));
     }
 
     protected void log(String string) {
