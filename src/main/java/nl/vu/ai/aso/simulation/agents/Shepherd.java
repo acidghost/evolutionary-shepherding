@@ -3,6 +3,7 @@ package nl.vu.ai.aso.simulation.agents;
 import nl.vu.ai.aso.shared.ShepherdInputs;
 import nl.vu.ai.aso.simulation.Herding;
 import nl.vu.ai.aso.simulation.Yard;
+import sim.engine.SimState;
 import sim.util.Double2D;
 
 import java.awt.*;
@@ -10,6 +11,7 @@ import java.awt.*;
 public class Shepherd extends AgentWithNetwork {
 
     public static final double AGENT_RADIUS = 3;
+    public int numberOfBumpsWithSheep;
 
     public Shepherd(double[] weights, int inputs) {
         this(0, 0, weights, inputs);
@@ -37,4 +39,10 @@ public class Shepherd extends AgentWithNetwork {
         return new ShepherdInputs(shepherd_r, shepherd_b, otherShep_r, otherShep_b);
     }
 
+    @Override
+    public void step(SimState simState) {
+        super.step(simState);
+        //Herding herding = (Herding) simState;
+        //numberOfBumpsWithSheep += herding.yard.corralPosition.distance(new Double2D(loc));
+    }
 }
