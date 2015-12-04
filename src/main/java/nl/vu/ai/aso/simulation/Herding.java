@@ -103,7 +103,7 @@ public class Herding extends SimState {
     public double[] individualSheepDistances() {
         double[] distances = new double[this.sheep.size()];
         for (int i = 0; i < sheepAgents.size(); i++) {
-            distances[i] = sheepAgents.get(i).travelledDistance;
+            distances[i] = sheepAgents.get(i).travelledDistance - cumulativeSheepRatio;
             switch (sheepStatus) {
                 case CORRALED:
                     distances[i] -= CORRALED_BONUS;
@@ -133,7 +133,7 @@ public class Herding extends SimState {
 
     public boolean insideLoopStuff() {
         cumulativeSheepDist += yard.allSheepDistance();
-        cumulativeSheepRatio += yard.getSheepRatio();
+        cumulativeSheepRatio += yard.getSheepRatio(sheepAgents);
 
         if (sheep.size() > 1 && sheepAgents.size() < 2) {
             // System.out.println("Not enough sheep.");
@@ -147,12 +147,10 @@ public class Herding extends SimState {
                 case CORRALED:
                     cumulativeSheepDist -= CORRALED_BONUS;
                     yard.remove(sheep);
-                    // sheepAgents.remove(sheep);
                     return false;
                 case ESCAPED:
                     cumulativeSheepDist += ESCAPED_BONUS;
                     yard.remove(sheep);
-                    // sheepAgents.remove(sheep);
                     return false;
                 case NORMAL:
                     break;

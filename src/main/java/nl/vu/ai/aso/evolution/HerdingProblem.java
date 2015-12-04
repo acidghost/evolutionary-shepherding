@@ -80,12 +80,13 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
         }
 
         EvaluationResults results;
-        if (evolutionState.generation > evolutionState.numGenerations / 2) {
+        double proportionInGUI = 3.0 / 4.0;
+        if (evolutionState.generation > evolutionState.numGenerations * proportionInGUI) {
             results = HerdingGUI.runSimulation(evaluations, 30, shepherd, sheep, predator);
         } else {
             results = Herding.runSimulation(evaluations, shepherd, sheep, predator);
         }
-        evolutionState.output.message("Evaluation finished.\n" + results.toString());
+        evolutionState.output.message("Evaluation finished.\nGeneration: " + evolutionState.generation + "\n" + results.toString());
 
         int sheepCounter = 0;
         double[] sheepScores = results.getSheepScore();

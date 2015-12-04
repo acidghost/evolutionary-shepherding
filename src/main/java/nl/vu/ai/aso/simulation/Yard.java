@@ -10,6 +10,7 @@ import sim.util.Bag;
 import sim.util.Double2D;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by acidghost on 01/12/15.
@@ -24,29 +25,15 @@ public class Yard extends Continuous2D {
 
     // for fitness function
     public double allSheepDistance() {
-        // double totalDistance = 0.0;
-        // Object[] agents = sortAgents();
-        // ArrayList<Sheep> allSheep = (ArrayList) agents[1];
-
-        /*
-        for (Sheep sheep : allSheep){
-            Double2D sheepPosition = this.getObjectLocation(sheep);
-            double individualDistance = corralPosition.distance(sheepPosition);
-            totalDistance += individualDistance;
-        }
-        */
-
         return getSheepCenter().distance(corralPosition);
     }
 
-    public double getSheepRatio() {
-        Object[] agents = sortAgents();
-        ArrayList<Sheep> allSheep = (ArrayList) agents[1];
-
+    public double getSheepRatio(List<Sheep> sheepAgents) {
+        Double2D sheepCenter = getSheepCenter();
         double ratio = 0.0;
 
-        for (Sheep sheep : allSheep){
-            double currentSheepDistance = getObjectLocationAsDouble2D(sheep).distance(getSheepCenter());
+        for (Sheep sheep : sheepAgents){
+            double currentSheepDistance = getObjectLocationAsDouble2D(sheep).distance(sheepCenter);
             if (ratio < currentSheepDistance) {
                 ratio = currentSheepDistance;
             }
@@ -120,7 +107,7 @@ public class Yard extends Continuous2D {
 
         Double2D center = new Double2D(0, 0);
         for (Sheep sheep : allSheep) {
-            center.add(this.getObjectLocation(sheep));
+            center = center.add(this.getObjectLocation(sheep));
         }
         return new Double2D(center.x / allSheep.size(), center.y / allSheep.size());
     }

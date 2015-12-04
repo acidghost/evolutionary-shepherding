@@ -153,7 +153,7 @@ eval.select-prev =                      ec.select.RandomSelection
 # breed =                               ec.es.MuPlusLambdaBreeder
 breed =                                 nl.vu.ai.aso.evolution.CoESBreeder
 
-generations=                            50
+generations=                            20
 # select.tournament.size =                5
 pop.subpops =                           5
 
@@ -168,7 +168,7 @@ pop.subpop.0.species.crossover-type =   one
 pop.subpop.0.species.genome-size =      37
 pop.subpop.0.species.min-gene =         -10
 pop.subpop.0.species.max-gene =         10
-pop.subpop.0.species.fitness =          ec.simple.SimpleFitness
+pop.subpop.0.species.fitness =          nl.vu.ai.aso.evolution.CoESFitness
 pop.subpop.0.species.ind =              ec.vector.DoubleVectorIndividual
 pop.subpop.0.species.pipe =             ec.vector.breed.VectorMutationPipeline
 pop.subpop.0.species.pipe.source.0 =    ec.es.ESSelection

@@ -153,7 +153,7 @@ eval.select-prev =                      ec.select.RandomSelection
 # breed =                               ec.es.MuPlusLambdaBreeder
 breed =                                 nl.vu.ai.aso.evolution.CoESBreeder
 
-generations=                            50
+generations=                            20
 # select.tournament.size =              5
 pop.subpops =                           6
 
