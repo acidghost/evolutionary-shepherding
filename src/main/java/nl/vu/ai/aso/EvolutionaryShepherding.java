@@ -7,6 +7,15 @@ import ec.Evolve;
  */
 public class EvolutionaryShepherding {
 
+    public static Thread start(String file) {
+        return new Thread() {
+            @Override
+            public void run() {
+                Evolve.main(new String[] { "-file", file });
+            }
+        };
+    }
+
     public static void main(String[] args) {
         String nSheep = "one";
         String nSheph = "one";

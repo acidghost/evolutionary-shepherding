@@ -26,8 +26,10 @@ public class EvolutionaryShepherdingGUI extends JPanel {
     private JPanel rPanel1;
     private JComboBox<String> cmbBoxScenarios;
     private JButton btnStart;
+    private JButton btnStop;
 
     private File resourcesFolderFile;
+    private Thread simulationThread;
 
     public EvolutionaryShepherdingGUI() throws IOException {
         super(new BorderLayout());
@@ -61,8 +63,23 @@ public class EvolutionaryShepherdingGUI extends JPanel {
         rPanel1.setBackground(BG_COLOR);
         btnStart = new JButton();
         btnStart.setText("Start simulation");
-        btnStart.addActionListener(actionEvent -> System.out.println("Start sim btn clicked"));
+        btnStart.addActionListener(actionEvent -> {
+            String selected = (String) cmbBoxScenarios.getSelectedItem();
+            simulationThread = EvolutionaryShepherding.start(resourcesFolderFile.getPath() + "/" + selected);
+            simulationThread.start();
+            btnStop.setEnabled(true);
+            btnStart.setEnabled(false);
+        });
+        btnStop = new JButton();
+        btnStop.setText("Stop simulation");
+        btnStop.setEnabled(false);
+        btnStop.addActionListener(actionEvent -> {
+            simulationThread.stop();
+            btnStop.setEnabled(false);
+            btnStart.setEnabled(true);
+        });
         rPanel1.add(btnStart);
+        rPanel1.add(btnStop);
 
         rightPanel.add(rPanel1, BorderLayout.CENTER);
     }
