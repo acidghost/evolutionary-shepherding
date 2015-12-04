@@ -31,7 +31,7 @@ public class EvaluationResults {
 
     @Override
     public String toString() {
-        return "Shepherd score: " + shepherdScore + "\nSheep score: " + Arrays.toString(sheepScore) + "\nSheep status: " + sheepStatus;
+        return "Shepherd score: " + Arrays.toString(shepherdScore) + "\nSheep score: " + Arrays.toString(sheepScore) + "\nSheep status: " + sheepStatus;
     }
 
 }
