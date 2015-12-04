@@ -120,15 +120,18 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
         evolutionState.output.message("Evaluation finished.\nGeneration: " + evolutionState.generation + "\n" + results.toString());
 
         int sheepCounter = 0;
+        int shepherdCounter = 0;
         double[] sheepScores = results.getSheepScore();
+        double[] shepherdScores = results.getShepherdScore();
         for (int i = 0; i < individuals.length; i++) {
             if (updateFitness[i]) {
                 Individual individual = individuals[i];
                 CoESFitness fitness = (CoESFitness) individual.fitness;
                 if (i < split) {
-                    double score = results.getShepherdScore();
+                    double score = shepherdScores[shepherdCounter];
                     fitness.trials.add(score);
                     fitness.setFitness(evolutionState, score, false);
+                    shepherdCounter++;
                 } else {
                     double score = sheepScores[sheepCounter];
                     fitness.trials.add(score);

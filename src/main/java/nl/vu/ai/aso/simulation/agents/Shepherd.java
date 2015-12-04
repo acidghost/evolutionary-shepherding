@@ -4,7 +4,9 @@ import nl.vu.ai.aso.shared.ShepherdInputs;
 import nl.vu.ai.aso.simulation.Herding;
 import nl.vu.ai.aso.simulation.Yard;
 import sim.engine.SimState;
+import sim.util.Bag;
 import sim.util.Double2D;
+import sim.util.MutableDouble2D;
 
 import java.awt.*;
 
@@ -19,6 +21,7 @@ public class Shepherd extends AgentWithNetwork {
 
     public Shepherd(double newX, double newY, double[] weights, int inputs) {
         super(newX, newY, 1, Color.blue, AGENT_RADIUS, weights, inputs);
+        numberOfBumpsWithSheep = 0;
     }
 
     public Shepherd(Double2D location, double[] weights, int inputs) {
@@ -40,9 +43,24 @@ public class Shepherd extends AgentWithNetwork {
     }
 
     @Override
-    public void step(SimState simState) {
-        super.step(simState);
-        //Herding herding = (Herding) simState;
-        //numberOfBumpsWithSheep += herding.yard.corralPosition.distance(new Double2D(loc));
+    public boolean isValidMove(Herding herding, MutableDouble2D newLoc) {
+        // check if shepherd bumped into a sheep
+        Bag inRadius = herding.yard.getNeighborsExactlyWithinDistance(new Double2D(loc), agentRadius);
+
+        if (inRadius.size() > 1) {
+            boolean noBump = true;
+
+            for (Object agent : inRadius) {
+                if (!agent.equals(this) && (agent instanceof Sheep)) {
+                    Double2D agentPos = herding.yard.getObjectLocation(agent);
+                    noBump = noBump && (newLoc.distance(agentPos) > loc.distance(agentPos));
+                }
+            }
+            if (!noBump) {
+                numberOfBumpsWithSheep++;
+            }
+        }
+
+        return super.isValidMove(herding, newLoc);
     }
 }

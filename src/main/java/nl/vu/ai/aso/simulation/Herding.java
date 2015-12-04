@@ -100,7 +100,7 @@ public class Herding extends SimState {
         System.exit(0);
     }
 
-    public double[] individualSheepDistances() {
+    public double[] individualSheepScores() {
         double[] distances = new double[this.sheep.size()];
         for (int i = 0; i < sheepAgents.size(); i++) {
             distances[i] = sheepAgents.get(i).travelledDistance - cumulativeSheepRatio;
@@ -116,14 +116,23 @@ public class Herding extends SimState {
         return distances;
     }
 
+    public double[] individualShepherdScores() {
+        double[] scores = new double[this.shepherds.size()];
+
+        for (int i = 0; i < shepherdAgents.size(); i++) {
+            scores[i] = shepherdAgents.get(i).numberOfBumpsWithSheep * 10 - cumulativeSheepDist;
+        }
+        return scores;
+    }
+
 
     public static EvaluationResults runSimulation(int totalSteps, List<double[]> shepherd, List<double[]> sheep, boolean predator) {
         Herding herding = new Herding(System.currentTimeMillis(), shepherd, sheep, predator);
 
         herding.loop(totalSteps);
 
-        double shepherdFitness = -Herding.cumulativeSheepDist;
-        double[] sheepFitness = herding.individualSheepDistances();
+        double[] shepherdFitness = herding.individualShepherdScores();
+        double[] sheepFitness = herding.individualSheepScores();
 
         EvaluationResults results = new EvaluationResults(shepherdFitness, sheepFitness, sheepStatus);
         herding.endLoopStuff();

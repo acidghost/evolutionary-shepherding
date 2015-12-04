@@ -73,8 +73,8 @@ public class HerdingGUI extends GUIState {
         herdingGUI.quit();
         console.dispose();
 
-        double shepherdFitness = -Herding.cumulativeSheepDist;
-        double[] sheepFitness = herding.individualSheepDistances();
+        double[] shepherdFitness = herding.individualShepherdScores();
+        double[] sheepFitness = herding.individualSheepScores();
         EvaluationResults results = new EvaluationResults(shepherdFitness, sheepFitness, Herding.sheepStatus);
 
         herding.endLoopStuff();

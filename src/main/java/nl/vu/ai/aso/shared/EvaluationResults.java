@@ -7,17 +7,17 @@ import java.util.Arrays;
  */
 public class EvaluationResults {
 
-    private double shepherdScore;
+    private double[] shepherdScore;
     private double[] sheepScore;
     private SheepStatus sheepStatus;
 
-    public EvaluationResults(double shepherdScore, double[] sheepScore, SheepStatus sheepStatus) {
+    public EvaluationResults(double[] shepherdScore, double[] sheepScore, SheepStatus sheepStatus) {
         this.shepherdScore = shepherdScore;
         this.sheepScore = sheepScore;
         this.sheepStatus = sheepStatus;
     }
 
-    public double getShepherdScore() {
+    public double[] getShepherdScore() {
         return shepherdScore;
     }
 
