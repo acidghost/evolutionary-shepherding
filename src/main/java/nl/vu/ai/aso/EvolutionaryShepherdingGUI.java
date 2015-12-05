@@ -36,6 +36,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     private Form.Section replaySection = new Form.Section();
     private ListButton availableReplays = new ListButton();
     private PushButton startReplay = new PushButton();
+    private Slider speedSlider = new Slider();
     private ListView logView = new ListView();
 
     private File resourcesFolderFile;
@@ -122,12 +123,13 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
         simulationSection.add(stopButton);
 
         initAvailableReplays();
+        speedSlider.setRange(10, 500);
         startReplay.setButtonData("Start replay");
         startReplay.getButtonPressListeners().add(button -> {
             String selected = (String) availableReplays.getSelectedItem();
             String filename = new File(EvolutionaryShepherding.SERIALIZED_DIR).getPath() + selected;
             try {
-                simulationTask = EvolutionaryShepherding.replaySimulation(filename);
+                simulationTask = EvolutionaryShepherding.replaySimulation(filename, speedSlider.getValue());
                 simulationTask.execute(new TaskAdapter<>(new TaskListener<EvaluationResults>() {
                     @Override
                     public void taskExecuted(Task<EvaluationResults> task) {
@@ -151,6 +153,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
         });
 
         replaySection.add(availableReplays);
+        replaySection.add(speedSlider);
         replaySection.add(startReplay);
 
         Form.SectionSequence formSections = form.getSections();

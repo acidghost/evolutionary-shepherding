@@ -47,7 +47,7 @@ public class EvolutionaryShepherding {
         };
     }
 
-    public static Task<EvaluationResults> replaySimulation(String filename) throws IOException, ClassNotFoundException {
+    public static Task<EvaluationResults> replaySimulation(String filename, int speed) throws IOException, ClassNotFoundException {
         FileInputStream inputFileStream = new FileInputStream(filename);
         ObjectInputStream objectInputStream = new ObjectInputStream(inputFileStream);
         Replay replay = (Replay) objectInputStream.readObject();
@@ -61,7 +61,7 @@ public class EvolutionaryShepherding {
         return new Task<EvaluationResults>() {
             @Override
             public EvaluationResults execute() throws TaskExecutionException {
-                return HerdingGUI.runSimulation(replay.getTotalSteps(), 30, shepherd, sheep, false);
+                return HerdingGUI.runSimulation(replay.getTotalSteps(), speed, shepherd, sheep, false);
             }
         };
     }
