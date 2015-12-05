@@ -35,13 +35,13 @@ public class EvolutionaryShepherding {
         }
     }
 
-    public static Task runEvolution(String file) {
+    public static Task runEvolution(String file, String statFile) {
         return new Task() {
             @Override
             public Object execute() throws TaskExecutionException {
                 HerdingProblem.evaluationCounter = 0;
                 clearSerialized();
-                Evolve.main(new String[] { "-file", file });
+                Evolve.main(new String[] { "-file", file, "-p", "stat.file=" + statFile });
                 return null;
             }
         };
