@@ -5,7 +5,9 @@ import ec.coevolve.GroupedProblemForm;
 import ec.simple.SimpleFitness;
 import ec.util.Parameter;
 import ec.vector.DoubleVectorIndividual;
+import nl.vu.ai.aso.EvolutionaryShepherding;
 import nl.vu.ai.aso.shared.EvaluationResults;
+import nl.vu.ai.aso.shared.Replay;
 import nl.vu.ai.aso.simulation.Herding;
 import nl.vu.ai.aso.simulation.HerdingGUI;
 
@@ -58,7 +60,16 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
 
         evolutionState.output.message("\n\nFinished generation " + evolutionState.generation);
 
-        List<Individual> bestOfGeneration = new ArrayList<>(evolutionState.population.subpops.length);
+        serializeIndividuals(evolutionState);
+
+        evolutionState.output.message("\n");
+    }
+
+    private void serializeIndividuals(EvolutionState evolutionState) {
+        int split = evolutionState.parameters.getInt(new Parameter(POP_SEPARATOR), new Parameter(POP_SEPARATOR + ".default"));
+        int evaluations = evolutionState.parameters.getInt(new Parameter(EVAL_STEPS), new Parameter(EVAL_STEPS));
+
+        List<DoubleVectorIndividual> bestOfGeneration = new ArrayList<>(evolutionState.population.subpops.length);
         for (int i = 0; i < evolutionState.population.subpops.length; i++) {
             Subpopulation subpop = evolutionState.population.subpops[i];
             Individual bestIndividual = subpop.individuals[0];
@@ -68,7 +79,7 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
                     bestIndividual = individual;
                 }
             }
-            bestOfGeneration.add(bestIndividual);
+            bestOfGeneration.add((DoubleVectorIndividual) bestIndividual);
         }
 
         for (int i = 0; i < bestOfGeneration.size(); i++) {
@@ -77,16 +88,18 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
         }
 
         try {
-            OutputStream file = new FileOutputStream("serialized/best." + evolutionState.generation + ".ser");
+            Replay replay = new Replay(bestOfGeneration, split, evaluations);
+            OutputStream file = new FileOutputStream(EvolutionaryShepherding.SERIALIZED_DIR + "/best." + evolutionState.generation + ".ser");
             OutputStream buffer = new BufferedOutputStream(file);
             ObjectOutput output = new ObjectOutputStream(buffer);
-            output.writeObject(bestOfGeneration);
+            output.writeObject(replay);
+            output.close();
+            buffer.close();
+            file.close();
         } catch (IOException ioe) {
             evolutionState.output.fatal("Error serializing best of generation!");
             ioe.printStackTrace();
         }
-
-        evolutionState.output.message("\n");
     }
 
     public void evaluate(EvolutionState evolutionState, Individual[] individuals, boolean[] updateFitness, boolean countVictoriesOnly, int[] subpops, int threadnum) {

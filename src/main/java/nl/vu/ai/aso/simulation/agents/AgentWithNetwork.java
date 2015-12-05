@@ -4,8 +4,6 @@ import nl.vu.ai.aso.neuralnetwork.Mlp;
 import nl.vu.ai.aso.shared.INetInputs;
 import nl.vu.ai.aso.simulation.Herding;
 import nl.vu.ai.aso.simulation.Yard;
-import sim.engine.SimState;
-import sim.engine.Steppable;
 import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
 import sim.util.MutableDouble2D;

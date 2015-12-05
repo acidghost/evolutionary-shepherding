@@ -1,15 +1,18 @@
 package nl.vu.ai.aso;
 
-import com.google.common.io.PatternFilenameFilter;
+import nl.vu.ai.aso.shared.EvaluationResults;
 import org.apache.pivot.collections.ArrayList;
 import org.apache.pivot.collections.List;
 import org.apache.pivot.collections.Map;
+import org.apache.pivot.util.concurrent.Task;
+import org.apache.pivot.util.concurrent.TaskListener;
 import org.apache.pivot.wtk.*;
 import org.apache.pivot.wtk.Window;
 
 import java.awt.*;
 import java.awt.Frame;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 /**
@@ -26,14 +29,17 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     private FlowPane leftPanel = new FlowPane();
     private FlowPane rightPanel = new FlowPane();
     private Form form = new Form();
-    private Form.Section formSection = new Form.Section();
+    private Form.Section simulationSection = new Form.Section();
     private ListButton availableScenarios = new ListButton();
     private PushButton startButton = new PushButton();
     private PushButton stopButton = new PushButton();
+    private Form.Section replaySection = new Form.Section();
+    private ListButton availableReplays = new ListButton();
+    private PushButton startReplay = new PushButton();
     private ListView logView = new ListView();
 
     private File resourcesFolderFile;
-    private Thread simulationThread;
+    private Task<EvaluationResults> simulationTask;
 
     public EvolutionaryShepherdingGUI() {
         super();
@@ -56,12 +62,21 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
         assert resourcesFolder != null;
         resourcesFolderFile = new File(resourcesFolder.getPath());
         List<String> scenarios = new ArrayList<>();
-        for (File file : resourcesFolderFile.listFiles(new PatternFilenameFilter(".*\\.params"))) {
+        for (File file : resourcesFolderFile.listFiles(EvolutionaryShepherding.PARAMS_FILENAME_FILTER)) {
             String path = file.getPath();
             scenarios.add(path.split(resourcesFolder.getPath())[1]);
         }
         availableScenarios.setListData(scenarios);
         availableScenarios.getStyles().put("color", BG_COLOR);
+    }
+
+    private void initAvailableReplays() {
+        List<String> listData = new ArrayList<>();
+        File serialized = new File(EvolutionaryShepherding.SERIALIZED_DIR);
+        for (File file : serialized.listFiles(EvolutionaryShepherding.SERIALIZED_FILENAME_FILTER)) {
+            listData.add(file.getPath().split(serialized.getPath())[1]);
+        }
+        availableReplays.setListData(listData);
     }
 
     private void initLeftPanel() {
@@ -72,30 +87,73 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
             if (selected == null || selected.equals("")) {
                 Alert.alert(MessageType.WARNING, "No scenario selected!", this);
             } else {
-                simulationThread = EvolutionaryShepherding.getThread(resourcesFolderFile.getPath() + "/" + selected);
-                simulationThread.start();
-                startButton.setEnabled(false);
-                stopButton.setEnabled(true);
-                availableScenarios.setEnabled(false);
-                log("Simulation " + selected + " started...");
+                simulationTask = EvolutionaryShepherding.runEvolution(resourcesFolderFile.getPath() + "/" + selected);
+                simulationTask.execute(new TaskListener<EvaluationResults>() {
+                    @Override
+                    public void taskExecuted(Task<EvaluationResults> task) {
+                        log("Simulation " + selected + " ended\n" + task.getResult().toString());
+                        setComponentsState(false);
+                    }
+
+                    @Override
+                    public void executeFailed(Task<EvaluationResults> task) {
+                        log("Simulation " + selected + " ended with errors");
+                        setComponentsState(false);
+                    }
+                });
+                setComponentsState(true);
+                log("Simulation " + selected + " started");
             }
         });
 
         stopButton.setButtonData("Stop simulation");
         stopButton.setEnabled(false);
         stopButton.getButtonPressListeners().add(button -> {
-            simulationThread.stop();
-            startButton.setEnabled(true);
-            stopButton.setEnabled(false);
-            availableScenarios.setEnabled(true);
-            log("Simulation " + availableScenarios.getSelectedItem() + " stopped...");
+            simulationTask.abort();
+            simulationTask = null;
+            setComponentsState(false);
+            log("Simulation " + availableScenarios.getSelectedItem() + " stopped");
+            initAvailableReplays();
         });
 
-        formSection.add(availableScenarios);
-        formSection.add(startButton);
-        formSection.add(stopButton);
+        simulationSection.add(availableScenarios);
+        simulationSection.add(startButton);
+        simulationSection.add(stopButton);
 
-        form.getSections().add(formSection);
+        initAvailableReplays();
+        startReplay.setButtonData("Start replay");
+        startReplay.getButtonPressListeners().add(button -> {
+            String selected = (String) availableReplays.getSelectedItem();
+            String filename = new File(EvolutionaryShepherding.SERIALIZED_DIR).getPath() + selected;
+            try {
+                simulationTask = EvolutionaryShepherding.replaySimulation(filename);
+                simulationTask.execute(new TaskListener<EvaluationResults>() {
+                    @Override
+                    public void taskExecuted(Task<EvaluationResults> task) {
+                        log("Replay of " + selected + " ended\n" + task.getResult().toString());
+                        setComponentsState(false);
+                    }
+
+                    @Override
+                    public void executeFailed(Task<EvaluationResults> task) {
+                        log("Replay of " + selected + " ended with errors");
+                        setComponentsState(false);
+                    }
+                });
+                setComponentsState(true);
+                log("Replay of " + selected + " started");
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                Alert.alert(MessageType.ERROR, e.getClass().getCanonicalName() + ": " + e.getMessage(), this);
+            }
+        });
+
+        replaySection.add(availableReplays);
+        replaySection.add(startReplay);
+
+        Form.SectionSequence formSections = form.getSections();
+        formSections.add(simulationSection);
+        formSections.add(replaySection);
         form.getStyles().put("backgroundColor", BG_COLOR);
 
         leftPanel.add(form);
@@ -113,6 +171,20 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
         mainPanel.setRight(rightPanel);
     }
 
+    private void setComponentsState(boolean simOn) {
+        if (simOn) {
+            startButton.setEnabled(false);
+            stopButton.setEnabled(true);
+            availableScenarios.setEnabled(false);
+            startReplay.setEnabled(false);
+        } else {
+            startButton.setEnabled(true);
+            stopButton.setEnabled(false);
+            availableScenarios.setEnabled(true);
+            startReplay.setEnabled(true);
+        }
+    }
+
     @Override
     public void startup(Display display, Map<String, String> map) throws Exception {
         this.open(display);
@@ -123,7 +195,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
 
     @Override
     public boolean shutdown(boolean b) throws Exception {
-        this.close();
+        close();
         return false;
     }
 
