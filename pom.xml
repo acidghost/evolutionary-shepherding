@@ -7,8 +7,9 @@
   <version>1.0-SNAPSHOT</version>
   <name>evolutionary-shepherding</name>
 
-    <distributionManagement>
-    </distributionManagement>
+  <properties>
+    <pivot.version>2.0.4</pivot.version>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -45,6 +46,30 @@
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>18.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.pivot</groupId>
+      <artifactId>pivot-core</artifactId>
+      <version>${pivot.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.pivot</groupId>
+      <artifactId>pivot-wtk</artifactId>
+      <version>${pivot.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.pivot</groupId>
+      <artifactId>pivot-charts</artifactId>
+      <version>${pivot.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.pivot</groupId>
+      <artifactId>pivot-wtk-terra</artifactId>
+      <version>${pivot.version}</version>
     </dependency>
   </dependencies>
 

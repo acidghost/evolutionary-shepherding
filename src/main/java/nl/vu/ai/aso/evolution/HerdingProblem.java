@@ -22,7 +22,7 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
     public static final String EVAL_PREDATOR = "eval.predator";
     public static final String EVAL_STEPS = "eval.evaluations";
 
-    private static int evaluationCounter = 0;
+    public static int evaluationCounter = 0;
 
     public void preprocessPopulation(EvolutionState evolutionState, Population pop, boolean[] prepareForAssessment, boolean countVictoriesOnly) {
         for( int i = 0 ; i < pop.subpops.length ; i++ ) {

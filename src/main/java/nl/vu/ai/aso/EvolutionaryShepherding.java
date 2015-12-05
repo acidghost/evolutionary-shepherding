@@ -1,16 +1,18 @@
 package nl.vu.ai.aso;
 
 import ec.Evolve;
+import nl.vu.ai.aso.evolution.HerdingProblem;
 
 /**
  * Created by acidghost on 24/11/15.
  */
 public class EvolutionaryShepherding {
 
-    public static Thread start(String file) {
+    public static Thread getThread(String file) {
         return new Thread() {
             @Override
             public void run() {
+                HerdingProblem.evaluationCounter = 0;
                 Evolve.main(new String[] { "-file", file });
             }
         };
