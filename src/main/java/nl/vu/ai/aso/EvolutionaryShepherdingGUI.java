@@ -88,10 +88,11 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
                 Alert.alert(MessageType.WARNING, "No scenario selected!", this);
             } else {
                 simulationTask = EvolutionaryShepherding.runEvolution(resourcesFolderFile.getPath() + "/" + selected);
-                simulationTask.execute(new TaskListener<EvaluationResults>() {
+                simulationTask.execute(new TaskAdapter<>(new TaskListener<EvaluationResults>() {
                     @Override
                     public void taskExecuted(Task<EvaluationResults> task) {
-                        log("Simulation " + selected + " ended\n" + task.getResult().toString());
+                        log("Simulation " + selected + " ended");
+                        log(task.getResult().toString());
                         setComponentsState(false);
                     }
 
@@ -100,7 +101,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
                         log("Simulation " + selected + " ended with errors");
                         setComponentsState(false);
                     }
-                });
+                }));
                 setComponentsState(true);
                 log("Simulation " + selected + " started");
             }
@@ -127,10 +128,11 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
             String filename = new File(EvolutionaryShepherding.SERIALIZED_DIR).getPath() + selected;
             try {
                 simulationTask = EvolutionaryShepherding.replaySimulation(filename);
-                simulationTask.execute(new TaskListener<EvaluationResults>() {
+                simulationTask.execute(new TaskAdapter<>(new TaskListener<EvaluationResults>() {
                     @Override
                     public void taskExecuted(Task<EvaluationResults> task) {
-                        log("Replay of " + selected + " ended\n" + task.getResult().toString());
+                        log("Replay of " + selected + " ended");
+                        log(task.getResult().toString());
                         setComponentsState(false);
                     }
 
@@ -139,7 +141,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
                         log("Replay of " + selected + " ended with errors");
                         setComponentsState(false);
                     }
-                });
+                }));
                 setComponentsState(true);
                 log("Replay of " + selected + " started");
             } catch (IOException | ClassNotFoundException e) {
