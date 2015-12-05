@@ -16,16 +16,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by acidghost on 24/11/15.
+ * Created by acidghost on 05/12/15.
  */
-public class HerdingProblem extends Problem implements GroupedProblemForm {
+public abstract class HerdingProblem extends Problem implements GroupedProblemForm {
 
     public static final String POP_SEPARATOR = "pop.separator";
     public static final String EVAL_PREDATOR = "eval.predator";
     public static final String EVAL_STEPS = "eval.evaluations";
 
+    public static final double PROPORTION_IN_GUI = 3.0 / 4.0;
+
     public static int evaluationCounter = 0;
 
+    @Override
     public void preprocessPopulation(EvolutionState evolutionState, Population pop, boolean[] prepareForAssessment, boolean countVictoriesOnly) {
         for( int i = 0 ; i < pop.subpops.length ; i++ ) {
             if (prepareForAssessment[i]) {
@@ -38,6 +41,18 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
         }
     }
 
+    protected EvaluationResults getEvaluationResults(EvolutionState evolutionState, boolean predator, int evaluations, List<double[]> shepherd, ArrayList<double[]> sheep) {
+        EvaluationResults results;
+        if (evolutionState.generation > evolutionState.numGenerations * PROPORTION_IN_GUI) {
+            results = HerdingGUI.runSimulation(evaluations, 30, shepherd, sheep, predator);
+        } else {
+            results = Herding.runSimulation(evaluations, shepherd, sheep, predator);
+        }
+        evolutionState.output.message("Evaluation finished.\nGeneration: " + evolutionState.generation + "\n" + results.toString());
+        return results;
+    }
+
+    @Override
     public void postprocessPopulation(EvolutionState evolutionState, Population pop, boolean[] assessFitness, boolean countVictoriesOnly) {
         for (int i=0; i < pop.subpops.length; i++) {
             if (assessFitness[i]) {
@@ -65,7 +80,7 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
         evolutionState.output.message("\n");
     }
 
-    private void serializeIndividuals(EvolutionState evolutionState) {
+    protected void serializeIndividuals(EvolutionState evolutionState) {
         int split = evolutionState.parameters.getInt(new Parameter(POP_SEPARATOR), new Parameter(POP_SEPARATOR + ".default"));
         int evaluations = evolutionState.parameters.getInt(new Parameter(EVAL_STEPS), new Parameter(EVAL_STEPS));
 
@@ -88,7 +103,7 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
         }
 
         try {
-            Replay replay = new Replay(bestOfGeneration, split, evaluations);
+            Replay replay = getReplay(evolutionState, bestOfGeneration, split, evaluations);
             OutputStream file = new FileOutputStream(EvolutionaryShepherding.SERIALIZED_DIR + "/best." + evolutionState.generation + ".ser");
             OutputStream buffer = new BufferedOutputStream(file);
             ObjectOutput output = new ObjectOutputStream(buffer);
@@ -102,58 +117,6 @@ public class HerdingProblem extends Problem implements GroupedProblemForm {
         }
     }
 
-    public void evaluate(EvolutionState evolutionState, Individual[] individuals, boolean[] updateFitness, boolean countVictoriesOnly, int[] subpops, int threadnum) {
-        int split = evolutionState.parameters.getInt(new Parameter(POP_SEPARATOR), new Parameter(POP_SEPARATOR + ".default"));
-        boolean predator = evolutionState.parameters.getBoolean(new Parameter(EVAL_PREDATOR), new Parameter(EVAL_PREDATOR + ".default"), false);
-        int evaluations = evolutionState.parameters.getInt(new Parameter(EVAL_STEPS), new Parameter(EVAL_STEPS));
-
-        evaluationCounter++;
-        evolutionState.output.message("Evaluate: " + evaluationCounter);
-
-        ArrayList<double[]> shepherd = new ArrayList<>();
-        ArrayList<double[]> sheep = new ArrayList<>();
-        for(int i = 0; i < individuals.length; i++) {
-            DoubleVectorIndividual individual = (DoubleVectorIndividual) individuals[i];
-            // evolutionState.output.message("Doing individual " + individual.hashCode() + " " + individual.genotypeToStringForHumans());
-            double[] genome = individual.genome;
-            if (i < split) {
-                shepherd.add(genome);
-            } else {
-                sheep.add(genome);
-            }
-        }
-
-        EvaluationResults results;
-        double proportionInGUI = 3.0 / 4.0;
-        if (evolutionState.generation > evolutionState.numGenerations * proportionInGUI) {
-            results = HerdingGUI.runSimulation(evaluations, 30, shepherd, sheep, predator);
-        } else {
-            results = Herding.runSimulation(evaluations, shepherd, sheep, predator);
-        }
-        evolutionState.output.message("Evaluation finished.\nGeneration: " + evolutionState.generation + "\n" + results.toString());
-
-        int sheepCounter = 0;
-        int shepherdCounter = 0;
-        double[] sheepScores = results.getSheepScore();
-        double[] shepherdScores = results.getShepherdScore();
-        for (int i = 0; i < individuals.length; i++) {
-            if (updateFitness[i]) {
-                Individual individual = individuals[i];
-                CoESFitness fitness = (CoESFitness) individual.fitness;
-                if (i < split) {
-                    double score = shepherdScores[shepherdCounter];
-                    fitness.trials.add(score);
-                    fitness.setFitness(evolutionState, score, false);
-                    shepherdCounter++;
-                } else {
-                    double score = sheepScores[sheepCounter];
-                    fitness.trials.add(score);
-                    fitness.setFitness(evolutionState, score, false);
-                    sheepCounter++;
-                }
-                fitness.sheepStatuses.add(results.getSheepStatus());
-            }
-        }
-    }
+    public abstract Replay getReplay(EvolutionState evolutionState, List<DoubleVectorIndividual> bestOfGeneration, int split, int totalSteps);
 
 }

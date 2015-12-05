@@ -11,7 +11,7 @@ import nl.vu.ai.aso.shared.SheepStatus;
 public class CoESStatistics extends SimpleShortStatistics {
 
     private int popSeparator;
-    private int totalCorraledCases = 0;
+    private int totalCorralledCases = 0;
     private int totalEscapedCases = 0;
     private int totalEvaluations = 0;
 
@@ -48,7 +48,7 @@ public class CoESStatistics extends SimpleShortStatistics {
         double escapedRatio = ((double) escapedCases) / evaluations;
         state.output.print(corralledCases + " " + escapedCases + " " + evaluations + " " + corralledRatio + " " + escapedRatio + " ", statisticslog);
 
-        totalCorraledCases += corralledCases;
+        totalCorralledCases += corralledCases;
         totalEscapedCases += escapedCases;
         totalEvaluations += evaluations;
     }
@@ -57,8 +57,8 @@ public class CoESStatistics extends SimpleShortStatistics {
     public void finalStatistics(EvolutionState state, int result) {
         super.finalStatistics(state, result);
 
-        double totalCorralledRatio = ((double) totalCorraledCases) / totalEvaluations;
+        double totalCorralledRatio = ((double) totalCorralledCases) / totalEvaluations;
         double totalEscaledRatio = ((double) totalEscapedCases) / totalEvaluations;
-        state.output.println(totalCorraledCases + " " + totalEscapedCases + " " + totalEvaluations + " " + totalCorralledRatio + " " + totalEscaledRatio, statisticslog);
+        state.output.println(totalCorralledCases + " " + totalEscapedCases + " " + totalEvaluations + " " + totalCorralledRatio + " " + totalEscaledRatio, statisticslog);
     }
 }

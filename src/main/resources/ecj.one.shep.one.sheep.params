@@ -139,7 +139,7 @@ stat.do-subpops = true
 
 # eval =                                  ec.coevolve.MultiPopCoevolutionaryEvaluator
 eval =                                  nl.vu.ai.aso.evolution.CoESEvaluator
-eval.problem =                          nl.vu.ai.aso.evolution.HerdingProblem
+eval.problem =                          nl.vu.ai.aso.evolution.HeteroHerdingProblem
 
 eval.evaluations =                      1000
 

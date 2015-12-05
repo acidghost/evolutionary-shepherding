@@ -4,6 +4,7 @@ import com.google.common.io.PatternFilenameFilter;
 import ec.Evolve;
 import nl.vu.ai.aso.evolution.HerdingProblem;
 import nl.vu.ai.aso.shared.EvaluationResults;
+import nl.vu.ai.aso.shared.EvolutionType;
 import nl.vu.ai.aso.shared.Replay;
 import nl.vu.ai.aso.simulation.HerdingGUI;
 import org.apache.pivot.util.concurrent.Task;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,7 +43,7 @@ public class EvolutionaryShepherding {
             public Object execute() throws TaskExecutionException {
                 HerdingProblem.evaluationCounter = 0;
                 clearSerialized();
-                Evolve.main(new String[] { "-file", file, "-p", "stat.file=" + statFile });
+                Evolve.main(new String[] { "-file", file, "-p", "stat.file=$" + statFile });
                 return null;
             }
         };
@@ -54,14 +56,32 @@ public class EvolutionaryShepherding {
         objectInputStream.close();
         inputFileStream.close();
 
-        List<double[]> individuals = replay.getBestGenomesOfGeneration();
-        List<double[]> shepherd = individuals.subList(0, replay.getSplit());
-        List<double[]> sheep = individuals.subList(replay.getSplit(), individuals.size());
-
         return new Task<EvaluationResults>() {
             @Override
             public EvaluationResults execute() throws TaskExecutionException {
-                return HerdingGUI.runSimulation(replay.getTotalSteps(), speed, shepherd, sheep, false);
+                List<double[]> individuals = replay.getBestGenomesOfGeneration();
+                List<double[]> shepherd;
+                List<double[]> sheep;
+                EvaluationResults results = null;
+                switch (replay.getEvolutionType()) {
+                    case HETERO:
+                        shepherd = individuals.subList(0, replay.getSplit());
+                        sheep = individuals.subList(replay.getSplit(), individuals.size());
+                        results = HerdingGUI.runSimulation(replay.getTotalSteps(), speed, shepherd, sheep, false);
+                        break;
+                    case HOMO:
+                        shepherd = new ArrayList<>();
+                        for (int i = 0; i < replay.getNumShepherd(); i++) {
+                            shepherd.add(individuals.get(0));
+                        }
+                        sheep = new ArrayList<>();
+                        for (int i = 0; i < replay.getNumSheep(); i++) {
+                            sheep.add(individuals.get(1));
+                        }
+                        results = HerdingGUI.runSimulation(replay.getTotalSteps(), speed, shepherd, sheep, false);
+                        break;
+                }
+                return results;
             }
         };
     }
