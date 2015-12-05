@@ -4,7 +4,6 @@ import com.google.common.io.PatternFilenameFilter;
 import ec.Evolve;
 import nl.vu.ai.aso.evolution.HerdingProblem;
 import nl.vu.ai.aso.shared.EvaluationResults;
-import nl.vu.ai.aso.shared.EvolutionType;
 import nl.vu.ai.aso.shared.Replay;
 import nl.vu.ai.aso.simulation.HerdingGUI;
 import org.apache.pivot.util.concurrent.Task;
@@ -14,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +23,8 @@ import java.util.List;
 public class EvolutionaryShepherding {
 
     public static final String SERIALIZED_DIR = "serialized";
-    static final PatternFilenameFilter PARAMS_FILENAME_FILTER = new PatternFilenameFilter(".*\\.params");
-    static final PatternFilenameFilter SERIALIZED_FILENAME_FILTER = new PatternFilenameFilter(".*\\.ser");
+    public static final PatternFilenameFilter PARAMS_FILENAME_FILTER = new PatternFilenameFilter(".*\\.params");
+    public static final PatternFilenameFilter SERIALIZED_FILENAME_FILTER = new PatternFilenameFilter(".*\\.ser");
 
     public static void clearSerialized() {
         File serialized = new File(SERIALIZED_DIR);
@@ -43,7 +43,9 @@ public class EvolutionaryShepherding {
             public Object execute() throws TaskExecutionException {
                 HerdingProblem.evaluationCounter = 0;
                 clearSerialized();
+                ExitManager exitManager = ExitManager.disableSystemExit();
                 Evolve.main(new String[] { "-file", file, "-p", "stat.file=$" + statFile });
+                exitManager.enableSystemExit();
                 return null;
             }
         };
@@ -84,6 +86,36 @@ public class EvolutionaryShepherding {
                 return results;
             }
         };
+    }
+
+    private static class ExitManager extends SecurityManager {
+        private SecurityManager original;
+
+        public ExitManager(SecurityManager original) {
+            this.original = original;
+        }
+
+        public SecurityManager getOriginal() {
+            return original;
+        }
+
+        public static ExitManager disableSystemExit() {
+            ExitManager exitManager = new ExitManager(System.getSecurityManager());
+            System.setSecurityManager(exitManager);
+            return exitManager;
+        }
+
+        public void enableSystemExit() {
+            System.setSecurityManager(original);
+        }
+
+        @Override
+        public void checkExit(int i) {
+            throw new SecurityException();
+        }
+
+        @Override
+        public void checkPermission(Permission permission) {}
     }
 
     public static void main(String[] args) {

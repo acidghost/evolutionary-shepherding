@@ -24,7 +24,7 @@ public abstract class HerdingProblem extends Problem implements GroupedProblemFo
     public static final String EVAL_PREDATOR = "eval.predator";
     public static final String EVAL_STEPS = "eval.evaluations";
 
-    public static final double PROPORTION_IN_GUI = 3.0 / 4.0;
+    public static final double PROPORTION_NOT_IN_GUI = 1;
 
     public static int evaluationCounter = 0;
 
@@ -43,7 +43,7 @@ public abstract class HerdingProblem extends Problem implements GroupedProblemFo
 
     protected EvaluationResults getEvaluationResults(EvolutionState evolutionState, boolean predator, int evaluations, List<double[]> shepherd, ArrayList<double[]> sheep) {
         EvaluationResults results;
-        if (evolutionState.generation > evolutionState.numGenerations * PROPORTION_IN_GUI) {
+        if (evolutionState.generation > evolutionState.numGenerations * PROPORTION_NOT_IN_GUI) {
             results = HerdingGUI.runSimulation(evaluations, 30, shepherd, sheep, predator);
         } else {
             results = Herding.runSimulation(evaluations, shepherd, sheep, predator);
