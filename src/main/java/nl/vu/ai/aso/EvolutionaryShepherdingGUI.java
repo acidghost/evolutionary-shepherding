@@ -109,12 +109,14 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
                         log("Simulation " + selected + " ended");
                         log(task.getResult().toString());
                         setComponentsState(false);
+                        initAvailableReplays();
                     }
 
                     @Override
                     public void executeFailed(Task<EvaluationResults> task) {
                         log("Simulation " + selected + " ended with errors");
                         setComponentsState(false);
+                        initAvailableReplays();
                     }
                 }));
                 setComponentsState(true);
