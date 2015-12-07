@@ -58,7 +58,7 @@ public class CoESStatistics extends SimpleShortStatistics {
         super.finalStatistics(state, result);
 
         double totalCorralledRatio = ((double) totalCorralledCases) / totalEvaluations;
-        double totalEscaledRatio = ((double) totalEscapedCases) / totalEvaluations;
-        state.output.println(totalCorralledCases + " " + totalEscapedCases + " " + totalEvaluations + " " + totalCorralledRatio + " " + totalEscaledRatio, statisticslog);
+        double totalEscapedRatio = ((double) totalEscapedCases) / totalEvaluations;
+        state.output.println(totalCorralledCases + " " + totalEscapedCases + " " + totalEvaluations + " " + totalCorralledRatio + " " + totalEscapedRatio, statisticslog);
     }
 }

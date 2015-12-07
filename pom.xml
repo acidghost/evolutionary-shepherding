@@ -8,7 +8,10 @@
   <name>evolutionary-shepherding</name>
 
   <properties>
+    <slf4j.version>1.7.13</slf4j.version>
+    <guava.version>18.0</guava.version>
     <pivot.version>2.0.4</pivot.version>
+    <jfree.version>1.0.19</jfree.version>
   </properties>
 
   <dependencies>
@@ -39,13 +42,13 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.7.13</version>
+      <version>${slf4j.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>18.0</version>
+      <version>${guava.version}</version>
     </dependency>
 
     <dependency>
@@ -70,6 +73,12 @@
       <groupId>org.apache.pivot</groupId>
       <artifactId>pivot-wtk-terra</artifactId>
       <version>${pivot.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>${jfree.version}</version>
     </dependency>
   </dependencies>
 
