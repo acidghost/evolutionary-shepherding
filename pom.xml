@@ -7,8 +7,12 @@
   <version>1.0-SNAPSHOT</version>
   <name>evolutionary-shepherding</name>
 
-    <distributionManagement>
-    </distributionManagement>
+  <properties>
+    <slf4j.version>1.7.13</slf4j.version>
+    <guava.version>18.0</guava.version>
+    <pivot.version>2.0.4</pivot.version>
+    <jfree.version>1.0.19</jfree.version>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -19,14 +23,92 @@
       <systemPath>${basedir}/ecj/jar/ecj.23.jar</systemPath>
     </dependency>
 
-      <dependency>
+    <dependency>
       <groupId>edu.gmu.cs</groupId>
       <artifactId>mason</artifactId>
       <scope>system</scope>
       <version>19.0</version>
       <systemPath>${basedir}/mason/jar/mason.19.jar</systemPath>
     </dependency>
+
+    <dependency>
+      <groupId>org.neuroph</groupId>
+      <artifactId>neuroph</artifactId>
+      <scope>system</scope>
+      <version>2.92</version>
+      <systemPath>${basedir}/neuroph/neuroph-core-2.92.jar</systemPath>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.pivot</groupId>
+      <artifactId>pivot-core</artifactId>
+      <version>${pivot.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.pivot</groupId>
+      <artifactId>pivot-wtk</artifactId>
+      <version>${pivot.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.pivot</groupId>
+      <artifactId>pivot-charts</artifactId>
+      <version>${pivot.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.pivot</groupId>
+      <artifactId>pivot-wtk-terra</artifactId>
+      <version>${pivot.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>${jfree.version}</version>
+    </dependency>
   </dependencies>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.6</version>
+          <configuration>
+            <descriptorRefs>
+              <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+            <archive>
+              <manifest>
+                <mainClass>nl.vu.ai.aso.EvolutionaryShepherdingGUI</mainClass>
+              </manifest>
+            </archive>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
 </project>

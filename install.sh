@@ -15,3 +15,12 @@ if [ ! -d 'mason' ]; then
 	tar -xzvf mason.tar.gz
 	rm mason.tar.gz
 fi
+
+# Install NeuroPH
+if [ ! -d 'neuroph' ]; then
+	echo 'Installing NeuroPH...'
+	wget http://netcologne.dl.sourceforge.net/project/neuroph/neuroph-2.92/neuroph-2.92.zip
+	unzip neuroph-2.92.zip
+	rm neuroph-2.92.zip
+	mv neuroph-2.92 neuroph
+fi

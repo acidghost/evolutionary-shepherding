@@ -16,10 +16,14 @@ hs_err_pid*
 
 ecj
 mason
+neuroph
+neuroph-2.92
+*.nnet
 .idea
 *.iml
 target
 *.stat
+*.ser
 
 
 report/.texpadtmp/
@@ -30,3 +34,4 @@ report/*.blg
 report/*.dvi
 report/*.synctex.gz
 report/*.log
+
