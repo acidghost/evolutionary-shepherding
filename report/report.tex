@@ -19,7 +19,7 @@
 
 
 \author{\IEEEauthorblockN{Enrico Rotundo, Selene Beaz Santamaria, Andrea Borchelli Peperoni, Tommie Limberjack}
-\IEEEauthorblockA{VU University\\
+\IEEEauthorblockA{Vrije Universiteit Amsterdam \\
 Amsterdam, Netherlands\\
 Email: Enrico@smellLikePizza.italia}}
 
@@ -40,11 +40,54 @@ In this paper, we use the competitive co-evolution in order to investigate its i
 
 
 \section{Introduction}
-Objectives
+Evolutionary algorithms (EA) are biological inspired algorithms that evolves over time through generations of individuals. 
+The evolution is usually controlled such that next generations improve along the runs.
+In the robotics field, evolutionary algorithms can be used to evolve the  behaviour controller of an individual.
+Neural Networks (NN) are functions estimators or approximators nautal inspired by animals nervous systems, their design allows them to accepts high dimensionaity inputs.   
+Properly trained Neural Networks can be used to control the behaviour of a robot, where inputs are sensors based observations and weights are evolved by an evolutionary algorithm.
+A whole evolution process can be run as a virtual simulation which exploits the current computer's computational power in order to evaluate many generations in a reasonable time.
+Robotics uses both NN and EA in order to evolve intelligent behaviours that can pursue some goals.
+Tasks composition and complexity can vary based on the specific use case, in general it is object of many research investigations which aim to solve different tasks.
+For instance, tasks can be relatively small (e.g., moving objects) or more based on collaboration between a number of individual.
+Research investigations analyse collective behaviour in order to asses to which extent collaboration between individuals is feasible.  
 
-RQs
+In this paper, we consider competitive co-evolution within a herding task which consists in a number of shepherds that herd a sheep into a corral.
+Here we focus on evolving NNs as controllers for the agents.
+Controllers can be assigned to agents with different approaches, the homogeneous consists in using the same controller for each individual of a specie (e.g., shepherds) while the heterogeneous assigns a different NN for each agent.
+Moreover, the task complexity can be increased by varying or introducing new agents like adding a fox.
+
+We recap our objectives in the following list:
+
+\begin{itemize}
+	\item To compare homogeneity versus heterogeneity.
+	\item To estimate the effect of increasing the task difficulty.
+ 	\item To develop controlled experiments through software simulations, using ad hoc Java libraries.
+	\item To collect comprehensive results data.
+\end{itemize}
+ 
+In the herding task, shepherds and sheep have opponents behaviours in the sense that their goals are opposite.
+While the shepherds try to herd sheep into the corral, the sheep tries to run away from the left side of the pasture.
+Thus, competing species can be co-evolved fighting against each others.
+Furthermore, the task complexity can be influenced by varying different  
+Research questions arise from 
+Assuming “intelligent” sheep:
+ 
+\begin{enumerate}
+	\item How does the competitive co-evolution affect the relation between homogeneous and heterogeneous (dog’s) controllers in a co-evolutive herding task?
+	\item How does increasing the difficulty (e.g.: by increasing the sheep’s speed) of a single task increase the necessity for heterogeneous controllers?
+	\item How does increasing task complexity by adding more sheep affects the effectiveness of herding?
+\end{enumerate}
 
 Hypotesis + testing
+In a competitive co-evolution herding task:	
+
+\begin{enumerate}
+	\item Shepherds’ fitness in the heterogeneous case is overall higher than in the homogeneous case.
+	\item Shepherds’ fitness in the heterogeneous case and sheep’s speed are inversely related, such that fitness decreases as speed increases.
+	\item Shepherds’ fitness in the heterogeneous case and sheep’s multiplicity are inversely related, such that fitness decreases as speed increases.
+\end{enumerate}
+
+We now consider H1, we leave the testing of the others as future work. The H0 (null hypotesis) is “Shepherds’ fitness in the heterogeneous case is equivalent to the one of the homogeneous”.
 
 
 \section{Literature}
