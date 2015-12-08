@@ -1,3 +1,6 @@
+*/*.DS_Store
+.DS_Store
+
 *.class
 
 # Mobile Tools for Java (J2ME)
@@ -18,5 +21,12 @@ mason
 target
 *.stat
 
+
 report/.texpadtmp/
 report/*.pdf
+report/*.aux
+report/*.bbl
+report/*.blg
+report/*.dvi
+report/*.synctex.gz
+report/*.log
