@@ -17,3 +17,10 @@ mason
 *.iml
 target
 *.stat
+
+report/report.aux
+report/report.bbl
+report/report.blg
+report/report.dvi
+report/report.pdf
+report/report.synctex.gz
