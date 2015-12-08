@@ -17,6 +17,7 @@ import java.awt.*;
 import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -79,8 +80,17 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
         resourcesFolderFile = new File(resourcesFolder.getPath());
         List<String> scenarios = new ArrayList<>();
         for (File file : resourcesFolderFile.listFiles(EvolutionaryShepherding.PARAMS_FILENAME_FILTER)) {
-            String path = file.getPath();
-            scenarios.add(path.split(resourcesFolder.getPath())[1]);
+            URL trial = null;
+            try {
+                trial = file.toURI().toURL();
+                assert trial != null;
+
+                String path = trial.toString();
+                scenarios.add(path.split(resourcesFolder.getPath())[1]);
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         }
         availableScenarios.setListData(scenarios);
         availableScenarios.getStyles().put("color", BG_COLOR);
