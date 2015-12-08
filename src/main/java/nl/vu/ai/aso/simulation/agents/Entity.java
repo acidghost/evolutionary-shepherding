@@ -150,11 +150,11 @@ public abstract class Entity extends OvalPortrayal2D implements Steppable {
         // check walls X axis
         boolean checkXAxis = true;
         if (newLoc.x > herding.WIDTH) {
-            if (velocity.x > 0) velocity.x = -velocity.x;
+            // if (velocity.x > 0) velocity.x = -velocity.x;
             loc.x = herding.WIDTH - getRadius();
             checkXAxis = false;
         } else if (newLoc.x < 0) {
-            if (velocity.x < 0) velocity.x = -velocity.x;
+            // if (velocity.x < 0) velocity.x = -velocity.x;
             loc.x = getRadius();
             checkXAxis = false;
         }
@@ -162,11 +162,11 @@ public abstract class Entity extends OvalPortrayal2D implements Steppable {
         // check walls Y axis
         boolean checkYAxis = true;
         if (newLoc.y > herding.HEIGHT) {
-            if (velocity.y > 0) velocity.y = -velocity.y;
+            // if (velocity.y > 0) velocity.y = -velocity.y;
             loc.y = herding.HEIGHT - getRadius();
             checkYAxis = false;
         } else if (newLoc.y < 0) {
-            if (velocity.y < 0) velocity.y = -velocity.y;
+            // if (velocity.y < 0) velocity.y = -velocity.y;
             loc.y = getRadius();
             checkYAxis = false;
         }
@@ -215,10 +215,12 @@ public abstract class Entity extends OvalPortrayal2D implements Steppable {
         // acceleration = f/m
         acceleration.multiply(force, 1 / mass); // resets acceleration
         // log("Acc on is " + acceleration.toCoordinates());
+
         // v = v + a
         velocity.addIn(acceleration);
         capVelocity();
-        // log("Vel on is " + velocity.toCoordinates());
+        // log("Vel is " + velocity.toCoordinates());
+
         // L = L + v
         newLoc.add(loc, velocity);  // resets newLoc
 

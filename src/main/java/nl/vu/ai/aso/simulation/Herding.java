@@ -14,12 +14,13 @@ import java.util.List;
 public class Herding extends SimState {
 
     private final double TIME_STEP_PERIOD = 1;
-    public final int WIDTH = 37;
-    public final int HEIGHT = 37;
+    public static final int WIDTH = 37;
+    public static final int HEIGHT = 37;
     public static final double RESOLUTION = 1;
 
-    public final int CORRALED_BONUS = 20000;
-    public final int ESCAPED_BONUS = 20000;
+    public final int CORRALED_BONUS = 500;
+    public final int ESCAPED_BONUS = 500;
+    public final int BUMP_BONUS_SCALE = 10;
 
     public Yard yard = new Yard(RESOLUTION, WIDTH, HEIGHT); //37x37 foot pasture
     public List<double[]> shepherds;
@@ -120,7 +121,7 @@ public class Herding extends SimState {
         double[] scores = new double[this.shepherds.size()];
 
         for (int i = 0; i < shepherdAgents.size(); i++) {
-            scores[i] = shepherdAgents.get(i).numberOfBumpsWithSheep * 10 - cumulativeSheepDist;
+            scores[i] = (shepherdAgents.get(i).numberOfBumpsWithSheep * BUMP_BONUS_SCALE) - cumulativeSheepDist;
         }
         return scores;
     }

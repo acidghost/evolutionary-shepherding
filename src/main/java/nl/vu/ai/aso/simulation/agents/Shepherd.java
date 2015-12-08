@@ -47,16 +47,10 @@ public class Shepherd extends AgentWithNetwork {
         Bag inRadius = herding.yard.getNeighborsExactlyWithinDistance(new Double2D(loc), agentRadius);
 
         if (inRadius.size() > 1) {
-            boolean noBump = true;
-
             for (Object agent : inRadius) {
                 if (!agent.equals(this) && (agent instanceof Sheep)) {
-                    Double2D agentPos = herding.yard.getObjectLocation(agent);
-                    noBump = noBump && (newLoc.distance(agentPos) > loc.distance(agentPos));
+                    numberOfBumpsWithSheep++;
                 }
-            }
-            if (!noBump) {
-                numberOfBumpsWithSheep++;
             }
         }
 
