@@ -18,8 +18,8 @@ public class Herding extends SimState {
     public static final int HEIGHT = 37;
     public static final double RESOLUTION = 1;
 
-    public final int CORRALED_BONUS = 500;
-    public final int ESCAPED_BONUS = 500;
+    // public final int CORRALED_BONUS = 500;
+    // public final int ESCAPED_BONUS = 500;
     public final int BUMP_BONUS_SCALE = 10;
 
     public Yard yard = new Yard(RESOLUTION, WIDTH, HEIGHT); //37x37 foot pasture
@@ -28,16 +28,22 @@ public class Herding extends SimState {
     private boolean predatorPresent;
     public List<Sheep> sheepAgents;
     public List<Shepherd> shepherdAgents;
+    private int totalSteps;
 
     public static double cumulativeSheepDist = 0;
     public static double cumulativeSheepRatio = 0;
     public static SheepStatus sheepStatus = SheepStatus.NORMAL;
 
     public Herding(long seed, List<double[]> shepherds, List<double[]> sheeps, boolean predatorPresent) {
+        this(seed, 1000, shepherds, sheeps, predatorPresent);
+    }
+
+    public Herding(long seed, int totalSteps, List<double[]> shepherds, List<double[]> sheeps, boolean predatorPresent) {
         super(seed);
         this.shepherds = shepherds;
         this.sheep = sheeps;
         this.predatorPresent = predatorPresent;
+        this.totalSteps = totalSteps;
     }
 
     public void start() {
@@ -107,10 +113,10 @@ public class Herding extends SimState {
             distances[i] = sheepAgents.get(i).travelledDistance - cumulativeSheepRatio;
             switch (sheepStatus) {
                 case CORRALED:
-                    distances[i] -= CORRALED_BONUS;
+                    distances[i] -= WIDTH * (totalSteps - schedule.getSteps());
                     break;
                 case ESCAPED:
-                    distances[i] += ESCAPED_BONUS;
+                    distances[i] += WIDTH * (totalSteps - schedule.getSteps());
                     break;
             }
         }
@@ -128,9 +134,9 @@ public class Herding extends SimState {
 
 
     public static EvaluationResults runSimulation(int totalSteps, List<double[]> shepherd, List<double[]> sheep, boolean predator) {
-        Herding herding = new Herding(System.currentTimeMillis(), shepherd, sheep, predator);
+        Herding herding = new Herding(System.currentTimeMillis(), totalSteps, shepherd, sheep, predator);
 
-        herding.loop(totalSteps);
+        herding.loop();
 
         double[] shepherdFitness = herding.individualShepherdScores();
         double[] sheepFitness = herding.individualSheepScores();
@@ -155,11 +161,11 @@ public class Herding extends SimState {
             sheepStatus = yard.getSheepStatus(sheep);
             switch (sheepStatus) {
                 case CORRALED:
-                    cumulativeSheepDist -= CORRALED_BONUS;
+                    cumulativeSheepDist -= WIDTH * (totalSteps - schedule.getSteps());
                     yard.remove(sheep);
                     return false;
                 case ESCAPED:
-                    cumulativeSheepDist += ESCAPED_BONUS;
+                    cumulativeSheepDist += WIDTH * (totalSteps - schedule.getSteps());
                     yard.remove(sheep);
                     return false;
                 case NORMAL:
@@ -176,7 +182,7 @@ public class Herding extends SimState {
         sheepStatus = SheepStatus.NORMAL;
     }
 
-    public void loop(int totalSteps) {
+    public void loop() {
         setJob(1);
         start();
         do {

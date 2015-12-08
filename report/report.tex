@@ -7,6 +7,7 @@
 \fi
 
 
+\usepackage{graphicx}
 
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
@@ -80,6 +81,7 @@ The following research questions assume intelligent sheep within a herding task:
 \end{enumerate}
 
 \subsection{Hypothesis}
+\label{sec:hypothesis}
 The following hypothesis are in one to one relationship with the aforementioned research questions:
 
 \begin{enumerate}
@@ -131,17 +133,37 @@ TODO
 \section{Implementation}
 TODO
 
-\section{Experiments}
-TODO
+\section{Experiment}
+\label{sec:experiment)
+In this section we detail the design of the experiments performed in this paper.
+For the sake of shortness, we go just show the experiment that considers the $H_1$ listed in ~\ref{sec:hypothesis}.
+This experiment involves the following entities:
+
+\begin{itemize}
+	\item 2 homogeneous shepherd’s vs 1 (intelligent) sheep
+	\item 2 heterogeneous shepherd’s vs 1 (intelligent) sheep
+\end{itemize}
+
 
 \section{Results}
-TODO
+In this section we present the results of the experiment detailed in Section ~\ref{sec:experiment}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=3.3in]{imgs/homo_vs_hetero.png}
+\caption{TODO.}
+\label{fig:homo_vs_hetero}
+\end{figure}
 
 \section{Conclusion}
 The conclusion goes here.
 
 \subsection{Future work}
 TODO
+
+-In a competitive co-evolution, how does increasing task complexity by adding more sheep affects the effectiveness of herding? %TODO: fix
+
+-[In a competitive co-evolution, do heterogeneous sheep perform better than homogeneous?] %TODO: fix
 
 
 

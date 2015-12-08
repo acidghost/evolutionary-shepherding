@@ -4,7 +4,9 @@ import nl.vu.ai.aso.shared.SheepInputs;
 import nl.vu.ai.aso.simulation.Herding;
 import nl.vu.ai.aso.simulation.Yard;
 import sim.engine.SimState;
+import sim.util.Bag;
 import sim.util.Double2D;
+import sim.util.MutableDouble2D;
 
 import java.awt.*;
 
@@ -45,6 +47,20 @@ public class Sheep extends AgentWithNetwork {
         } else {
             return new SheepInputs(closestShep_r, closestShep_b, null, null);
         }
+    }
+
+    @Override
+    public boolean isValidMove(Herding herding, MutableDouble2D newLoc) {
+        // check if shepherd bumped into a sheep
+        Bag inRadius = herding.yard.getNeighborsExactlyWithinDistance(new Double2D(loc), agentRadius);
+
+        for (Object agent : inRadius) {
+            if (agent instanceof Shepherd) {
+                ((Shepherd) agent).numberOfBumpsWithSheep++;
+            }
+        }
+
+        return super.isValidMove(herding, newLoc);
     }
 
     @Override

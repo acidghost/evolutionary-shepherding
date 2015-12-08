@@ -41,8 +41,8 @@ public abstract class AgentWithNetwork extends Entity {
             double angle = (2 * Math.PI * output[1]) - Math.PI;
 
             Double2D cartesian = new Double2D((radius * Math.cos(angle)), (radius * Math.sin(angle)));
-            cartesian = cartesian.add(new Double2D(loc));
-            log("New target: " + cartesian.toCoordinates() + "\n" + radius + " " + angle);
+            // cartesian = cartesian.add(new Double2D(loc));
+            // log("New target: " + cartesian.toCoordinates() + "\n" + radius + " " + angle);
             nnPosition = cartesian;
             nnCounter = FREQUENCY;
         } else {
@@ -68,9 +68,9 @@ public abstract class AgentWithNetwork extends Entity {
     protected double getBearingFromSheep(Continuous2D yard, AgentWithNetwork agent, Double2D sheepCenter, Double2D corralPosition) {
         Double2D agentPos = yard.getObjectLocation(agent);
 
-        double angle1 = Math.atan2((sheepCenter.y - corralPosition.y), (sheepCenter.x - corralPosition.x));
-        double angle2 = Math.atan2((agentPos.y - corralPosition.y), (agentPos.x - corralPosition.x));
+        double sheepCorralAngle = Math.atan2(corralPosition.y - sheepCenter.y, corralPosition.x - sheepCenter.x);
+        double agentCorralAngle = Math.atan2(corralPosition.y - agentPos.y, corralPosition.x - agentPos.x);
 
-        return angle1 - angle2;
+        return agentCorralAngle - sheepCorralAngle;
     }
 }
