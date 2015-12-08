@@ -29,9 +29,9 @@ Email: Enrico@smellLikePizza.italia}}
 
 
 \begin{abstract}
-In the robotics context, intelligent behaviours are often achieved using neural networks as controllers evolved with an evolutionary algorithm. 
-In the case of multiple individuals within a species, controllers can be either homogeneous or heterogeneous. 
-In this paper, we use the competitive co-evolution in order to investigate its interaction with the relation between the homo and hetero cases. 
+In the robotics context, intelligent behaviours are often achieved using neural networks as controllers evolved with an evolutionary algorithm.
+In the case of multiple individuals within a species, controllers can be either homogeneous or heterogeneous.
+In this paper, we use the competitive co-evolution in order to investigate its interaction with the relation between the homo and hetero cases.
 % TODO: add what we have discovered
 \end{abstract}
 
@@ -93,13 +93,22 @@ We now consider H1, we leave the testing of the others as future work. The H0 (n
 \section{Literature}
  
 
-\subsection{Co-evolution}
-In \cite{stanley2004competitive} Stanley and Miikkulainen showed that by complexifying agent controllers in a competitive co-evolutionary setting, the added complexity could be utilized through the generation of advanced strategies.
+\subsection{Coevolution}
+It was as early as 1964 when Ehrlich and Raven focused their paper \cite{ehrlich1964butterflies} describing the effects of coevoultion in butterflies and plants.
 
-\subsection{Homogeneity vs Heteroheneity}
+In 1980 Janzen's \cite{janzen1980coevolution} formalised a clear definition for coevolution:
+`` 'Coevolution' may be usefully defined as an evolutionary change in a trait of the individuals in one population in response to a trait of the individuals of a second population, followed by an evolutionary response by the second populations to the change in the first.''
 
+
+\subsection{Competitive Coevolution}
+Dawkins and Krebs described in their 1979 paper: ``Arms Races between and within Species'' \cite{dawkins1979arms}, the dynamics of, and created terminology for, competitive coevolution. Provided are examples of manifestations of competitive coevolution in natural systems.
+
+In \cite{stanley2004competitive} Stanley and Miikkulainen showed that through the complexification of agent controllers in a competitive co-evolutionary setting, the controller's added complexity can be utilized through the generation of more advanced strategies as complexity increases.
+
+
+\subsection{Homogeneity vs Heteroheneity in ANN's}
 \cite{potter2001heterogeneity} performed a study to a tradeoff of homogeneity versus heterogeneity in the control systems of robots by allowing teams to coevolve their high-level controllers given different levels of difficulty of the task
-Hypothesised was that: “simply increasing the difficulty of a task is not enough to induce a team of robots to create specialists”. 
+Hypothesised was that: ``\textit{simply increasing the difficulty of a task is not enough to induce a team of robots to create specialists.}''
 Task difficulty was varied by replacing one adversary's passive controller with an active variant supposedly proving that increased difficulty did not justify the use of heterogeneous controllers.
 However, increased difficulty was never implemented structurally nor tested methodologically. 
 
