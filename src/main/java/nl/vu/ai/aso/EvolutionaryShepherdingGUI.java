@@ -1,5 +1,6 @@
 package nl.vu.ai.aso;
 
+import com.google.common.base.Optional;
 import nl.vu.ai.aso.shared.EvaluationResults;
 import org.apache.pivot.collections.ArrayList;
 import org.apache.pivot.collections.List;
@@ -7,13 +8,18 @@ import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.concurrent.Task;
 import org.apache.pivot.util.concurrent.TaskListener;
 import org.apache.pivot.wtk.*;
+import org.apache.pivot.wtk.Component;
+import org.apache.pivot.wtk.Label;
+import org.apache.pivot.wtk.Window;
 
-import java.awt.Color;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Created by acidghost on 05/12/15.
@@ -21,9 +27,9 @@ import java.net.URL;
 public class EvolutionaryShepherdingGUI extends Window implements Application {
 
     private static final Color BG_COLOR = Color.darkGray;
-    private static final Dimensions DIMENSION = new Dimensions(800, 300);
+    private static final Dimensions DIMENSION = new Dimensions(800, 450);
     private static final String TITLE = "Evolutionary Shepherding";
-    private static final int LOG_LENGTH = 10;
+    private static final int LOG_LENGTH = 15;
     private static final Font ITALIC_FONT = new Font("Times", Font.ITALIC, 11);
 
     private SplitPane mainPanel = new SplitPane();
@@ -34,6 +40,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     private Label simulationSectionLabel = new Label();
     private ListButton availableScenarios = new ListButton();
     private TextInput statFileInput = new TextInput();
+    private TextInput evoRunNumberInput = new TextInput();
     private PushButton startButton = new PushButton();
     private PushButton stopButton = new PushButton();
     private Form.Section replaySection = new Form.Section();
@@ -41,16 +48,19 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     private ListButton availableReplays = new ListButton();
     private PushButton startReplay = new PushButton();
     private Slider speedSlider = new Slider();
+    private Form.Section statsSection = new Form.Section();
+    private Label statsSectionLabel = new Label();
+    private ListButton availableStats = new ListButton();
+    private PushButton drawChartsButton = new PushButton();
     private ListView logView = new ListView();
     private Label logNotice = new Label();
 
     private File resourcesFolderFile;
-    private Task<EvaluationResults> simulationTask;
+    private Task<Optional<EvaluationResults>> simulationTask;
 
     public EvolutionaryShepherdingGUI() {
         super();
 
-        initAvailableScenarios();
         initLeftPanel();
         initRightPanel();
 
@@ -79,44 +89,86 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     private void initAvailableReplays() {
         List<String> listData = new ArrayList<>();
         File serialized = new File(EvolutionaryShepherding.SERIALIZED_DIR);
-        for (File file : serialized.listFiles(EvolutionaryShepherding.SERIALIZED_FILENAME_FILTER)) {
-            listData.add(file.getPath().split(serialized.getPath())[1]);
+
+        try {
+            Files.find(
+                Paths.get(serialized.toURI()), 999,
+                (p, bfa) -> bfa.isRegularFile() && EvolutionaryShepherding.SERIALIZED_FILENAME_FILTER.accept(p.toFile(), p.getFileName().toString())
+            ).forEach(file -> listData.add(file.toFile().getPath().split(serialized.getPath())[1]));
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert.alert(MessageType.ERROR, e.getClass().getSimpleName() + ": " + e.getMessage(), this);
         }
+
         availableReplays.setListData(listData);
     }
 
+    private void initAvailableStats() {
+        List<String> listData = new ArrayList<>();
+        File root = new File("./");
+        for (File file : root.listFiles(EvolutionaryShepherding.STATS_FILENAME_FILTER)) {
+            listData.add(file.getPath());
+        }
+        availableStats.setListData(listData);
+    }
+
     private void initLeftPanel() {
+        initSimulationSection();
+        initReplaySection();
+        initStatsSection();
+
+        Form.SectionSequence formSections = form.getSections();
+        formSections.add(simulationSection);
+        formSections.add(replaySection);
+        formSections.add(statsSection);
+        form.getStyles().put("backgroundColor", BG_COLOR);
+
+        leftPanel.add(form);
+        leftPanel.getStyles().put("backgroundColor", BG_COLOR);
+        mainPanel.setLeft(leftPanel);
+    }
+
+    private void initSimulationSection() {
         simulationSectionLabel.setText("Simulation control panel");
         StyleDictionary simulationSectionLabelStyles = simulationSectionLabel.getStyles();
         simulationSectionLabelStyles.put("color", Color.white);
         simulationSectionLabelStyles.put("font", ITALIC_FONT);
 
+        initAvailableScenarios();
+
         statFileInput.setPrompt("Filename *.stat for the run");
+        evoRunNumberInput.setPrompt("Run number for this scenario");
+
         startButton.setButtonData("Start simulation");
         startButton.setEnabled(true);
         startButton.getButtonPressListeners().add(button -> {
             String selected = (String) availableScenarios.getSelectedItem();
             String statFile = statFileInput.getText();
+            String runNumber = evoRunNumberInput.getText();
             if (selected == null || selected.equals("")) {
                 Alert.alert(MessageType.WARNING, "No scenario selected!", this);
             } else if(statFile == null || statFile.equals("")) {
                 Alert.alert(MessageType.WARNING, "Insert a meaningful stat filename!", this);
+            } else if(runNumber == null || runNumber.equals("")) {
+                Alert.alert(MessageType.WARNING, "Insert a run number", this);
             } else {
-                simulationTask = EvolutionaryShepherding.runEvolution(resourcesFolderFile.getPath() + "/" + selected, statFile);
-                simulationTask.execute(new TaskAdapter<>(new TaskListener<EvaluationResults>() {
+                simulationTask = EvolutionaryShepherding.runEvolution(resourcesFolderFile.getPath() + "/" + selected, statFile, runNumber);
+                simulationTask.execute(new TaskAdapter<>(new TaskListener<Optional<EvaluationResults>>() {
                     @Override
-                    public void taskExecuted(Task<EvaluationResults> task) {
+                    public void taskExecuted(Task<Optional<EvaluationResults>> task) {
                         log("Simulation " + selected + " ended");
-                        log(task.getResult().toString());
+                        log(task.getResult().get().toString());
                         setComponentsState(false);
                         initAvailableReplays();
+                        initAvailableStats();
                     }
 
                     @Override
-                    public void executeFailed(Task<EvaluationResults> task) {
+                    public void executeFailed(Task<Optional<EvaluationResults>> task) {
                         log("Simulation " + selected + " ended with errors");
                         setComponentsState(false);
                         initAvailableReplays();
+                        initAvailableStats();
                     }
                 }));
                 setComponentsState(true);
@@ -137,9 +189,12 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
         simulationSection.add(simulationSectionLabel);
         simulationSection.add(availableScenarios);
         simulationSection.add(statFileInput);
+        simulationSection.add(evoRunNumberInput);
         simulationSection.add(startButton);
         simulationSection.add(stopButton);
+    }
 
+    private void initReplaySection() {
         replaySectionLabel.setText("Replay best individuals");
         StyleDictionary replaySectionLabelStyles = replaySectionLabel.getStyles();
         replaySectionLabelStyles.put("color", Color.white);
@@ -158,16 +213,16 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
             String filename = new File(EvolutionaryShepherding.SERIALIZED_DIR).getPath() + selected;
             try {
                 simulationTask = EvolutionaryShepherding.replaySimulation(filename, speedSlider.getValue());
-                simulationTask.execute(new TaskAdapter<>(new TaskListener<EvaluationResults>() {
+                simulationTask.execute(new TaskAdapter<>(new TaskListener<Optional<EvaluationResults>>() {
                     @Override
-                    public void taskExecuted(Task<EvaluationResults> task) {
+                    public void taskExecuted(Task<Optional<EvaluationResults>> task) {
                         log("Replay of " + selected + " ended");
-                        log(task.getResult().toString());
+                        log(task.getResult().get().toString());
                         setComponentsState(false);
                     }
 
                     @Override
-                    public void executeFailed(Task<EvaluationResults> task) {
+                    public void executeFailed(Task<Optional<EvaluationResults>> task) {
                         log("Replay of " + selected + " ended with errors");
                         setComponentsState(false);
                     }
@@ -184,15 +239,37 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
         replaySection.add(availableReplays);
         replaySection.add(speedSlider);
         replaySection.add(startReplay);
+    }
 
-        Form.SectionSequence formSections = form.getSections();
-        formSections.add(simulationSection);
-        formSections.add(replaySection);
-        form.getStyles().put("backgroundColor", BG_COLOR);
+    private void initStatsSection() {
+        statsSectionLabel.setText("Chart statistics");
+        statsSectionLabel.getStyles().put("font", ITALIC_FONT);
+        statsSectionLabel.getStyles().put("color", Color.white);
 
-        leftPanel.add(form);
-        leftPanel.getStyles().put("backgroundColor", BG_COLOR);
-        mainPanel.setLeft(leftPanel);
+        initAvailableStats();
+
+        drawChartsButton.setButtonData("Draw charts");
+        drawChartsButton.getButtonPressListeners().add(button -> {
+            String selected = (String) availableStats.getSelectedItem();
+            if (selected == null || selected.equals("")) {
+                Alert.alert(MessageType.WARNING, "No stat file selected", this);
+            } else {
+                try {
+                    Charts charts = new Charts(selected);
+                    JFrame frame = new JFrame(selected);
+                    frame.setContentPane(charts.getMeanPerSubpopPerGeneration(selected));
+                    frame.setVisible(true);
+                    frame.setSize(600, 400);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Alert.alert(MessageType.ERROR, e.getClass().getSimpleName() + ": " + e.getMessage(), this);
+                }
+            }
+        });
+
+        statsSection.add(statsSectionLabel);
+        statsSection.add(availableStats);
+        statsSection.add(drawChartsButton);
     }
 
     private void initRightPanel() {

@@ -1,5 +1,6 @@
 package nl.vu.ai.aso.evolution;
 
+import com.google.common.io.Files;
 import ec.*;
 import ec.coevolve.GroupedProblemForm;
 import ec.simple.SimpleFitness;
@@ -23,6 +24,9 @@ public abstract class HerdingProblem extends Problem implements GroupedProblemFo
     public static final String POP_SEPARATOR = "pop.separator";
     public static final String EVAL_PREDATOR = "eval.predator";
     public static final String EVAL_STEPS = "eval.evaluations";
+    public static final String EVO_FILE = "evo.file";
+    public static final String EVO_RUN = "evo.run";
+    public static final String STAT_FILE = "stat.file";
 
     public static final double PROPORTION_NOT_IN_GUI = 1;
 
@@ -102,9 +106,16 @@ public abstract class HerdingProblem extends Problem implements GroupedProblemFo
             evolutionState.output.message("Subpop " + i + ": " + individual.fitness.fitnessToStringForHumans());
         }
 
+        Replay replay = getReplay(evolutionState, bestOfGeneration, split, evaluations);
+
         try {
-            Replay replay = getReplay(evolutionState, bestOfGeneration, split, evaluations);
-            OutputStream file = new FileOutputStream(EvolutionaryShepherding.SERIALIZED_DIR + "/best." + evolutionState.generation + ".ser");
+            final String[] evoFileSplitted = ((String) evolutionState.parameters.get(EVO_FILE)).split("/");
+            final String evoFile = evoFileSplitted[evoFileSplitted.length - 1].split(".params")[0];
+            final String runNumber = (String) evolutionState.parameters.get(EVO_RUN);
+            final String filename = EvolutionaryShepherding.SERIALIZED_DIR + "/" + evoFile + "-" + runNumber + "/best." + evolutionState.generation + ".ser";
+            Files.createParentDirs(new File(filename));
+
+            OutputStream file = new FileOutputStream(filename);
             OutputStream buffer = new BufferedOutputStream(file);
             ObjectOutput output = new ObjectOutputStream(buffer);
             output.writeObject(replay);

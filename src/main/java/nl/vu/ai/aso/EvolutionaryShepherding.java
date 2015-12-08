@@ -1,5 +1,6 @@
 package nl.vu.ai.aso;
 
+import com.google.common.base.Optional;
 import com.google.common.io.PatternFilenameFilter;
 import ec.Evolve;
 import nl.vu.ai.aso.evolution.HerdingProblem;
@@ -25,6 +26,7 @@ public class EvolutionaryShepherding {
     public static final String SERIALIZED_DIR = "serialized";
     public static final PatternFilenameFilter PARAMS_FILENAME_FILTER = new PatternFilenameFilter(".*\\.params");
     public static final PatternFilenameFilter SERIALIZED_FILENAME_FILTER = new PatternFilenameFilter(".*\\.ser");
+    public static final PatternFilenameFilter STATS_FILENAME_FILTER = new PatternFilenameFilter(".*\\.stat");
 
     public static void clearSerialized() {
         File serialized = new File(SERIALIZED_DIR);
@@ -37,30 +39,35 @@ public class EvolutionaryShepherding {
         }
     }
 
-    public static Task runEvolution(String file, String statFile) {
-        return new Task() {
+    public static Task<Optional<EvaluationResults>> runEvolution(String file, String statFile, String runNumber) {
+        return new Task<Optional<EvaluationResults>>() {
             @Override
-            public Object execute() throws TaskExecutionException {
+            public Optional<EvaluationResults> execute() throws TaskExecutionException {
                 HerdingProblem.evaluationCounter = 0;
-                clearSerialized();
+                // clearSerialized();
                 ExitManager exitManager = ExitManager.disableSystemExit();
-                Evolve.main(new String[] { "-file", file, "-p", "stat.file=$" + statFile });
+                Evolve.main(new String[] {
+                    "-file", file,
+                    "-p", HerdingProblem.STAT_FILE + "=$" + statFile,
+                    "-p", HerdingProblem.EVO_FILE + "=" + file,
+                    "-p", HerdingProblem.EVO_RUN + "=" + runNumber
+                });
                 exitManager.enableSystemExit();
-                return null;
+                return Optional.absent();
             }
         };
     }
 
-    public static Task<EvaluationResults> replaySimulation(String filename, int speed) throws IOException, ClassNotFoundException {
+    public static Task<Optional<EvaluationResults>> replaySimulation(String filename, int speed) throws IOException, ClassNotFoundException {
         FileInputStream inputFileStream = new FileInputStream(filename);
         ObjectInputStream objectInputStream = new ObjectInputStream(inputFileStream);
         Replay replay = (Replay) objectInputStream.readObject();
         objectInputStream.close();
         inputFileStream.close();
 
-        return new Task<EvaluationResults>() {
+        return new Task<Optional<EvaluationResults>>() {
             @Override
-            public EvaluationResults execute() throws TaskExecutionException {
+            public Optional<EvaluationResults> execute() throws TaskExecutionException {
                 List<double[]> individuals = replay.getBestGenomesOfGeneration();
                 List<double[]> shepherd;
                 List<double[]> sheep;
@@ -83,7 +90,7 @@ public class EvolutionaryShepherding {
                         results = HerdingGUI.runSimulation(replay.getTotalSteps(), speed, shepherd, sheep, false);
                         break;
                 }
-                return results;
+                return Optional.of(results);
             }
         };
     }
@@ -127,7 +134,7 @@ public class EvolutionaryShepherding {
             nSheep = args[1];
         }
 
-        clearSerialized();
+        // clearSerialized();
 
         String filename = EvolutionaryShepherding.class.getClassLoader().getResource("ecj." + nSheph + ".shep." + nSheep + ".sheep.params").getPath();
         Evolve.main(new String[] { "-file", filename });
