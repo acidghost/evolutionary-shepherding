@@ -36,28 +36,30 @@ public class HeteroHerdingProblem extends HerdingProblem {
             }
         }
 
-        EvaluationResults results = getEvaluationResults(evolutionState, predator, evaluations, shepherd, sheep);
+        for (int trial = 0; trial < TRIALS; trial++) {
+            EvaluationResults results = getEvaluationResults(evolutionState, predator, evaluations, shepherd, sheep);
 
-        int sheepCounter = 0;
-        int shepherdCounter = 0;
-        double[] sheepScores = results.getSheepScore();
-        double[] shepherdScores = results.getShepherdScore();
-        for (int i = 0; i < individuals.length; i++) {
-            if (updateFitness[i]) {
-                Individual individual = individuals[i];
-                CoESFitness fitness = (CoESFitness) individual.fitness;
-                if (i < split) {
-                    double score = shepherdScores[shepherdCounter];
-                    fitness.trials.add(score);
-                    fitness.setFitness(evolutionState, score, false);
-                    shepherdCounter++;
-                } else {
-                    double score = sheepScores[sheepCounter];
-                    fitness.trials.add(score);
-                    fitness.setFitness(evolutionState, score, false);
-                    sheepCounter++;
+            int sheepCounter = 0;
+            int shepherdCounter = 0;
+            double[] sheepScores = results.getSheepScore();
+            double[] shepherdScores = results.getShepherdScore();
+            for (int i = 0; i < individuals.length; i++) {
+                if (updateFitness[i]) {
+                    Individual individual = individuals[i];
+                    CoESFitness fitness = (CoESFitness) individual.fitness;
+                    if (i < split) {
+                        double score = shepherdScores[shepherdCounter];
+                        fitness.trials.add(score);
+                        fitness.setFitness(evolutionState, score, false);
+                        shepherdCounter++;
+                    } else {
+                        double score = sheepScores[sheepCounter];
+                        fitness.trials.add(score);
+                        fitness.setFitness(evolutionState, score, false);
+                        sheepCounter++;
+                    }
+                    fitness.sheepStatuses.add(results.getSheepStatus());
                 }
-                fitness.sheepStatuses.add(results.getSheepStatus());
             }
         }
     }

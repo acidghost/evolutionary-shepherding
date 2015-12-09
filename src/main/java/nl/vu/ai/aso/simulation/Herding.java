@@ -15,12 +15,13 @@ public class Herding extends SimState {
 
     private final double TIME_STEP_PERIOD = 1;
     public static final int WIDTH = 37;
-    public static final int HEIGHT = 37;
+    public static final int HEIGHT = WIDTH;
     public static final double RESOLUTION = 1;
 
     // public final int CORRALED_BONUS = 500;
     // public final int ESCAPED_BONUS = 500;
-    public final int BUMP_BONUS_SCALE = 10;
+    private final int BUMP_BONUS_SCALE = 20;
+    private final int ESCAPED_PENALTY_MUL = 10;
 
     public Yard yard = new Yard(RESOLUTION, WIDTH, HEIGHT); //37x37 foot pasture
     public List<double[]> shepherds;
@@ -101,9 +102,7 @@ public class Herding extends SimState {
         fakeSheep.add(new double[] { 1.0, 2.0, 4.5, 6.7 });
         fakeSheep.add(new double[] {2.0, 1.1, 2.2, 1.4 });
 
-        boolean fakePredatorPresent = false;
-
-        runSimulation(5000, fakeShepherd, fakeSheep, fakePredatorPresent);
+        runSimulation(5000, fakeShepherd, fakeSheep, false);
         System.exit(0);
     }
 
@@ -113,10 +112,10 @@ public class Herding extends SimState {
             distances[i] = sheepAgents.get(i).travelledDistance - cumulativeSheepRatio;
             switch (sheepStatus) {
                 case CORRALED:
-                    distances[i] -= WIDTH * (totalSteps - schedule.getSteps());
+                    distances[i] -= ESCAPED_PENALTY_MUL * (totalSteps - schedule.getSteps());
                     break;
                 case ESCAPED:
-                    distances[i] += WIDTH * (totalSteps - schedule.getSteps());
+                    distances[i] += ESCAPED_PENALTY_MUL * (totalSteps - schedule.getSteps());
                     break;
             }
         }
@@ -161,11 +160,11 @@ public class Herding extends SimState {
             sheepStatus = yard.getSheepStatus(sheep);
             switch (sheepStatus) {
                 case CORRALED:
-                    cumulativeSheepDist -= WIDTH * (totalSteps - schedule.getSteps());
+                    cumulativeSheepDist -= ESCAPED_PENALTY_MUL * (totalSteps - schedule.getSteps());
                     yard.remove(sheep);
                     return false;
                 case ESCAPED:
-                    cumulativeSheepDist += WIDTH * (totalSteps - schedule.getSteps());
+                    cumulativeSheepDist += ESCAPED_PENALTY_MUL * (totalSteps - schedule.getSteps());
                     yard.remove(sheep);
                     return false;
                 case NORMAL:

@@ -144,19 +144,19 @@ eval.problem =                          nl.vu.ai.aso.evolution.HomoHerdingProble
 eval.num-shepherd =                     3
 eval.num-sheep =                        1
 
-eval.evaluations =                      1000
+eval.evaluations =                      1500
 
 eval.num-shuffled=		            	0
 eval.num-current=                       0
-eval.num-elites =                       0
-eval.num-prev =                         10
+eval.num-elites =                       1
+eval.num-prev =                         0
 eval.select-current =                   ec.select.RandomSelection
 eval.select-prev =                      ec.select.RandomSelection
 
 # breed =                                 ec.es.MuPlusLambdaBreeder
 breed =                                 nl.vu.ai.aso.evolution.CoESBreeder
 
-generations=                            20
+generations=                            50
 # select.tournament.size =                5
 pop.subpops =                           2
 

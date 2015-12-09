@@ -141,21 +141,21 @@ stat.do-subpops = true
 eval =                                  nl.vu.ai.aso.evolution.CoESEvaluator
 eval.problem =                          nl.vu.ai.aso.evolution.HeteroHerdingProblem
 
-eval.evaluations =                      5000
+eval.evaluations =                      1500
 
 eval.num-shuffled=		            	0
 eval.num-current=                       0
-eval.num-elites =                       0
-eval.num-prev =                         10
+eval.num-elites =                       1
+eval.num-prev =                         0
 eval.select-current =                   ec.select.RandomSelection
 eval.select-prev =                      ec.select.RandomSelection
 
 # breed =                               ec.es.MuPlusLambdaBreeder
 breed =                                 nl.vu.ai.aso.evolution.CoESBreeder
 
-generations=                            20
-# select.tournament.size =                5
-pop.subpops =                           5
+generations=                            50
+# select.tournament.size =              5
+pop.subpops =                           6
 
 es.mu.0 =                               10
 es.lambda.0 =                           100
@@ -279,6 +279,30 @@ pop.subpop.4.species.mutation-bounded =	true
 # pop.subpop.4.species.pipe.source.0 = 	ec.vector.breed.VectorCrossoverPipeline
 # pop.subpop.4.species.pipe.source.0.source.0 = ec.select.TournamentSelection
 # pop.subpop.4.species.pipe.source.0.source.1 = same
+
+es.mu.5 =                               10
+es.lambda.5 =                           100
+
+pop.subpop.5 =                          ec.Subpopulation
+pop.subpop.5.duplicate-retries =        0
+pop.subpop.5.size =                     10
+pop.subpop.5.species =                  ec.vector.FloatVectorSpecies
+pop.subpop.5.species.crossover-type =   one
+pop.subpop.5.species.genome-size =      37
+pop.subpop.5.species.min-gene =         -10
+pop.subpop.5.species.max-gene =         10
+pop.subpop.5.species.fitness =          nl.vu.ai.aso.evolution.CoESFitness
+pop.subpop.5.species.ind =              ec.vector.DoubleVectorIndividual
+pop.subpop.5.species.pipe =             ec.vector.breed.VectorMutationPipeline
+pop.subpop.5.species.pipe.source.0 =    ec.es.ESSelection
+pop.subpop.5.species.mutation-type =    gauss
+pop.subpop.5.species.mutation-stdev =   0.01
+pop.subpop.5.species.mutation-prob =    1.0
+pop.subpop.5.species.mutation-bounded =	true
+# pop.subpop.5.species.pipe = 		    ec.vector.breed.VectorMutationPipeline
+# pop.subpop.5.species.pipe.source.0 = 	ec.vector.breed.VectorCrossoverPipeline
+# pop.subpop.5.species.pipe.source.0.source.0 = ec.select.TournamentSelection
+# pop.subpop.5.species.pipe.source.0.source.1 = same
 
 pop.separator = 3
 pop.separator.default = 3

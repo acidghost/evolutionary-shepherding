@@ -25,6 +25,7 @@ public class Sheep extends AgentWithNetwork {
     public Sheep(double newX, double newY, double[] weights, int inputs) {
         super(newX, newY, 1, Color.lightGray, AGENT_RADIUS, weights, inputs);
         travelledDistance = 0;
+        cap = 0.4;
     }
 
     public Sheep(Double2D location, double[] weights, int inputs) {

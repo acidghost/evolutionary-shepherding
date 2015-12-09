@@ -29,6 +29,7 @@ public abstract class HerdingProblem extends Problem implements GroupedProblemFo
     public static final String STAT_FILE = "stat.file";
 
     public static final double PROPORTION_NOT_IN_GUI = 1;
+    public static final int TRIALS = 10;
 
     public static int evaluationCounter = 0;
 
@@ -109,10 +110,10 @@ public abstract class HerdingProblem extends Problem implements GroupedProblemFo
         Replay replay = getReplay(evolutionState, bestOfGeneration, split, evaluations);
 
         try {
-            final String[] evoFileSplitted = ((String) evolutionState.parameters.get(EVO_FILE)).split("/");
+            final String[] evoFileSplitted = ((String) evolutionState.parameters.get(EVO_FILE)).split(File.separator);
             final String evoFile = evoFileSplitted[evoFileSplitted.length - 1].split(".params")[0];
             final String runNumber = (String) evolutionState.parameters.get(EVO_RUN);
-            final String filename = EvolutionaryShepherding.SERIALIZED_DIR + "/" + evoFile + "-" + runNumber + "/best." + evolutionState.generation + ".ser";
+            final String filename = EvolutionaryShepherding.SERIALIZED_DIR + File.separator + evoFile + "-" + runNumber + File.separator + "best." + evolutionState.generation + ".ser";
             Files.createParentDirs(new File(filename));
 
             OutputStream file = new FileOutputStream(filename);

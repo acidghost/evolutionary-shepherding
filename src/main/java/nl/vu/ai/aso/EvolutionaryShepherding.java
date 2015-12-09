@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.URL;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,8 +129,8 @@ public class EvolutionaryShepherding {
     }
 
     public static void main(String[] args) {
-        String nSheep = "one";
-        String nSheph = "one";
+        String nSheph = "3";
+        String nSheep = "1";
 
         if (args.length == 2) {
             nSheph = args[0];
@@ -138,8 +139,14 @@ public class EvolutionaryShepherding {
 
         // clearSerialized();
 
-        String filename = EvolutionaryShepherding.class.getClassLoader().getResource("ecj." + nSheph + ".shep." + nSheep + ".sheep.params").getPath();
-        Evolve.main(new String[] { "-file", filename });
+        final URL resource = EvolutionaryShepherding.class.getClassLoader().getResource("homo." + nSheph + ".shep." + nSheep + ".sheep.params");
+        assert resource != null;
+        String filename = resource.getPath();
+        Evolve.main(new String[] {
+            "-file", filename,
+            "-p", HerdingProblem.EVO_FILE + "=" + filename,
+            "-p", HerdingProblem.EVO_RUN + "=" + 0
+        });
     }
 
 }

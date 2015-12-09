@@ -17,7 +17,7 @@ public abstract class AgentWithNetwork extends Entity {
 
     private Mlp network;
     private int nnCounter;
-    private static final int FREQUENCY = 10;
+    private static final int FREQUENCY = 1;
     private Double2D nnPosition;
 
     public AgentWithNetwork(double newX, double newY, double newRadius, Color c, double agentRadius, double[] weights, int inputs, int hidden) {
