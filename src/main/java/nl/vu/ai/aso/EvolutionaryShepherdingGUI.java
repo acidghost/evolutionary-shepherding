@@ -105,7 +105,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
 
     private void initAvailableStats() {
         List<String> listData = new ArrayList<>();
-        File root = new File("./");
+        File root = new File(EvolutionaryShepherding.STATISTICS_DIR);
         for (File file : root.listFiles(EvolutionaryShepherding.STATS_FILENAME_FILTER)) {
             listData.add(file.getPath());
         }
@@ -152,7 +152,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
             } else if(runNumber == null || runNumber.equals("")) {
                 Alert.alert(MessageType.WARNING, "Insert a run number", this);
             } else {
-                simulationTask = EvolutionaryShepherding.runEvolution(resourcesFolderFile.getPath() + "/" + selected, statFile, runNumber);
+                simulationTask = EvolutionaryShepherding.runEvolution(resourcesFolderFile.getPath() + File.separator + selected, statFile, runNumber);
                 simulationTask.execute(new TaskAdapter<>(new TaskListener<Optional<EvaluationResults>>() {
                     @Override
                     public void taskExecuted(Task<Optional<EvaluationResults>> task) {

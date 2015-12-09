@@ -1,6 +1,7 @@
 package nl.vu.ai.aso;
 
 import com.google.common.base.Optional;
+import com.google.common.io.Files;
 import com.google.common.io.PatternFilenameFilter;
 import ec.Evolve;
 import nl.vu.ai.aso.evolution.HerdingProblem;
@@ -24,6 +25,7 @@ import java.util.List;
 public class EvolutionaryShepherding {
 
     public static final String SERIALIZED_DIR = "serialized";
+    public static final String STATISTICS_DIR = "statistics";
     public static final PatternFilenameFilter PARAMS_FILENAME_FILTER = new PatternFilenameFilter(".*\\.params");
     public static final PatternFilenameFilter SERIALIZED_FILENAME_FILTER = new PatternFilenameFilter(".*\\.ser");
     public static final PatternFilenameFilter STATS_FILENAME_FILTER = new PatternFilenameFilter(".*\\.stat");
@@ -48,7 +50,7 @@ public class EvolutionaryShepherding {
                 ExitManager exitManager = ExitManager.disableSystemExit();
                 Evolve.main(new String[] {
                     "-file", file,
-                    "-p", HerdingProblem.STAT_FILE + "=$" + statFile,
+                    "-p", HerdingProblem.STAT_FILE + "=$" + STATISTICS_DIR + File.separator + statFile,
                     "-p", HerdingProblem.EVO_FILE + "=" + file,
                     "-p", HerdingProblem.EVO_RUN + "=" + runNumber
                 });
