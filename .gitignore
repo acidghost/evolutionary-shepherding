@@ -30,3 +30,4 @@ report/*.blg
 report/*.dvi
 report/*.synctex.gz
 report/*.log
+report/*.bib
