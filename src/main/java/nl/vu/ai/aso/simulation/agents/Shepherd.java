@@ -33,7 +33,7 @@ public class Shepherd extends AgentWithNetwork {
         Double2D sheepCenter = yard.getSheepCenter();
         double shepherd_r = getDistanceFromSheep(yard, this, sheepCenter);
         double shepherd_b = getBearingFromSheep(yard, this, sheepCenter, yard.corralPosition);
-        // log("B - R: " + shepherd_b + " " + shepherd_r);
+        // log("R - B: " + shepherd_r + " " + shepherd_b);
 
         Object[] neighbors = yard.detectNearestNeighbors(this);
         double otherShep_r = getDistanceFromSheep(yard, (Shepherd) neighbors[0], sheepCenter);

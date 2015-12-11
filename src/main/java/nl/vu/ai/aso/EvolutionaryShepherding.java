@@ -145,7 +145,8 @@ public class EvolutionaryShepherding {
         Evolve.main(new String[] {
             "-file", filename,
             "-p", HerdingProblem.EVO_FILE + "=" + filename,
-            "-p", HerdingProblem.EVO_RUN + "=" + 0
+            "-p", HerdingProblem.EVO_RUN + "=" + 0,
+            "-p", HerdingProblem.STAT_FILE + "=$" + STATISTICS_DIR + File.separator + "homo-0.stat"
         });
     }
 

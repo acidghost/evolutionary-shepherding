@@ -228,8 +228,6 @@ public abstract class Entity extends OvalPortrayal2D implements Steppable {
         if (isValidMove(herding, newLoc)) {
             loc = newLoc;
             // log("New agent location @ " + loc.toCoordinates());
-        } else {
-            // log("hit something @ " + newLoc.toCoordinates());
         }
 
         yard.setObjectLocation(this, new Double2D(loc));

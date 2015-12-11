@@ -36,14 +36,15 @@ public class Sheep extends AgentWithNetwork {
     protected SheepInputs getInputs(Herding herding) {
         Yard yard = herding.yard;
         Double2D sheepCenter = yard.getSheepCenter();
-        double sheep_r = getDistanceFromSheep(yard, this, sheepCenter);
-        double sheep_b = getBearingFromSheep(yard, this, sheepCenter, yard.corralPosition);
 
         Object[] neighbors = yard.detectNearestNeighbors(this);
         double closestShep_r = getDistanceFromSheep(yard, (Shepherd) neighbors[0], sheepCenter);
         double closestShep_b = getBearingFromSheep(yard, (Shepherd) neighbors[0], sheepCenter, yard.corralPosition);
+        // log("R - B: " + closestShep_r + " - " + closestShep_b);
 
         if (herding.sheep.size() > 1) {
+            double sheep_r = getDistanceFromSheep(yard, this, sheepCenter);
+            double sheep_b = getBearingFromSheep(yard, this, sheepCenter, yard.corralPosition);
             return new SheepInputs(closestShep_r, closestShep_b, sheep_r, sheep_b);
         } else {
             return new SheepInputs(closestShep_r, closestShep_b, null, null);
@@ -68,6 +69,6 @@ public class Sheep extends AgentWithNetwork {
     public void step(SimState simState) {
         super.step(simState);
         Herding herding = (Herding) simState;
-        travelledDistance += herding.yard.corralPosition.distance(new Double2D(loc));
+        travelledDistance += loc.x - herding.yard.corralPosition.x;
     }
 }

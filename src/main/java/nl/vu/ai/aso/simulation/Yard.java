@@ -25,7 +25,7 @@ public class Yard extends Continuous2D {
 
     // for fitness function
     public double allSheepDistance() {
-        return getSheepCenter().distance(corralPosition);
+        return corralPosition.x - getSheepCenter().x;
     }
 
     public double getSheepRatio(List<Sheep> sheepAgents) {
@@ -49,30 +49,46 @@ public class Yard extends Continuous2D {
         ArrayList<Sheep> otherSheep = (ArrayList) agents[1];
         Predator nearestPredator = (Predator) agents[2];
 
-        // get the nearest shepard
-        Shepherd nearestShepard = otherShepherds.get(0);
-        double distanceNearestShepard = getObjectLocationAsDouble2D(agent).distance(getObjectLocationAsDouble2D(nearestShepard));
-
-        for (int i = 1; i < otherShepherds.size(); i++){
-            //check if the distance is bigger than nearestShepherds
-            double currentShepardDistance = getObjectLocationAsDouble2D(agent).distance(getObjectLocationAsDouble2D(otherShepherds.get(i)));
-            if (distanceNearestShepard > currentShepardDistance) {
-                nearestShepard = otherShepherds.get(i);
-                distanceNearestShepard = currentShepardDistance;
-            }
+        if (agent instanceof Shepherd) {
+            otherShepherds.remove(agent);
+        } else if (agent instanceof Sheep) {
+            otherSheep.remove(agent);
         }
 
-        // get the nearest sheep
-        Sheep nearestSheep = otherSheep.get(0);
-        double distanceNearestSheep= getObjectLocationAsDouble2D(agent).distance(getObjectLocationAsDouble2D(nearestSheep));
+        Shepherd nearestShepard;
+        if (otherShepherds.size() > 0) {
+            // get the nearest shepard
+            nearestShepard = otherShepherds.get(0);
+            double distanceNearestShepard = getObjectLocationAsDouble2D(agent).distance(getObjectLocationAsDouble2D(nearestShepard));
 
-        for (int i = 1; i < otherSheep.size(); i++){
-            //check if the distance is bigger than nearestSheep
-            double currentSheepDistance = getObjectLocationAsDouble2D(agent).distance(getObjectLocationAsDouble2D(otherSheep.get(i)));
-            if (distanceNearestSheep > currentSheepDistance) {
-                nearestSheep = otherSheep.get(i);
-                distanceNearestSheep = currentSheepDistance;
+            for (int i = 1; i < otherShepherds.size(); i++){
+                //check if the distance is bigger than nearestShepherds
+                double currentShepardDistance = getObjectLocationAsDouble2D(agent).distance(getObjectLocationAsDouble2D(otherShepherds.get(i)));
+                if (distanceNearestShepard > currentShepardDistance) {
+                    nearestShepard = otherShepherds.get(i);
+                    distanceNearestShepard = currentShepardDistance;
+                }
             }
+        } else {
+            nearestShepard = (Shepherd) agent;
+        }
+
+        Sheep nearestSheep;
+        if (otherSheep.size() > 0) {
+            // get the nearest sheep
+            nearestSheep = otherSheep.get(0);
+            double distanceNearestSheep= getObjectLocationAsDouble2D(agent).distance(getObjectLocationAsDouble2D(nearestSheep));
+
+            for (int i = 1; i < otherSheep.size(); i++){
+                //check if the distance is bigger than nearestSheep
+                double currentSheepDistance = getObjectLocationAsDouble2D(agent).distance(getObjectLocationAsDouble2D(otherSheep.get(i)));
+                if (distanceNearestSheep > currentSheepDistance) {
+                    nearestSheep = otherSheep.get(i);
+                    distanceNearestSheep = currentSheepDistance;
+                }
+            }
+        } else {
+            nearestSheep = (Sheep) agent;
         }
 
         return new Object[] {nearestShepard, nearestSheep, nearestPredator}; // last one could be null
