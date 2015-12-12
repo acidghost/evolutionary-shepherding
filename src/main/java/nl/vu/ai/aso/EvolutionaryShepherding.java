@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.URL;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +24,15 @@ import java.util.List;
  */
 public class EvolutionaryShepherding {
 
+    public static final String STATISTICS_DIR = "statistics";
     public static final String SERIALIZED_DIR = "serialized";
-    public static final String OUTPUT_STAT_DIR = "output";
     public static final PatternFilenameFilter PARAMS_FILENAME_FILTER = new PatternFilenameFilter(".*\\.params");
     public static final PatternFilenameFilter SERIALIZED_FILENAME_FILTER = new PatternFilenameFilter(".*\\.ser");
     public static final PatternFilenameFilter STATS_FILENAME_FILTER = new PatternFilenameFilter(".*\\.stat");
 
-    public static void clearSerialized() {
-        File serialized = new File(SERIALIZED_DIR);
+    public static void clearSerialized(String folder) {
+        File serialized = new File(SERIALIZED_DIR + File.separator + folder);
+        System.out.println("Cleaning " + serialized.getPath() + " folder...");
         File[] files = serialized.listFiles(SERIALIZED_FILENAME_FILTER);
         for (int i = 0; i < (files != null ? files.length : 0); i++) {
             File file = files[i];
@@ -45,11 +47,14 @@ public class EvolutionaryShepherding {
             @Override
             public Optional<EvaluationResults> execute() throws TaskExecutionException {
                 HerdingProblem.evaluationCounter = 0;
-                // clearSerialized();
+
+                final String[] splitFilename = file.split(".params")[0].split(File.separator);
+                clearSerialized(splitFilename[splitFilename.length - 1] + "-" + runNumber);
+
                 ExitManager exitManager = ExitManager.disableSystemExit();
                 Evolve.main(new String[] {
                     "-file", file,
-                    "-p", HerdingProblem.STAT_FILE + "=$" + statFile,
+                    "-p", HerdingProblem.STAT_FILE + "=$" + STATISTICS_DIR + File.separator + statFile,
                     "-p", HerdingProblem.EVO_FILE + "=" + file,
                     "-p", HerdingProblem.EVO_RUN + "=" + runNumber
                 });
@@ -127,18 +132,25 @@ public class EvolutionaryShepherding {
     }
 
     public static void main(String[] args) {
-        String nSheep = "one";
-        String nSheph = "one";
+        String nSheph = "3";
+        String nSheep = "1";
 
         if (args.length == 2) {
             nSheph = args[0];
             nSheep = args[1];
         }
 
-        // clearSerialized();
+        clearSerialized("homo." + nSheph + ".shep." + nSheep + ".sheep-0");
 
-        String filename = EvolutionaryShepherding.class.getClassLoader().getResource("ecj." + nSheph + ".shep." + nSheep + ".sheep.params").getPath();
-        Evolve.main(new String[] { "-file", filename });
+        final URL resource = EvolutionaryShepherding.class.getClassLoader().getResource("homo." + nSheph + ".shep." + nSheep + ".sheep.params");
+        assert resource != null;
+        String filename = resource.getPath();
+        Evolve.main(new String[] {
+            "-file", filename,
+            "-p", HerdingProblem.EVO_FILE + "=" + filename,
+            "-p", HerdingProblem.EVO_RUN + "=" + 0,
+            "-p", HerdingProblem.STAT_FILE + "=$" + STATISTICS_DIR + File.separator + "homo-0.stat"
+        });
     }
 
 }
