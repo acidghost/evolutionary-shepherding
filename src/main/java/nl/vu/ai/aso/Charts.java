@@ -5,9 +5,13 @@ import com.google.common.collect.Lists;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.Layer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -86,6 +90,70 @@ public class Charts {
             collection, PlotOrientation.VERTICAL,
             true, true, false
         );
+
+        XYPlot plot = chart.getXYPlot();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        plot.setRenderer(renderer);
+
+        return new ChartPanel(chart);
+    }
+
+    public static Container getMeanVarPerGenAcrossRuns(String title, String scenario) throws IOException {
+        File scenarioDir = new File(scenario);
+        List<Charts> charts = Lists.newArrayList();
+        for (File runFile : scenarioDir.listFiles(EvolutionaryShepherding.STATS_FILENAME_FILTER)) {
+            charts.add(new Charts(runFile.getPath()));
+        }
+
+        XYSeriesCollection collection = new XYSeriesCollection();
+        List<double[]> allVariances = Lists.newArrayList();
+
+        for (int subpop = 0; subpop < charts.get(0).statLines.get(0).subpopData.size(); subpop++) {
+            XYSeries series = new XYSeries("Subpop " + subpop);
+            int totalGenerations = charts.get(0).statLines.size();
+
+            for (int generation = 0; generation < totalGenerations; generation++) {
+                double sum = 0.0;
+                for (Charts chart : charts) {
+                    sum += chart.statLines.get(generation).subpopData.get(subpop).mean;
+                }
+                series.add(generation, sum / charts.size());
+            }
+
+            collection.addSeries(series);
+
+            double[] variances = new double[totalGenerations];
+            for (int generation = 0; generation < totalGenerations; generation++) {
+                double tmp = 0.0;
+                for (Charts chart : charts) {
+                    double v = chart.statLines.get(generation).subpopData.get(subpop).mean;
+                    tmp += (series.getY(generation).doubleValue() - v) * (series.getY(generation).doubleValue() - v);
+                }
+                variances[generation] = tmp / variances.length;
+            }
+            allVariances.add(variances);
+        }
+
+        JFreeChart chart = ChartFactory.createXYLineChart(
+            title + " - " + charts.size() + " runs",
+            "Generations", "Mean fitness",
+            collection, PlotOrientation.VERTICAL,
+            true, true, false
+        );
+
+        XYPlot plot = chart.getXYPlot();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        for (int subpop = 0; subpop < allVariances.size(); subpop++) {
+            double[] variances = allVariances.get(subpop);
+            for (int i = 0; i < variances.length; i++) {
+                double variance = variances[i];
+                double mean = collection.getSeries(subpop).getY(i).doubleValue();
+                IntervalMarker intervalMarker = new IntervalMarker(mean - variance, mean + variance);
+                plot.addRangeMarker(i, intervalMarker, Layer.BACKGROUND, false);
+            }
+        }
+        plot.setRenderer(renderer);
+
         return new ChartPanel(chart);
     }
 
