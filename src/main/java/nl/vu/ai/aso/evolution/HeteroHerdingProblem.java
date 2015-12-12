@@ -21,7 +21,7 @@ public class HeteroHerdingProblem extends HerdingProblem {
         int evaluations = evolutionState.parameters.getInt(new Parameter(EVAL_STEPS), new Parameter(EVAL_STEPS));
 
         HerdingProblem.evaluationCounter++;
-        evolutionState.output.message("Evaluate: " + HerdingProblem.evaluationCounter);
+        // evolutionState.output.message("Evaluate: " + HerdingProblem.evaluationCounter);
 
         ArrayList<double[]> shepherd = new ArrayList<>();
         ArrayList<double[]> sheep = new ArrayList<>();

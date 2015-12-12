@@ -53,7 +53,7 @@ public abstract class HerdingProblem extends Problem implements GroupedProblemFo
         } else {
             results = Herding.runSimulation(evaluations, shepherd, sheep, predator);
         }
-        evolutionState.output.message("Evaluation finished.\nGeneration: " + evolutionState.generation + "\n" + results.toString());
+        // evolutionState.output.message("Evaluation finished.\nGeneration: " + evolutionState.generation + "\n" + results.toString());
         return results;
     }
 
@@ -78,7 +78,7 @@ public abstract class HerdingProblem extends Problem implements GroupedProblemFo
             }
         }
 
-        evolutionState.output.message("\n\nFinished generation " + evolutionState.generation);
+        evolutionState.output.message("Finished generation " + evolutionState.generation);
 
         serializeIndividuals(evolutionState);
 

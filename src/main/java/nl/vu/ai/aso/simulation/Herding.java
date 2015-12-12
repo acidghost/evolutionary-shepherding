@@ -92,7 +92,7 @@ public class Herding extends SimState {
             schedule.scheduleRepeating(aSheep, TIME_STEP_PERIOD);
         }
 
-        System.out.println("Starting simulation with " + shepherds.size() + " shepherds and " + sheep.size() + " sheep.");
+        // System.out.println("Starting simulation with " + shepherds.size() + " shepherds and " + sheep.size() + " sheep.");
     }
 
     // development's convenient method
