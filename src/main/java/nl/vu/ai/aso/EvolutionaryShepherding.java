@@ -1,7 +1,6 @@
 package nl.vu.ai.aso;
 
 import com.google.common.base.Optional;
-import com.google.common.io.Files;
 import com.google.common.io.PatternFilenameFilter;
 import ec.Evolve;
 import nl.vu.ai.aso.evolution.HerdingProblem;
@@ -31,8 +30,9 @@ public class EvolutionaryShepherding {
     public static final PatternFilenameFilter SERIALIZED_FILENAME_FILTER = new PatternFilenameFilter(".*\\.ser");
     public static final PatternFilenameFilter STATS_FILENAME_FILTER = new PatternFilenameFilter(".*\\.stat");
 
-    public static void clearSerialized() {
-        File serialized = new File(SERIALIZED_DIR);
+    public static void clearSerialized(String folder) {
+        File serialized = new File(SERIALIZED_DIR + File.separator + folder);
+        System.out.println("Cleaning " + serialized.getPath() + " folder...");
         File[] files = serialized.listFiles(SERIALIZED_FILENAME_FILTER);
         for (int i = 0; i < (files != null ? files.length : 0); i++) {
             File file = files[i];
@@ -47,7 +47,8 @@ public class EvolutionaryShepherding {
             @Override
             public Optional<EvaluationResults> execute() throws TaskExecutionException {
                 HerdingProblem.evaluationCounter = 0;
-                // clearSerialized();
+                final String[] splitFilename = file.split(".params")[0].split(File.separator);
+                clearSerialized(splitFilename[splitFilename.length - 1] + "-" + runNumber);
                 ExitManager exitManager = ExitManager.disableSystemExit();
                 Evolve.main(new String[] {
                     "-file", file,
@@ -137,7 +138,7 @@ public class EvolutionaryShepherding {
             nSheep = args[1];
         }
 
-        // clearSerialized();
+        clearSerialized("homo." + nSheph + ".shep." + nSheep + ".sheep-0");
 
         final URL resource = EvolutionaryShepherding.class.getClassLoader().getResource("homo." + nSheph + ".shep." + nSheep + ".sheep.params");
         assert resource != null;

@@ -20,8 +20,9 @@ public class Herding extends SimState {
 
     // public final int CORRALED_BONUS = 500;
     // public final int ESCAPED_BONUS = 500;
-    private final int BUMP_BONUS_SCALE = 20;
-    private final int ESCAPED_PENALTY_MUL = 10;
+    private final int BUMP_BONUS_SCALE = 5;
+    private final int ESCAPED_PENALTY_MUL = WIDTH;
+    private final double DISTANCE_SCALE = 1.0;
 
     public Yard yard = new Yard(RESOLUTION, WIDTH, HEIGHT); //37x37 foot pasture
     public List<double[]> shepherds;
@@ -53,11 +54,13 @@ public class Herding extends SimState {
         // clear the yard
         yard.clear();
 
+        double halfDistance = 6;
+
         //TODO: set another spawn position
         final Double2D[] shepherdsPositions = new Double2D[] {
-            new Double2D(yard.getWidth() * 0.5 - 8, yard.getHeight() * 0.5 - Shepherd.AGENT_RADIUS),
-            new Double2D(yard.getWidth() * 0.5 - 8, yard.getHeight() * 0.5),
-            new Double2D(yard.getWidth() * 0.5 - 8, yard.getHeight() * 0.5 + Shepherd.AGENT_RADIUS)
+            new Double2D(yard.getWidth() * 0.5 - halfDistance, yard.getHeight() * 0.5),
+            new Double2D(yard.getWidth() * 0.5 - halfDistance, yard.getHeight() * 0.5 - (Shepherd.AGENT_RADIUS * 2)),
+            new Double2D(yard.getWidth() * 0.5 - halfDistance, yard.getHeight() * 0.5 + (Shepherd.AGENT_RADIUS * 2))
         };
 
         // add shepherds to the yard
@@ -72,9 +75,9 @@ public class Herding extends SimState {
 
         //TODO: set another spawn position
         final Double2D[] sheepPositions = new Double2D[] {
-            new Double2D(yard.getWidth() * 0.5 + 8, yard.getHeight() * 0.5 - Sheep.AGENT_RADIUS),
-            new Double2D(yard.getWidth() * 0.5 + 8, yard.getHeight() * 0.5),
-            new Double2D(yard.getWidth() * 0.5 + 8, yard.getHeight() * 0.5 + Sheep.AGENT_RADIUS)
+            new Double2D(yard.getWidth() * 0.5 + halfDistance, yard.getHeight() * 0.5),
+            new Double2D(yard.getWidth() * 0.5 + halfDistance, yard.getHeight() * 0.5 - Sheep.AGENT_RADIUS),
+            new Double2D(yard.getWidth() * 0.5 + halfDistance, yard.getHeight() * 0.5 + Sheep.AGENT_RADIUS)
         };
 
         // add sheep to the yard
@@ -109,7 +112,7 @@ public class Herding extends SimState {
     public double[] individualSheepScores() {
         double[] distances = new double[this.sheep.size()];
         for (int i = 0; i < sheepAgents.size(); i++) {
-            distances[i] = sheepAgents.get(i).travelledDistance - cumulativeSheepRatio;
+            distances[i] = (sheepAgents.get(i).travelledDistance * DISTANCE_SCALE) - cumulativeSheepRatio;
             switch (sheepStatus) {
                 case CORRALED:
                     distances[i] -= ESCAPED_PENALTY_MUL * (totalSteps - schedule.getSteps());
@@ -126,7 +129,7 @@ public class Herding extends SimState {
         double[] scores = new double[this.shepherds.size()];
 
         for (int i = 0; i < shepherdAgents.size(); i++) {
-            scores[i] = (shepherdAgents.get(i).numberOfBumpsWithSheep * BUMP_BONUS_SCALE) - cumulativeSheepDist;
+            scores[i] = ((shepherdAgents.get(i).numberOfBumpsWithSheep * BUMP_BONUS_SCALE) / sheepAgents.size()) - (cumulativeSheepDist * DISTANCE_SCALE);
         }
         return scores;
     }
@@ -149,11 +152,6 @@ public class Herding extends SimState {
     public boolean insideLoopStuff() {
         cumulativeSheepDist += yard.allSheepDistance();
         cumulativeSheepRatio += yard.getSheepRatio(sheepAgents);
-
-        if (sheep.size() > 1 && sheepAgents.size() < 2) {
-            // System.out.println("Not enough sheep.");
-            return false;
-        }
 
         List<Sheep> copiedSheep = new ArrayList<>(sheepAgents);
         for (Sheep sheep : copiedSheep) {

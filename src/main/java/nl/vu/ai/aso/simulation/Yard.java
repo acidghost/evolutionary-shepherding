@@ -1,5 +1,6 @@
 package nl.vu.ai.aso.simulation;
 
+import com.google.common.collect.Lists;
 import nl.vu.ai.aso.shared.SheepStatus;
 import nl.vu.ai.aso.simulation.agents.Entity;
 import nl.vu.ai.aso.simulation.agents.Predator;
@@ -44,15 +45,21 @@ public class Yard extends Continuous2D {
     // returns, in order, closest shepard, sheep and predator. Last one could be null
     public Object[] detectNearestNeighbors(Object agent) {
         // split agents based on their types
-        Object[] agents = sortAgents();
-        ArrayList<Shepherd> otherShepherds = (ArrayList) agents[0];
-        ArrayList<Sheep> otherSheep = (ArrayList) agents[1];
-        Predator nearestPredator = (Predator) agents[2];
+        List<Shepherd> otherShepherds = Lists.newArrayList();
+        List<Sheep> otherSheep = Lists.newArrayList();
+        Predator nearestPredator = null;
 
-        if (agent instanceof Shepherd) {
-            otherShepherds.remove(agent);
-        } else if (agent instanceof Sheep) {
-            otherSheep.remove(agent);
+        Bag allAgents = getAllObjects();
+        for (Object obj : allAgents) {
+            if (!agent.equals(obj)) {
+                if (obj instanceof Shepherd) {
+                    otherShepherds.add((Shepherd) obj);
+                } else if (obj instanceof Sheep) {
+                    otherSheep.add((Sheep) obj);
+                } else if (obj instanceof Predator) {
+                    nearestPredator = (Predator) obj;
+                }
+            }
         }
 
         Shepherd nearestShepard;

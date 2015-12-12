@@ -31,18 +31,34 @@ public abstract class AgentWithNetwork extends Entity {
     }
 
     protected Double2D getNewPosition(INetInputs inputs, Yard yard) {
+        // log("Loc: " + loc.toCoordinates());
+
         if (nnCounter == 0) {
             // log("Requesting new position to NN -> " + Arrays.toString(inputs.toArray()));
             double[] output = network.feedforward(inputs.toArray());
             // log("NN output is " + output[0] + ", " + output[1]);
-            //TODO: check this makes sense
+
             // output -> re-scale -> cartesian -> absolute centered
+
+            // Sheep-centric, so radius is distance from sheep center
+            // and angle is angle from sheep center respect to the corral
             double radius = Herding.WIDTH * output[0];
             double angle = (2 * Math.PI * output[1]) - Math.PI;
+            // log("Radius - angle: " + radius + "\t" + angle);
 
-            Double2D cartesian = new Double2D((radius * Math.cos(angle)), (radius * Math.sin(angle)));
-            // cartesian = cartesian.add(new Double2D(loc));
-            // log("New target: " + cartesian.toCoordinates() + "\t" + radius + " " + angle);
+            Double2D sheepCenter = yard.getSheepCenter();
+            double sheepCorralAngle = Math.atan2(yard.corralPosition.y - sheepCenter.y, yard.corralPosition.x - sheepCenter.x);
+            // log("Sheep-corral angle: " + sheepCorralAngle);
+
+            double xTargetSheepCentric = radius * Math.cos(angle - sheepCorralAngle);
+            double yTargetSheepCentric = radius * Math.sin(angle - sheepCorralAngle);
+            // log("x - y: " + xTargetSheepCentric + " " + yTargetSheepCentric);
+
+            double xTarget = sheepCenter.x + xTargetSheepCentric;
+            double yTarget = sheepCenter.y + yTargetSheepCentric;
+            Double2D cartesian = new Double2D(xTarget, yTarget);
+
+            // log("New target: " + cartesian.toCoordinates() + "\n");
             nnPosition = cartesian;
             nnCounter = FREQUENCY;
         } else {
@@ -57,7 +73,8 @@ public abstract class AgentWithNetwork extends Entity {
     @Override
     public MutableDouble2D getForces(Herding herding) {
         INetInputs inputs = getInputs(herding);
-        return new MutableDouble2D(getNewPosition(inputs, herding.yard));
+        final Double2D newPosition = getNewPosition(inputs, herding.yard);
+        return new MutableDouble2D(newPosition.x - loc.x, newPosition.y - loc.y);
     }
 
     protected double getDistanceFromSheep(Continuous2D yard, AgentWithNetwork agent, Double2D sheepCenter) {
@@ -78,4 +95,5 @@ public abstract class AgentWithNetwork extends Entity {
 
         return sheepCorralAngle + agentSheepAngle;
     }
+
 }

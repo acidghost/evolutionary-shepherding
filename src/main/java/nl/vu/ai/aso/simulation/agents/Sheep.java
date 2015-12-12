@@ -15,7 +15,7 @@ import java.awt.*;
  */
 public class Sheep extends AgentWithNetwork {
 
-    public static final double AGENT_RADIUS = 5;
+    public static final double AGENT_RADIUS = 2;
     public double travelledDistance;
 
     public Sheep(double[] weights, int inputs) {
@@ -23,9 +23,9 @@ public class Sheep extends AgentWithNetwork {
     }
 
     public Sheep(double newX, double newY, double[] weights, int inputs) {
-        super(newX, newY, 1, Color.lightGray, AGENT_RADIUS, weights, inputs);
+        super(newX, newY, 2, Color.lightGray, AGENT_RADIUS, weights, inputs);
         travelledDistance = 0;
-        cap = 0.4;
+        cap = 1.0;
     }
 
     public Sheep(Double2D location, double[] weights, int inputs) {
@@ -40,7 +40,7 @@ public class Sheep extends AgentWithNetwork {
         Object[] neighbors = yard.detectNearestNeighbors(this);
         double closestShep_r = getDistanceFromSheep(yard, (Shepherd) neighbors[0], sheepCenter);
         double closestShep_b = getBearingFromSheep(yard, (Shepherd) neighbors[0], sheepCenter, yard.corralPosition);
-        // log("R - B: " + closestShep_r + " - " + closestShep_b);
+        // log("R - B:\t" + closestShep_r + "\t" + closestShep_b);
 
         if (herding.sheep.size() > 1) {
             double sheep_r = getDistanceFromSheep(yard, this, sheepCenter);
@@ -54,10 +54,11 @@ public class Sheep extends AgentWithNetwork {
     @Override
     public boolean isValidMove(Herding herding, MutableDouble2D newLoc) {
         // check if shepherd bumped into a sheep
-        Bag inRadius = herding.yard.getNeighborsExactlyWithinDistance(new Double2D(loc), agentRadius);
+        Bag inRadius = herding.yard.getNeighborsExactlyWithinDistance(new Double2D(loc), agentRadius + Shepherd.AGENT_RADIUS);
 
         for (Object agent : inRadius) {
             if (agent instanceof Shepherd) {
+                // log("Bump!");
                 ((Shepherd) agent).numberOfBumpsWithSheep++;
             }
         }
@@ -69,6 +70,7 @@ public class Sheep extends AgentWithNetwork {
     public void step(SimState simState) {
         super.step(simState);
         Herding herding = (Herding) simState;
-        travelledDistance += loc.x - herding.yard.corralPosition.x;
+        travelledDistance += herding.yard.corralPosition.x - loc.x;
+        // log("Traveled distance: " + travelledDistance);
     }
 }
