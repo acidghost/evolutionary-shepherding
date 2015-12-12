@@ -13,16 +13,17 @@ import java.util.List;
 
 public class Herding extends SimState {
 
-    private final double TIME_STEP_PERIOD = 1;
+    private static final double TIME_STEP_PERIOD = 1;
     public static final int WIDTH = 37;
     public static final int HEIGHT = WIDTH;
     public static final double RESOLUTION = 1;
 
     // public final int CORRALED_BONUS = 500;
     // public final int ESCAPED_BONUS = 500;
-    private final int BUMP_BONUS_SCALE = 5;
-    private final int ESCAPED_PENALTY_MUL = WIDTH;
-    private final double DISTANCE_SCALE = 1.0;
+    private static final int BUMP_BONUS_SCALE = 0;
+    private static final int ESCAPED_PENALTY_MUL = WIDTH;
+    private static final double DISTANCE_SCALE = 1.0;
+    private static final double SHEEP_RATIO_SCALE = 0.8;
 
     public Yard yard = new Yard(RESOLUTION, WIDTH, HEIGHT); //37x37 foot pasture
     public List<double[]> shepherds;
@@ -112,7 +113,7 @@ public class Herding extends SimState {
     public double[] individualSheepScores() {
         double[] distances = new double[this.sheep.size()];
         for (int i = 0; i < sheepAgents.size(); i++) {
-            distances[i] = (sheepAgents.get(i).travelledDistance * DISTANCE_SCALE) - cumulativeSheepRatio;
+            distances[i] = (sheepAgents.get(i).travelledDistance * DISTANCE_SCALE) - (cumulativeSheepRatio * SHEEP_RATIO_SCALE);
             switch (sheepStatus) {
                 case CORRALED:
                     distances[i] -= ESCAPED_PENALTY_MUL * (totalSteps - schedule.getSteps());

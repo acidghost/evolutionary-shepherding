@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class Shepherd extends AgentWithNetwork {
 
-    public static final double AGENT_RADIUS = 4;
+    public static final double AGENT_RADIUS = 3;
     public int numberOfBumpsWithSheep;
 
     public Shepherd(double[] weights, int inputs) {
@@ -28,11 +28,14 @@ public class Shepherd extends AgentWithNetwork {
     @Override
     protected ShepherdInputs getInputs(Herding herding) {
         Yard yard = herding.yard;
-        Double2D sheepCenter = yard.getSheepCenter();
+
+        Object[] neighbors = yard.detectNearestNeighbors(this);
+        // Double2D sheepCenter = yard.getSheepCenter();
+        Double2D sheepCenter = yard.getObjectLocation(neighbors[1]);
+
         double shepherd_r = getDistanceFromSheep(yard, this, sheepCenter);
         double shepherd_b = getBearingFromSheep(yard, this, sheepCenter, yard.corralPosition);
 
-        Object[] neighbors = yard.detectNearestNeighbors(this);
         double otherShep_r = getDistanceFromSheep(yard, (Shepherd) neighbors[0], sheepCenter);
         double otherShep_b = getBearingFromSheep(yard, (Shepherd) neighbors[0], sheepCenter, yard.corralPosition);
 
