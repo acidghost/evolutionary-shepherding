@@ -40,7 +40,6 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     private Form.Section simulationSection = new Form.Section();
     private Label simulationSectionLabel = new Label();
     private ListButton availableScenarios = new ListButton();
-    private TextInput statFileInput = new TextInput();
     private TextInput evoRunNumberInput = new TextInput();
     private PushButton startButton = new PushButton();
     private PushButton stopButton = new PushButton();
@@ -115,10 +114,18 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
 
     private void initAvailableStats() {
         List<String> listData = new ArrayList<>();
-        File root = new File(EvolutionaryShepherding.STATISTICS_DIR);
-        for (File file : root.listFiles(EvolutionaryShepherding.STATS_FILENAME_FILTER)) {
-            listData.add(file.getPath());
+        File statsDir = new File(EvolutionaryShepherding.STATISTICS_DIR);
+
+        try {
+            Files.find(
+                Paths.get(statsDir.toURI()), 999,
+                (p, bfa) -> bfa.isRegularFile() && EvolutionaryShepherding.STATS_FILENAME_FILTER.accept(p.toFile(), p.getFileName().toString())
+            ).forEach(file -> listData.add(file.toFile().getPath().split(statsDir.getPath())[1]));
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert.alert(MessageType.ERROR, e.getClass().getSimpleName() + ": " + e.getMessage(), this);
         }
+
         availableStats.setListData(listData);
     }
 
@@ -146,23 +153,19 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
 
         initAvailableScenarios();
 
-        statFileInput.setPrompt("Filename *.stat for the run");
         evoRunNumberInput.setPrompt("Run number for this scenario");
 
         startButton.setButtonData("Start simulation");
         startButton.setEnabled(true);
         startButton.getButtonPressListeners().add(button -> {
             String selected = (String) availableScenarios.getSelectedItem();
-            String statFile = statFileInput.getText();
             String runNumber = evoRunNumberInput.getText();
             if (selected == null || selected.equals("")) {
                 Alert.alert(MessageType.WARNING, "No scenario selected!", this);
-            } else if(statFile == null || statFile.equals("")) {
-                Alert.alert(MessageType.WARNING, "Insert a meaningful stat filename!", this);
             } else if(runNumber == null || runNumber.equals("")) {
                 Alert.alert(MessageType.WARNING, "Insert a run number", this);
             } else {
-                simulationTask = EvolutionaryShepherding.runEvolution(resourcesFolderFile.getPath() + File.separator + selected, statFile, runNumber);
+                simulationTask = EvolutionaryShepherding.runEvolution(resourcesFolderFile.getPath() + File.separator + selected, runNumber);
                 simulationTask.execute(new TaskAdapter<>(new TaskListener<Optional<EvaluationResults>>() {
                     @Override
                     public void taskExecuted(Task<Optional<EvaluationResults>> task) {
@@ -198,7 +201,6 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
 
         simulationSection.add(simulationSectionLabel);
         simulationSection.add(availableScenarios);
-        simulationSection.add(statFileInput);
         simulationSection.add(evoRunNumberInput);
         simulationSection.add(startButton);
         simulationSection.add(stopButton);
@@ -265,7 +267,8 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
                 Alert.alert(MessageType.WARNING, "No stat file selected", this);
             } else {
                 try {
-                    Charts charts = new Charts(selected);
+                    final String filename = new File(EvolutionaryShepherding.STATISTICS_DIR).getPath() + selected;
+                    Charts charts = new Charts(filename);
                     JFrame frame = new JFrame(selected);
                     frame.setContentPane(charts.getMeanPerSubpopPerGeneration(selected));
                     frame.setVisible(true);

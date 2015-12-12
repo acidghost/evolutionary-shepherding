@@ -113,7 +113,7 @@ public abstract class HerdingProblem extends Problem implements GroupedProblemFo
             final String[] evoFileSplitted = ((String) evolutionState.parameters.get(EVO_FILE)).split(File.separator);
             final String evoFile = evoFileSplitted[evoFileSplitted.length - 1].split(".params")[0];
             final String runNumber = (String) evolutionState.parameters.get(EVO_RUN);
-            final String filename = EvolutionaryShepherding.SERIALIZED_DIR + File.separator + evoFile + "-" + runNumber + File.separator + "best." + evolutionState.generation + ".ser";
+            final String filename = EvolutionaryShepherding.SERIALIZED_DIR + File.separator + evoFile + File.separator + runNumber + File.separator + "best." + evolutionState.generation + ".ser";
             Files.createParentDirs(new File(filename));
 
             OutputStream file = new FileOutputStream(filename);
