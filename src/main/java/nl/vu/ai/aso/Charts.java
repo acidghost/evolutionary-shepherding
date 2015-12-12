@@ -81,7 +81,8 @@ public class Charts {
         }
 
         JFreeChart chart = ChartFactory.createXYLineChart(
-            title,  "Generations", "Mean fitness",
+            title + " - " + charts.size() + " runs",
+            "Generations", "Mean fitness",
             collection, PlotOrientation.VERTICAL,
             true, true, false
         );

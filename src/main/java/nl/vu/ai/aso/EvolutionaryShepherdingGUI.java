@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
  * Created by acidghost on 05/12/15.
@@ -32,6 +33,8 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     private static final String TITLE = "Evolutionary Shepherding";
     private static final int LOG_LENGTH = 15;
     private static final Font ITALIC_FONT = new Font("Times", Font.ITALIC, 11);
+
+    private static final int MAX_RUNS = 50;
 
     private SplitPane mainPanel = new SplitPane();
     private FlowPane leftPanel = new FlowPane();
@@ -51,6 +54,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     private Form.Section statsSection = new Form.Section();
     private Label statsSectionLabel = new Label();
     private ListButton availableStats = new ListButton();
+    private TextInput statsRun = new TextInput();
     private PushButton drawChartsButton = new PushButton();
     private ListView logView = new ListView();
     private Label logNotice = new Label();
@@ -113,20 +117,26 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     }
 
     private void initAvailableStats() {
-        List<String> listData = new ArrayList<>();
         File statsDir = new File(EvolutionaryShepherding.STATISTICS_DIR);
 
-        try {
-            Files.find(
-                Paths.get(statsDir.toURI()), 999,
-                (p, bfa) -> bfa.isRegularFile() && EvolutionaryShepherding.STATS_FILENAME_FILTER.accept(p.toFile(), p.getFileName().toString())
-            ).forEach(file -> listData.add(file.toFile().getPath().split(statsDir.getPath())[1]));
-        } catch (IOException e) {
-            e.printStackTrace();
-            Alert.alert(MessageType.ERROR, e.getClass().getSimpleName() + ": " + e.getMessage(), this);
-        }
+//        List<String> statFiles = new ArrayList<>();
+//        try {
+//            Files.find(
+//                Paths.get(statsDir.toURI()), 999,
+//                (p, bfa) -> bfa.isRegularFile() && EvolutionaryShepherding.STATS_FILENAME_FILTER.accept(p.toFile(), p.getFileName().toString())
+//            ).forEach(file -> statFiles.add(file.toFile().getPath().split(statsDir.getPath())[1]));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            Alert.alert(MessageType.ERROR, e.getClass().getSimpleName() + ": " + e.getMessage(), this);
+//        }
 
-        availableStats.setListData(listData);
+        List<String> scenarios = new ArrayList<>();
+        for (File file : statsDir.listFiles()) {
+            if (file.isDirectory()) {
+                scenarios.add(file.getPath().split(statsDir.getPath())[1]);
+            }
+        }
+        availableStats.setListData(scenarios);
     }
 
     private void initLeftPanel() {
@@ -262,17 +272,25 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
 
         drawChartsButton.setButtonData("Draw charts");
         drawChartsButton.getButtonPressListeners().add(button -> {
-            String selected = (String) availableStats.getSelectedItem();
-            if (selected == null || selected.equals("")) {
+            String selectedScenario = (String) availableStats.getSelectedItem();
+            String selectedRun = statsRun.getText();
+            if (selectedScenario == null || selectedScenario.equals("")) {
                 Alert.alert(MessageType.WARNING, "No stat file selected", this);
             } else {
                 try {
-                    final String filename = new File(EvolutionaryShepherding.STATISTICS_DIR).getPath() + selected;
-                    Charts charts = new Charts(filename);
-                    JFrame frame = new JFrame(selected);
-                    frame.setContentPane(charts.getMeanPerSubpopPerGeneration(selected));
-                    frame.setVisible(true);
-                    frame.setSize(600, 400);
+                    final String scenarioFilename = new File(EvolutionaryShepherding.STATISTICS_DIR).getPath() + selectedScenario;
+                    JFrame runsFrame = new JFrame(selectedScenario);
+                    runsFrame.setContentPane(Charts.getMeanPerGenAcrossRuns(selectedScenario, scenarioFilename));
+                    runsFrame.setVisible(true);
+                    runsFrame.setSize(600, 400);
+
+                    if (selectedRun != null && !Objects.equals(selectedRun, "")) {
+                        Charts runChart = new Charts(scenarioFilename + File.separator + selectedRun + ".stat");
+                        JFrame runFrame = new JFrame(selectedScenario + " - run " + selectedRun);
+                        runFrame.setContentPane(runChart.getMeanPerSubpopPerGeneration(selectedScenario));
+                        runFrame.setVisible(true);
+                        runFrame.setSize(600, 400);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     Alert.alert(MessageType.ERROR, e.getClass().getSimpleName() + ": " + e.getMessage(), this);
@@ -282,6 +300,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
 
         statsSection.add(statsSectionLabel);
         statsSection.add(availableStats);
+        statsSection.add(statsRun);
         statsSection.add(drawChartsButton);
     }
 
