@@ -11,6 +11,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.FileSystems;
@@ -44,6 +45,38 @@ public class Charts {
             for (StatLine statLine : statLines) {
                 series.add(statLine.generation, statLine.subpopData.get(i).mean);
             }
+            collection.addSeries(series);
+        }
+
+        JFreeChart chart = ChartFactory.createXYLineChart(
+            title,  "Generations", "Mean fitness",
+            collection, PlotOrientation.VERTICAL,
+            true, true, false
+        );
+        return new ChartPanel(chart);
+    }
+
+    public static Container getMeanPerGenAcrossRuns(String title, String scenario) throws IOException {
+        File scenarioDir = new File(scenario);
+        List<Charts> charts = Lists.newArrayList();
+        for (File runFile : scenarioDir.listFiles(EvolutionaryShepherding.STATS_FILENAME_FILTER)) {
+            charts.add(new Charts(runFile.getPath()));
+        }
+
+        XYSeriesCollection collection = new XYSeriesCollection();
+
+        for (int subpop = 0; subpop < charts.get(0).statLines.get(0).subpopData.size(); subpop++) {
+            XYSeries series = new XYSeries("Subpop " + subpop);
+            int totalGenerations = charts.get(0).statLines.size();
+
+            for (int generation = 0; generation < totalGenerations; generation++) {
+                double sum = 0.0;
+                for (Charts chart : charts) {
+                    sum += chart.statLines.get(generation).subpopData.get(subpop).mean;
+                }
+                series.add(generation, sum / charts.size());
+            }
+
             collection.addSeries(series);
         }
 
@@ -125,11 +158,16 @@ public class Charts {
     }
 
     public static void main(String[] args) throws IOException {
-        Charts charts = new Charts("./hetero.stat");
+        Charts charts = new Charts(EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1" + File.separator + "1.stat");
         JFrame frame = new JFrame("Hetero test");
         frame.setContentPane(charts.getMeanPerSubpopPerGeneration("Heterogeneous"));
         frame.setVisible(true);
         frame.setSize(600, 400);
+
+        JFrame frame2 = new JFrame("Runs demo");
+        frame2.setContentPane(Charts.getMeanPerGenAcrossRuns("Runs demo", EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1"));
+        frame2.setVisible(true);
+        frame2.setSize(600, 400);
     }
 
 }
