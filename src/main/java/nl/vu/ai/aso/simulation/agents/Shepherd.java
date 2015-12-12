@@ -3,15 +3,13 @@ package nl.vu.ai.aso.simulation.agents;
 import nl.vu.ai.aso.shared.ShepherdInputs;
 import nl.vu.ai.aso.simulation.Herding;
 import nl.vu.ai.aso.simulation.Yard;
-import sim.util.Bag;
 import sim.util.Double2D;
-import sim.util.MutableDouble2D;
 
 import java.awt.*;
 
 public class Shepherd extends AgentWithNetwork {
 
-    public static final double AGENT_RADIUS = 3;
+    public static final double AGENT_RADIUS = 4;
     public int numberOfBumpsWithSheep;
 
     public Shepherd(double[] weights, int inputs) {
@@ -19,7 +17,7 @@ public class Shepherd extends AgentWithNetwork {
     }
 
     public Shepherd(double newX, double newY, double[] weights, int inputs) {
-        super(newX, newY, 1, Color.blue, AGENT_RADIUS, weights, inputs);
+        super(newX, newY, 2, Color.blue, AGENT_RADIUS, weights, inputs);
         numberOfBumpsWithSheep = 0;
     }
 
@@ -33,11 +31,12 @@ public class Shepherd extends AgentWithNetwork {
         Double2D sheepCenter = yard.getSheepCenter();
         double shepherd_r = getDistanceFromSheep(yard, this, sheepCenter);
         double shepherd_b = getBearingFromSheep(yard, this, sheepCenter, yard.corralPosition);
-        // log("B - R: " + shepherd_b + " " + shepherd_r);
 
         Object[] neighbors = yard.detectNearestNeighbors(this);
         double otherShep_r = getDistanceFromSheep(yard, (Shepherd) neighbors[0], sheepCenter);
         double otherShep_b = getBearingFromSheep(yard, (Shepherd) neighbors[0], sheepCenter, yard.corralPosition);
+
+        // log("R - B:\t" + shepherd_r + "\t" + shepherd_b + "\t" + otherShep_r + "\t" + otherShep_b);
 
         return new ShepherdInputs(shepherd_r, shepherd_b, otherShep_r, otherShep_b);
     }

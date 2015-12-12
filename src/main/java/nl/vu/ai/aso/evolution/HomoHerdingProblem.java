@@ -40,31 +40,38 @@ public class HomoHerdingProblem extends HerdingProblem {
             sheep.add(sheepIndividual.genome);
         }
 
-        EvaluationResults results = getEvaluationResults(evolutionState, predator, evaluations, shepherd, sheep);
+        for (int trial = 0; trial < TRIALS; trial++) {
+            EvaluationResults results = getEvaluationResults(evolutionState, predator, evaluations, shepherd, sheep);
 
-        double[] sheepScores = results.getSheepScore();
-        double[] shepherdScores = results.getShepherdScore();
+            double[] sheepScores = results.getSheepScore();
+            double[] shepherdScores = results.getShepherdScore();
 
-        double finalShepherdScore = 0.0;
-        for (double shepherdScore : shepherdScores) {
-            finalShepherdScore += shepherdScore;
+            double finalShepherdScore = 0.0;
+            for (double shepherdScore : shepherdScores) {
+                finalShepherdScore += shepherdScore;
+            }
+            finalShepherdScore = finalShepherdScore / shepherdScores.length;
+
+            double finalSheepScore = 0.0;
+            for (double sheepScore : sheepScores) {
+                finalSheepScore += sheepScore;
+            }
+            finalSheepScore = finalSheepScore / sheepScores.length;
+
+            if (updateFitness[0]) {
+                CoESFitness shepherdFitness = (CoESFitness) shepherdIndividual.fitness;
+                shepherdFitness.trials.add(finalShepherdScore);
+                shepherdFitness.setFitness(evolutionState, finalShepherdScore, false);
+                shepherdFitness.sheepStatuses.add(results.getSheepStatus());
+            }
+
+            if (updateFitness[1]) {
+                CoESFitness sheepFitness = (CoESFitness) sheepIndividual.fitness;
+                sheepFitness.trials.add(finalSheepScore);
+                sheepFitness.setFitness(evolutionState, finalSheepScore, false);
+                sheepFitness.sheepStatuses.add(results.getSheepStatus());
+            }
         }
-        finalShepherdScore = finalShepherdScore / shepherdScores.length;
-
-        double finalSheepScore = 0.0;
-        for (double sheepScore : sheepScores) {
-            finalSheepScore += sheepScore;
-        }
-        finalSheepScore = finalSheepScore / sheepScores.length;
-
-        CoESFitness shepherdFitness = (CoESFitness) shepherdIndividual.fitness;
-        shepherdFitness.trials.add(finalShepherdScore);
-        shepherdFitness.setFitness(evolutionState, finalShepherdScore, false);
-        shepherdFitness.sheepStatuses.add(results.getSheepStatus());
-        CoESFitness sheepFitness = (CoESFitness) sheepIndividual.fitness;
-        sheepFitness.trials.add(finalSheepScore);
-        sheepFitness.setFitness(evolutionState, finalSheepScore, false);
-        sheepFitness.sheepStatuses.add(results.getSheepStatus());
     }
 
     @Override

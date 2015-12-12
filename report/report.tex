@@ -30,9 +30,9 @@ Email: Enrico@smellLikePizza.italia}}
 
 
 \begin{abstract}
-In the robotics context, intelligent behaviours are often achieved using neural networks as controllers evolved with an evolutionary algorithm.
+In the context of robotics, intelligent behaviours are often achieved using neural networks as controllers evolved using  an evolutionary algorithm.
 In the case of multiple individuals within a species, controllers can be either homogeneous or heterogeneous.
-In this paper, we use the competitive co-evolution in order to investigate its interaction with the relation between the homo and hetero cases.
+In this paper, we use competitive co-evolution of homo- and heterogeneous controllers in order to investigate its effects on the emergence of specialisation behaviour regarding a herding task.
 % TODO: add what we have discovered
 \end{abstract}
 
@@ -41,20 +41,20 @@ In this paper, we use the competitive co-evolution in order to investigate its i
 
 
 \section{Introduction}
-Evolutionary algorithms (EA) are biological inspired algorithms that evolves over time through generations of individuals. 
+Evolutionary algorithms (EA) are biology inspired algorithms able to evolve entities over time through the generation, procreation and simulation of these entities. The entities subject to the evolution are referred to as individuals and the EA acts like the digital environment these individuals are born, live, procreate and die in.
 The evolution is usually controlled such that next generations improve along the runs.
-In the robotics field, evolutionary algorithms can be used to evolve the  behaviour controller of an individual.
-Neural Networks (NN) are functions estimators or approximators nautal inspired by animals nervous systems, their design allows them to accepts high dimensionaity inputs.   
-Properly trained Neural Networks can be used to control the behaviour of a robot, where inputs are sensors based observations and weights are evolved by an evolutionary algorithm.
-A whole evolution process can be run as a virtual simulation which exploits the current computer's computational power in order to evaluate many generations in a reasonable time.
-Robotics uses both NN and EA in order to evolve intelligent behaviours that can pursue some goals.
-Tasks composition and complexity can vary based on the specific use case, in general it is object of many research investigations which aim to solve different tasks.
-For instance, tasks can be relatively small (e.g., moving objects) or more based on collaboration between a number of individual.
-Research investigations analyse collective behaviour in order to asses to which extent collaboration between individuals is feasible.  
+In the field of robotics, EA's can be used to evolve the behavioural controller of a robot, these controllers are evolved as individuals in an EA.
+Neural Networks (NN) are functions estimators or approximators nautal inspired by biological nervous systems, their design allows them to accept a high number of dimensional inputs.   
+Neural Networks can be used to control the behaviour robots, where the inputs are come from the sensors making observations and the NN's weights are evolved by an evolutionary algorithm.
+The complete evolutionary process can be run as a virtual simulation which exploits the current computer's computational power in order to evaluate many individuals in a reasonable time.
+Robotics employs both NNs and EAs in order to evolve intelligent behaviours that can pursue many given goals.
+Tasks composition and complexity can vary based on the specific use case, in general it is subject of many studies aiming to solve different tasks.
+For instance, tasks can be relatively small (e.g., moving objects) or more based on collaboration between a number of individuals.
+Research investigates collective behaviour in order to asses to which extent collaboration between individuals is feasible.  
 
-In this paper, we consider competitive co-evolution within a herding task which consists in a number of shepherds that herd a sheep into a corral.
+In this paper, we consider competitive co-evolution within a herding task which consists of a number of shepherds that herd a sheep into a corral.
 Here we focus on evolving NNs as controllers for the agents.
-Controllers can be assigned to agents with different approaches, the homogeneous consists in using the same controller for each individual of a specie (e.g., shepherds) while the heterogeneous assigns a different NN for each agent.
+Controllers can be assigned to agents with different approaches, the homogeneous approach uses the same controller for each type of agent (e.g., shepherds), meaning that each shepherd will be assigned the same controller. This one single controller is also the only evolved individual in the EA. In the heterogeneous approach each agent of a type gets their own controller and both controllers are separately evolved in the EA, using species.
 Moreover, the task complexity can be increased by varying or introducing new agents like adding a fox.
 
 We recap our objectives in the following list:
@@ -134,11 +134,10 @@ TODO
 TODO
 
 \section{Experiment}
-\label{sec:experiment)
+\label{sec:experiment}
 In this section we detail the design of the experiments performed in this paper.
 For the sake of shortness, we go just show the experiment that considers the $H_1$ listed in ~\ref{sec:hypothesis}.
 This experiment involves the following entities:
-
 \begin{itemize}
 	\item 2 homogeneous shepherd’s vs 1 (intelligent) sheep
 	\item 2 heterogeneous shepherd’s vs 1 (intelligent) sheep

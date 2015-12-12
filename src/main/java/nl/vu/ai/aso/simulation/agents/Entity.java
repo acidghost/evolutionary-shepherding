@@ -25,7 +25,6 @@ public abstract class Entity extends OvalPortrayal2D implements Steppable {
     public MutableDouble2D force = new MutableDouble2D();
     public MutableDouble2D acceleration = new MutableDouble2D();
     public MutableDouble2D newLoc = new MutableDouble2D();
-    public MutableDouble2D sumVector = new MutableDouble2D(0, 0);
 
     public double speed, radius;
     public double cap;
@@ -49,22 +48,6 @@ public abstract class Entity extends OvalPortrayal2D implements Steppable {
         loc.y = newY;
     }
 
-    public double getVelocityX() {
-        return velocity.x;
-    }
-
-    public void setVelocityX(double newX) {
-        velocity.x = newX;
-    }
-
-    public double getVelocityY() {
-        return velocity.y;
-    }
-
-    public void setVelocityY(double newY) {
-        velocity.y = newY;
-    }
-
     public double getSpeed() {
         return speed;
     }
@@ -79,7 +62,7 @@ public abstract class Entity extends OvalPortrayal2D implements Steppable {
 
     public void setRadius(double newRadius) {
         radius = newRadius;
-        scale = 2 * radius;  // so our ovalportrayal knows how to draw/hit us right
+        scale = radius;  // so our ovalportrayal knows how to draw/hit us right
     }
 
     public double getMass() {
@@ -92,7 +75,7 @@ public abstract class Entity extends OvalPortrayal2D implements Steppable {
 
     // Constructor
     public Entity(double newX, double newY, double newRadius, Color c, double newAgentRadius) {
-        super(c, newRadius * 2);  // scale is twice the radius
+        super(c, newRadius);  // scale is twice the radius
 
         loc = new MutableDouble2D(newX, newY);
         velocity = new MutableDouble2D(0, 0);
@@ -113,61 +96,56 @@ public abstract class Entity extends OvalPortrayal2D implements Steppable {
 
     public boolean isValidMove(final Herding herding, final MutableDouble2D newLoc) {
         // check collisions with other agents?
-        Bag inRadius = herding.yard.getNeighborsExactlyWithinDistance(new Double2D(loc), agentRadius);
-        if (inRadius.size() > 1) {
-            velocity = velocity.negate();
-            boolean checkNewPos = true;
-            Double2D nearestAgentPos = new Double2D(herding.WIDTH + herding.RESOLUTION, herding.HEIGHT + herding.RESOLUTION);
-            for (Object agent : inRadius) {
-                if (!agent.equals(this)) {
-                    Double2D agentPos = herding.yard.getObjectLocation(agent);
-                    checkNewPos = checkNewPos && (newLoc.distance(agentPos) > loc.distance(agentPos));
-                    if (nearestAgentPos.distance(agentPos) >= loc.distance(agentPos)) {
-                        nearestAgentPos = agentPos;
+        Bag inRadius = herding.yard.getNeighborsWithinDistance(new Double2D(loc), (agentRadius + Math.max(Shepherd.AGENT_RADIUS, Sheep.AGENT_RADIUS)) * 1.1);
+        boolean collided = false;
+        for (Object agent : inRadius) {
+            if (!agent.equals(this)) {
+                Entity entity = (Entity) agent;
+                if (entity.loc.distance(newLoc) < entity.agentRadius + agentRadius) {
+                    MutableDouble2D tmpVec = new MutableDouble2D();
+                    if (agentRadius > entity.agentRadius) {
+                        collided = true;
+
+                        tmpVec.subtract(entity.loc, loc);
+                        tmpVec.normalize();
+
+                        entity.bump.x = tmpVec.x * 2.0;
+                        entity.bump.y = tmpVec.y * 2.0;
+                        entity.loc.x += 1.2 * tmpVec.x;
+                        entity.loc.y += 1.2 * tmpVec.y;
+
+                        velocity.multiplyIn(0.9);
                     }
                 }
             }
-            if (checkNewPos) {
-                // log("Valid colliding position: " + newLoc.toCoordinates());
-                loc = newLoc;
-            } else {
-                // log("Invalid colliding position: " + newLoc.toCoordinates());
-                if (loc.x > nearestAgentPos.x) {
-                    loc.x += herding.RESOLUTION;
-                } else if (loc.x < nearestAgentPos.x) {
-                    loc.x -= herding.RESOLUTION;
-                }
-                if (loc.y > nearestAgentPos.y) {
-                    loc.y += herding.RESOLUTION;
-                } else if (loc.y < nearestAgentPos.y) {
-                    loc.y -= herding.RESOLUTION;
-                }
-                return false;
-            }
         }
 
+        if (collided) {
+            // log("Collided at: " + newLoc.toCoordinates());
+            // return false;
+        }
 
         // check walls X axis
         boolean checkXAxis = true;
-        if (newLoc.x > herding.WIDTH) {
-            // if (velocity.x > 0) velocity.x = -velocity.x;
-            loc.x = herding.WIDTH - getRadius();
+        if (newLoc.x > Herding.WIDTH) {
+            if (velocity.x > 0) velocity.x = -velocity.x;
+            loc.x = Herding.WIDTH - .5;
             checkXAxis = false;
         } else if (newLoc.x < 0) {
-            // if (velocity.x < 0) velocity.x = -velocity.x;
-            loc.x = getRadius();
+            if (velocity.x < 0) velocity.x = -velocity.x;
+            loc.x = .5;
             checkXAxis = false;
         }
 
         // check walls Y axis
         boolean checkYAxis = true;
-        if (newLoc.y > herding.HEIGHT) {
-            // if (velocity.y > 0) velocity.y = -velocity.y;
-            loc.y = herding.HEIGHT - getRadius();
+        if (newLoc.y > Herding.HEIGHT) {
+            if (velocity.y > 0) velocity.y = -velocity.y;
+            loc.y = Herding.HEIGHT - .5;
             checkYAxis = false;
         } else if (newLoc.y < 0) {
-            // if (velocity.y < 0) velocity.y = -velocity.y;
-            loc.y = getRadius();
+            if (velocity.y < 0) velocity.y = -velocity.y;
+            loc.y = .5;
             checkYAxis = false;
         }
 
@@ -187,8 +165,8 @@ public abstract class Entity extends OvalPortrayal2D implements Steppable {
         super.draw(object, graphics, info);
 
         // draw our line as well
-        final double width = info.draw.width * radius * 2;
-        final double height = info.draw.height * radius * 2;
+        final double width = info.draw.width * radius;
+        final double height = info.draw.height * radius;
 
         graphics.setColor(Color.white);
         double d = velocity.angle();
@@ -210,11 +188,14 @@ public abstract class Entity extends OvalPortrayal2D implements Steppable {
         Yard yard = herding.yard;
 
         MutableDouble2D force = getForces(herding);
-        // log("Force on  is " + force.toCoordinates());
+        force.addIn(bump);
+        bump.x = 0;
+        bump.y = 0;
+        // log("Force is " + force.toCoordinates());
 
         // acceleration = f/m
         acceleration.multiply(force, 1 / mass); // resets acceleration
-        // log("Acc on is " + acceleration.toCoordinates());
+        // log("Acc is " + acceleration.toCoordinates());
 
         // v = v + a
         velocity.addIn(acceleration);
@@ -222,22 +203,23 @@ public abstract class Entity extends OvalPortrayal2D implements Steppable {
         // log("Vel is " + velocity.toCoordinates());
 
         // L = L + v
-        newLoc.add(loc, velocity);  // resets newLoc
+        newLoc = new MutableDouble2D(loc.x + velocity.x, loc.y + velocity.y);
+        // log("NewLoc & loc: " + newLoc.toCoordinates() + " " + loc.toCoordinates());
 
         // is new location valid?
         if (isValidMove(herding, newLoc)) {
             loc = newLoc;
-            // log("New agent location @ " + loc.toCoordinates());
-        } else {
-            // log("hit something @ " + newLoc.toCoordinates());
+            // log("Valid move: " + loc.toCoordinates());
         }
+
+        // log("Loc final: " + loc.toCoordinates() + "\n");
 
         yard.setObjectLocation(this, new Double2D(loc));
     }
 
     protected void log(String string) {
         Date date = Date.from(Instant.now());
-        System.out.println(date + " : " + System.currentTimeMillis() + " " + this.getClass().getSimpleName() + " >> " + string);
+        System.out.printf("%-60s %s\t%s\n", date + " : " + System.currentTimeMillis() + " " + this.getClass().getSimpleName(), ">>", string);
     }
 
 }
