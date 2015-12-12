@@ -24,6 +24,7 @@ import java.util.List;
 public class EvolutionaryShepherding {
 
     public static final String SERIALIZED_DIR = "serialized";
+    public static final String OUTPUT_STAT_DIR = "output";
     public static final PatternFilenameFilter PARAMS_FILENAME_FILTER = new PatternFilenameFilter(".*\\.params");
     public static final PatternFilenameFilter SERIALIZED_FILENAME_FILTER = new PatternFilenameFilter(".*\\.ser");
     public static final PatternFilenameFilter STATS_FILENAME_FILTER = new PatternFilenameFilter(".*\\.stat");
