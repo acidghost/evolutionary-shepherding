@@ -15,7 +15,7 @@
 
 \begin{document}
 
-\title{The Creation of Co-evolution \\ by the Hands of God}
+\title{The Creation of Competitive Co-evolution \\ by the Hands of God}
 
 
 
@@ -31,7 +31,9 @@ Email: Enrico@smellLikePizza.italia}}
 
 \begin{abstract}
 In the context of robotics, intelligent behaviours are often achieved using neural networks as controllers evolved using  an evolutionary algorithm.
+% */ not sure if this sentence is needed:
 In the case of multiple individuals within a species, controllers can be either homogeneous or heterogeneous.
+%maybe ommit /*
 In this paper, we use competitive co-evolution of homo- and heterogeneous controllers in order to investigate its effects on the emergence of specialisation behaviour regarding a herding task.
 % TODO: add what we have discovered
 \end{abstract}
@@ -55,22 +57,23 @@ Research investigates collective behaviour in order to asses to which extent col
 In this paper, we consider competitive co-evolution within a herding task which consists of a number of shepherds that herd a sheep into a corral.
 Here we focus on evolving NNs as controllers for the agents.
 Controllers can be assigned to agents with different approaches, the homogeneous approach uses the same controller for each type of agent (e.g., shepherds), meaning that each shepherd will be assigned the same controller. This one single controller is also the only evolved individual in the EA. In the heterogeneous approach each agent of a type gets their own controller and both controllers are separately evolved in the EA, using species.
+% TODO are we going to talk about increasing complexity here?
 Moreover, the task complexity can be increased by varying or introducing new agents like adding a fox.
 
 We recap our objectives in the following list:
 
 \begin{itemize}
 	\item To compare homogeneity versus heterogeneity.
-	\item To estimate the effect of increasing the task difficulty.
+	\item To estimate the effect on homo versus heterogeneity of increasingly difficult task.
  	\item To develop controlled experiments through software simulations, using ad hoc Java libraries.
 	\item To collect comprehensive results data.
 \end{itemize}
  
 \subsection{Research questions}
-In the herding task, shepherds and sheep have opponents behaviours in the sense that their goals are opposite.
-While the shepherds try to herd sheep into the corral, the sheep tries to run away from the left side of the pasture.
-Thus, competing species can be co-evolved fighting against each others.
-Furthermore, the task complexity can be influenced by varying different parameters such as the number of sheep or their speed.
+In the herding task, shepherds and sheep have opposing goals.
+While the shepherds try to herd sheep into the corral, the sheep tries to escape through the left side of the pasture.
+Thus, species can be competitively co-evolved in a race to evolve strategies to accomplish the opposing goals.
+Furthermore, the task complexity can be influenced by varying different parameters such as the number of present agents of each type or their relative movement speeds.
 
 The following research questions assume intelligent sheep within a herding task:
  
