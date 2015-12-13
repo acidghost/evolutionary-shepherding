@@ -35,17 +35,19 @@ public class Sheep extends AgentWithNetwork {
     @Override
     protected SheepInputs getInputs(Herding herding) {
         Yard yard = herding.yard;
+        Object[] neighbors = yard.detectNearestNeighbors(this);
         Double2D sheepCenter = yard.getSheepCenter();
 
-        Object[] neighbors = yard.detectNearestNeighbors(this);
+        // closest shepherd coordinates
         double closestShep_r = getDistanceFromSheep(yard, (Shepherd) neighbors[0], sheepCenter);
         double closestShep_b = getBearingFromSheep(yard, (Shepherd) neighbors[0], sheepCenter, yard.corralPosition);
         // log("R - B:\t" + closestShep_r + "\t" + closestShep_b);
 
+        // closest sheep coordinates
         if (herding.sheep.size() > 1) {
-            double sheep_r = getDistanceFromSheep(yard, this, sheepCenter);
-            double sheep_b = getBearingFromSheep(yard, this, sheepCenter, yard.corralPosition);
-            return new SheepInputs(closestShep_r, closestShep_b, sheep_r, sheep_b);
+            double closestSheep_r = getDistanceFromSheep(yard, this, sheepCenter);
+            double closestSheep_b = getBearingFromSheep(yard, this, sheepCenter, yard.corralPosition);
+            return new SheepInputs(closestShep_r, closestShep_b, closestSheep_r, closestSheep_b);
         } else {
             return new SheepInputs(closestShep_r, closestShep_b, null, null);
         }
