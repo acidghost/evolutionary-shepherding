@@ -8,6 +8,8 @@ import org.apache.pivot.collections.Map;
 import org.apache.pivot.util.concurrent.Task;
 import org.apache.pivot.util.concurrent.TaskListener;
 import org.apache.pivot.wtk.*;
+import org.apache.pivot.wtk.Button;
+import org.apache.pivot.wtk.Checkbox;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.Label;
 import org.apache.pivot.wtk.Window;
@@ -43,6 +45,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     private Form.Section simulationSection = new Form.Section();
     private Label simulationSectionLabel = new Label();
     private ListButton availableScenarios = new ListButton();
+    private Checkbox runsCheckbox = new Checkbox();
     private TextInput evoRunNumberInput = new TextInput();
     private PushButton startButton = new PushButton();
     private PushButton stopButton = new PushButton();
@@ -163,7 +166,10 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
 
         initAvailableScenarios();
 
-        evoRunNumberInput.setPrompt("Run number for this scenario");
+        runsCheckbox.setButtonData("Multiple runs");
+        runsCheckbox.setSelected(true);
+
+        evoRunNumberInput.setPrompt("Run number or number of runs");
 
         startButton.setButtonData("Start simulation");
         startButton.setEnabled(true);
@@ -175,27 +181,60 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
             } else if(runNumber == null || runNumber.equals("")) {
                 Alert.alert(MessageType.WARNING, "Insert a run number", this);
             } else {
-                simulationTask = EvolutionaryShepherding.runEvolution(resourcesFolderFile.getPath() + File.separator + selected, runNumber);
-                simulationTask.execute(new TaskAdapter<>(new TaskListener<Optional<EvaluationResults>>() {
-                    @Override
-                    public void taskExecuted(Task<Optional<EvaluationResults>> task) {
-                        log("Simulation " + selected + " ended");
-                        log(task.getResult().get().toString());
-                        setComponentsState(false);
-                        initAvailableReplays();
-                        initAvailableStats();
-                    }
+                final boolean multipleRuns = runsCheckbox.getState().equals(Button.State.SELECTED);
+                if (multipleRuns) {
+                    // multiple runs of the same scenario
+                    final int runs = Integer.parseInt(runNumber);
+                    for (int run = 1; run <= runs; run++) {
+                        simulationTask = EvolutionaryShepherding.runEvolution(resourcesFolderFile.getPath() + File.separator + selected, String.valueOf(run));
+                        final int finalRun = run;
+                        simulationTask.execute(new TaskAdapter<>(new TaskListener<Optional<EvaluationResults>>() {
+                            @Override
+                            public void taskExecuted(Task<Optional<EvaluationResults>> task) {
+                                log("Run " + finalRun + " of " + selected + " ended");
+                                log(task.getResult().get().toString());
+                                setComponentsState(false);
+                                initAvailableReplays();
+                                initAvailableStats();
+                            }
 
-                    @Override
-                    public void executeFailed(Task<Optional<EvaluationResults>> task) {
-                        log("Simulation " + selected + " ended with errors");
-                        setComponentsState(false);
-                        initAvailableReplays();
-                        initAvailableStats();
+                            @Override
+                            public void executeFailed(Task<Optional<EvaluationResults>> task) {
+                                log("Run " + finalRun + " of " + selected + " ended with errors");
+                                setComponentsState(false);
+                                initAvailableReplays();
+                                initAvailableStats();
+                            }
+                        }));
+
+                        setComponentsState(true);
+                        log("Run " + run + " of " + selected + " started");
                     }
-                }));
-                setComponentsState(true);
-                log("Simulation " + selected + " started");
+                } else {
+                    // single run
+                    simulationTask = EvolutionaryShepherding.runEvolution(resourcesFolderFile.getPath() + File.separator + selected, runNumber);
+                    simulationTask.execute(new TaskAdapter<>(new TaskListener<Optional<EvaluationResults>>() {
+                        @Override
+                        public void taskExecuted(Task<Optional<EvaluationResults>> task) {
+                            log("Simulation " + selected + " ended");
+                            log(task.getResult().get().toString());
+                            setComponentsState(false);
+                            initAvailableReplays();
+                            initAvailableStats();
+                        }
+
+                        @Override
+                        public void executeFailed(Task<Optional<EvaluationResults>> task) {
+                            log("Simulation " + selected + " ended with errors");
+                            setComponentsState(false);
+                            initAvailableReplays();
+                            initAvailableStats();
+                        }
+                    }));
+
+                    setComponentsState(true);
+                    log("Simulation " + selected + " started");
+                }
             }
         });
 
@@ -211,6 +250,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
 
         simulationSection.add(simulationSectionLabel);
         simulationSection.add(availableScenarios);
+        simulationSection.add(runsCheckbox);
         simulationSection.add(evoRunNumberInput);
         simulationSection.add(startButton);
         simulationSection.add(stopButton);
