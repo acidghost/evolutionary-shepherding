@@ -160,7 +160,7 @@ public class EvolutionaryShepherding {
             "-file", filename,
             "-p", HerdingProblem.EVO_FILE + "=" + filename,
             "-p", HerdingProblem.EVO_RUN + "=" + 0,
-            "-p", HerdingProblem.STAT_FILE + "=$" + STATISTICS_DIR + File.separator + "homo" + File.separator + nSheph + "v" + nSheep + File.separator + "0.stat"
+            "-p", HerdingProblem.STAT_FILE + "=$" + STATISTICS_DIR + File.separator + "homo" + "." + nSheph + "v" + nSheep + File.separator + "0.stat"
         });
     }
 

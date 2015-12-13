@@ -234,7 +234,7 @@ public class Charts {
         frame.setSize(600, 400);
 
         JFrame frame2 = new JFrame("Runs demo");
-        frame2.setContentPane(Charts.getMeanPerGenAcrossRuns("Runs demo", EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1"));
+        frame2.setContentPane(Charts.getMeanVarPerGenAcrossRuns("Runs demo", EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1"));
         frame2.setVisible(true);
         frame2.setSize(600, 400);
     }
