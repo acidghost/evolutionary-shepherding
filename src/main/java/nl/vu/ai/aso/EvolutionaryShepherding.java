@@ -1,6 +1,7 @@
 package nl.vu.ai.aso;
 
 import com.google.common.base.Optional;
+import com.google.common.io.Files;
 import com.google.common.io.PatternFilenameFilter;
 import ec.Evolve;
 import nl.vu.ai.aso.evolution.HerdingProblem;
@@ -42,19 +43,29 @@ public class EvolutionaryShepherding {
         }
     }
 
-    public static Task<Optional<EvaluationResults>> runEvolution(String file, String statFile, String runNumber) {
+    public static Task<Optional<EvaluationResults>> runEvolution(String file, String runNumber) {
         return new Task<Optional<EvaluationResults>>() {
             @Override
             public Optional<EvaluationResults> execute() throws TaskExecutionException {
                 HerdingProblem.evaluationCounter = 0;
 
                 final String[] splitFilename = file.split(".params")[0].split(File.separator);
-                clearSerialized(splitFilename[splitFilename.length - 1] + "-" + runNumber);
+                final String paramFilename = splitFilename[splitFilename.length - 1];
+                clearSerialized(paramFilename + File.separator + runNumber);
+
+                final String statFile = STATISTICS_DIR + File.separator + paramFilename + File.separator + runNumber + ".stat";
+                try {
+                    Files.createParentDirs(new File(statFile));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("Error creating stat file!");
+                    return Optional.absent();
+                }
 
                 ExitManager exitManager = ExitManager.disableSystemExit();
                 Evolve.main(new String[] {
                     "-file", file,
-                    "-p", HerdingProblem.STAT_FILE + "=$" + STATISTICS_DIR + File.separator + statFile,
+                    "-p", HerdingProblem.STAT_FILE + "=$" + statFile,
                     "-p", HerdingProblem.EVO_FILE + "=" + file,
                     "-p", HerdingProblem.EVO_RUN + "=" + runNumber
                 });
@@ -140,16 +151,16 @@ public class EvolutionaryShepherding {
             nSheep = args[1];
         }
 
-        clearSerialized("homo." + nSheph + ".shep." + nSheep + ".sheep-0");
+        clearSerialized("homo." + nSheph + "v" + nSheep + File.separator + "0");
 
-        final URL resource = EvolutionaryShepherding.class.getClassLoader().getResource("homo." + nSheph + ".shep." + nSheep + ".sheep.params");
+        final URL resource = EvolutionaryShepherding.class.getClassLoader().getResource("homo." + nSheph + "v" + nSheep + ".params");
         assert resource != null;
         String filename = resource.getPath();
         Evolve.main(new String[] {
             "-file", filename,
             "-p", HerdingProblem.EVO_FILE + "=" + filename,
             "-p", HerdingProblem.EVO_RUN + "=" + 0,
-            "-p", HerdingProblem.STAT_FILE + "=$" + STATISTICS_DIR + File.separator + "homo-0.stat"
+            "-p", HerdingProblem.STAT_FILE + "=$" + STATISTICS_DIR + File.separator + "homo" + "." + nSheph + "v" + nSheep + File.separator + "0.stat"
         });
     }
 

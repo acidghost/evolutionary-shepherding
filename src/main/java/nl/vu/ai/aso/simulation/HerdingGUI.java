@@ -55,7 +55,7 @@ public class HerdingGUI extends GUIState {
         console.setPlaySleep(timeToSleep);
 
         Herding herding = (Herding) herdingGUI.state;
-        System.out.println("Starting GUI simulation for " + totalSteps + " steps");
+        // System.out.println("Starting GUI simulation for " + totalSteps + " steps");
         for (int i = 0; i < totalSteps; i++) {
             console.pressPlay();
             console.pressPause();

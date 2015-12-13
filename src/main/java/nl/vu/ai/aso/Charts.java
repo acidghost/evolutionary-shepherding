@@ -2,15 +2,24 @@ package nl.vu.ai.aso;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.DeviationRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.data.xy.YIntervalSeries;
+import org.jfree.data.xy.YIntervalSeriesCollection;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.FileSystems;
@@ -24,6 +33,7 @@ import java.util.stream.Collectors;
  */
 public class Charts {
 
+    private static final Paint[] DEFAULT_PALETTE = ChartColor.createDefaultPaintArray();
     private static final Splitter LINE_SPLITTER = Splitter.on(' ').trimResults();
     private final List<StatLine> statLines;
 
@@ -52,7 +62,125 @@ public class Charts {
             collection, PlotOrientation.VERTICAL,
             true, true, false
         );
+
+        XYPlot plot = chart.getXYPlot();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        plot.setRenderer(renderer);
+
         return new ChartPanel(chart);
+    }
+
+    public static Container getMeanPerGenAcrossRuns(String title, String scenario) throws IOException {
+        File scenarioDir = new File(scenario);
+        List<Charts> charts = Lists.newArrayList();
+        for (File runFile : scenarioDir.listFiles(EvolutionaryShepherding.STATS_FILENAME_FILTER)) {
+            charts.add(new Charts(runFile.getPath()));
+        }
+
+        XYSeriesCollection collection = new XYSeriesCollection();
+
+        for (int subpop = 0; subpop < charts.get(0).statLines.get(0).subpopData.size(); subpop++) {
+            XYSeries series = new XYSeries("Subpop " + subpop);
+            int totalGenerations = charts.get(0).statLines.size();
+
+            for (int generation = 0; generation < totalGenerations; generation++) {
+                double sum = 0.0;
+                for (Charts chart : charts) {
+                    sum += chart.statLines.get(generation).subpopData.get(subpop).mean;
+                }
+                series.add(generation, sum / charts.size());
+            }
+
+            collection.addSeries(series);
+        }
+
+        JFreeChart chart = ChartFactory.createXYLineChart(
+            title + " - " + charts.size() + " runs",
+            "Generations", "Mean fitness",
+            collection, PlotOrientation.VERTICAL,
+            true, true, false
+        );
+
+        XYPlot plot = chart.getXYPlot();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        plot.setRenderer(renderer);
+
+        return new ChartPanel(chart);
+    }
+
+    private static Container getWithConfidencePerGenAcrossRuns(String title, String scenario, String fieldName, String yLabel)
+        throws IOException, NoSuchFieldException, IllegalAccessException {
+
+        File scenarioDir = new File(scenario);
+        List<Charts> charts = Lists.newArrayList();
+        for (File runFile : scenarioDir.listFiles(EvolutionaryShepherding.STATS_FILENAME_FILTER)) {
+            charts.add(new Charts(runFile.getPath()));
+        }
+
+        YIntervalSeriesCollection collection = new YIntervalSeriesCollection();
+
+        for (int subpop = 0; subpop < charts.get(0).statLines.get(0).subpopData.size(); subpop++) {
+            YIntervalSeries series = new YIntervalSeries("Subpop " + subpop);
+            int totalGenerations = charts.get(0).statLines.size();
+
+            for (int generation = 0; generation < totalGenerations; generation++) {
+                SummaryStatistics statistics = new SummaryStatistics();
+
+                for (Charts chart : charts) {
+                    final SubpopData subpopData = chart.statLines.get(generation).subpopData.get(subpop);
+                    statistics.addValue(subpopData.getClass().getField(fieldName).getDouble(subpopData));
+                }
+
+                final double mean = statistics.getMean();
+                final TDistribution tDist = new TDistribution(statistics.getN() - 1);
+                final double significance = .95;
+                final double criticalValue = tDist.inverseCumulativeProbability(1.0 - significance / 2);
+                final double width = criticalValue * statistics.getStandardDeviation() / Math.sqrt(statistics.getN());
+
+                series.add(generation, mean, mean - width, mean + width);
+            }
+
+            collection.addSeries(series);
+        }
+
+        JFreeChart chart = ChartFactory.createXYLineChart(
+            title + " - " + charts.size() + " runs",
+            "Generations", yLabel,
+            collection, PlotOrientation.VERTICAL,
+            true, true, false
+        );
+
+        XYPlot plot = chart.getXYPlot();
+        DeviationRenderer deviationrenderer = new DeviationRenderer(true, false);
+        for (int i = 0; i < collection.getSeriesCount(); i++) {
+            Color paint = (Color) DEFAULT_PALETTE[i];
+            deviationrenderer.setSeriesFillPaint(i, paint.darker());
+            deviationrenderer.setSeriesStroke(i, new BasicStroke(1F, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        }
+        deviationrenderer.setAlpha(0.2F);
+        plot.setRenderer(deviationrenderer);
+
+        return new ChartPanel(chart);
+    }
+
+    public static Container getMeanWithConfidencePerGenAcrossRuns(String title, String scenario) throws IOException {
+        Container container = null;
+        try {
+            container = getWithConfidencePerGenAcrossRuns(title, scenario, "mean", "Mean fitness");
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return container;
+    }
+
+    public static Container getBestWithConfidencePerGenAcrossRuns(String title, String scenario) throws IOException {
+        Container container = null;
+        try {
+            container = getWithConfidencePerGenAcrossRuns(title, scenario, "bestSoFar", "Best fitness so far");
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return container;
     }
 
     private static class SubpopData {
@@ -125,11 +253,16 @@ public class Charts {
     }
 
     public static void main(String[] args) throws IOException {
-        Charts charts = new Charts("./hetero.stat");
+        Charts charts = new Charts(EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1" + File.separator + "1.stat");
         JFrame frame = new JFrame("Hetero test");
         frame.setContentPane(charts.getMeanPerSubpopPerGeneration("Heterogeneous"));
         frame.setVisible(true);
         frame.setSize(600, 400);
+
+        JFrame frame2 = new JFrame("Runs demo");
+        frame2.setContentPane(Charts.getMeanWithConfidencePerGenAcrossRuns("Runs demo", EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1"));
+        frame2.setVisible(true);
+        frame2.setSize(600, 400);
     }
 
 }
