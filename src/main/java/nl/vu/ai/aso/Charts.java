@@ -108,7 +108,9 @@ public class Charts {
         return new ChartPanel(chart);
     }
 
-    public static Container getMeanVarPerGenAcrossRuns(String title, String scenario) throws IOException {
+    private static Container getWithConfidencePerGenAcrossRuns(String title, String scenario, String fieldName, String yLabel)
+        throws IOException, NoSuchFieldException, IllegalAccessException {
+
         File scenarioDir = new File(scenario);
         List<Charts> charts = Lists.newArrayList();
         for (File runFile : scenarioDir.listFiles(EvolutionaryShepherding.STATS_FILENAME_FILTER)) {
@@ -125,7 +127,8 @@ public class Charts {
                 SummaryStatistics statistics = new SummaryStatistics();
 
                 for (Charts chart : charts) {
-                    statistics.addValue(chart.statLines.get(generation).subpopData.get(subpop).mean);
+                    final SubpopData subpopData = chart.statLines.get(generation).subpopData.get(subpop);
+                    statistics.addValue(subpopData.getClass().getField(fieldName).getDouble(subpopData));
                 }
 
                 final double mean = statistics.getMean();
@@ -142,7 +145,7 @@ public class Charts {
 
         JFreeChart chart = ChartFactory.createXYLineChart(
             title + " - " + charts.size() + " runs",
-            "Generations", "Mean fitness",
+            "Generations", yLabel,
             collection, PlotOrientation.VERTICAL,
             true, true, false
         );
@@ -158,6 +161,26 @@ public class Charts {
         plot.setRenderer(deviationrenderer);
 
         return new ChartPanel(chart);
+    }
+
+    public static Container getMeanWithConfidencePerGenAcrossRuns(String title, String scenario) throws IOException {
+        Container container = null;
+        try {
+            container = getWithConfidencePerGenAcrossRuns(title, scenario, "mean", "Mean fitness");
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return container;
+    }
+
+    public static Container getBestWithConfidencePerGenAcrossRuns(String title, String scenario) throws IOException {
+        Container container = null;
+        try {
+            container = getWithConfidencePerGenAcrossRuns(title, scenario, "bestSoFar", "Best fitness so far");
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return container;
     }
 
     private static class SubpopData {
@@ -237,7 +260,7 @@ public class Charts {
         frame.setSize(600, 400);
 
         JFrame frame2 = new JFrame("Runs demo");
-        frame2.setContentPane(Charts.getMeanVarPerGenAcrossRuns("Runs demo", EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1"));
+        frame2.setContentPane(Charts.getMeanWithConfidencePerGenAcrossRuns("Runs demo", EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1"));
         frame2.setVisible(true);
         frame2.setSize(600, 400);
     }

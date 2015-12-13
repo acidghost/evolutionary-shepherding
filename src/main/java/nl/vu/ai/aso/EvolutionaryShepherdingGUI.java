@@ -279,10 +279,16 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
             } else {
                 try {
                     final String scenarioFilename = new File(EvolutionaryShepherding.STATISTICS_DIR).getPath() + selectedScenario;
-                    JFrame runsFrame = new JFrame(selectedScenario);
-                    runsFrame.setContentPane(Charts.getMeanVarPerGenAcrossRuns(selectedScenario, scenarioFilename));
-                    runsFrame.setVisible(true);
-                    runsFrame.setSize(600, 400);
+
+                    JFrame runsMeanFrame = new JFrame(selectedScenario);
+                    runsMeanFrame.setContentPane(Charts.getMeanWithConfidencePerGenAcrossRuns(selectedScenario, scenarioFilename));
+                    runsMeanFrame.setVisible(true);
+                    runsMeanFrame.setSize(600, 400);
+
+                    JFrame runsBestSoFarFrame = new JFrame(selectedScenario);
+                    runsBestSoFarFrame.setContentPane(Charts.getBestWithConfidencePerGenAcrossRuns(selectedScenario, scenarioFilename));
+                    runsBestSoFarFrame.setVisible(true);
+                    runsBestSoFarFrame.setSize(600, 400);
 
                     if (selectedRun != null && !Objects.equals(selectedRun, "")) {
                         Charts runChart = new Charts(scenarioFilename + File.separator + selectedRun + ".stat");
