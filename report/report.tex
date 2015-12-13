@@ -70,15 +70,18 @@ We recap our objectives in the following list:
 \end{itemize}
  
 \subsection{Research questions}
-In the herding task, shepherds and sheep have opposing goals.
+In the herding task, shepherds and sheep have opposing goals;
 While the shepherds try to herd sheep into the corral, the sheep tries to escape through the left side of the pasture.
-Thus, species can be competitively co-evolved in a race to evolve strategies to accomplish the opposing goals.
-Furthermore, the task complexity can be influenced by varying different parameters such as the number of present agents of each type or their relative movement speeds.
+Thus, species can be competitively co-evolved in a race to evolve strategies to accomplish opposing goals.
+Furthermore, the task complexity can be influenced by varying different parameters such as the number of present agents per each type or their relative movement speeds. Another type of dimension used to scale the difficulty is the type of controller used. Instances of different controller types are "passive", "active" and "intelligent". 
 
-The following research questions assume intelligent sheep within a herding task:
+In this study an intelligent controller was added to the sheep, the intelligence of the controller is based on the assumption that since an artificial neural network is evolved, the sheep has the possibility to adapt to its environment through an evolutionary process. 
+This process, in which many strategies are simulated and evaluated, is comparable to a learning process and enables adaptivity. 
+
+Based on the assumption of intelligent sheep we state the following research questions:
  
 \begin{enumerate}
-	\item How does the competitive co-evolution affect the relation between homogeneous and heterogeneous (dog’s) controllers in a co-evolutive herding task?
+	\item How does the competitive co-evolution affect the relation between homogeneous and heterogeneous (dog’s) controllers in a co-evolved herding task?
 	\item How does increasing the difficulty (e.g.: by increasing the sheep’s speed) of a single task increase the necessity for heterogeneous controllers?
 	\item How does increasing task complexity by adding more sheep affects the effectiveness of herding?
 \end{enumerate}
@@ -110,7 +113,7 @@ Dawkins and Krebs described in their 1979 paper: ``Arms Races between and within
 In \cite{stanley2004competitive} Stanley and Miikkulainen showed that through the complexification of agent controllers in a competitive co-evolutionary setting, the controller's added complexity can be utilized through the generation of more advanced strategies as complexity increases.
 
 
-\subsection{Homogeneity vs Heteroheneity in ANN's}
+\subsection{Homogeneity vs Heterogeneity in ANN's}
 \cite{potter2001heterogeneity} performed a study to a tradeoff of homogeneity versus heterogeneity in the control systems of robots by allowing teams to coevolve their high-level controllers given different levels of difficulty of the task
 Hypothesised was that: ``\textit{simply increasing the difficulty of a task is not enough to induce a team of robots to create specialists.}''
 Task difficulty was varied by replacing one adversary's passive controller with an active variant supposedly proving that increased difficulty did not justify the use of heterogeneous controllers.
