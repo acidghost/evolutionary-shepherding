@@ -12,6 +12,7 @@
     <guava.version>18.0</guava.version>
     <pivot.version>2.0.4</pivot.version>
     <jfree.version>1.0.19</jfree.version>
+    <math3.version>3.5</math3.version>
   </properties>
 
   <dependencies>
@@ -79,6 +80,12 @@
       <groupId>org.jfree</groupId>
       <artifactId>jfreechart</artifactId>
       <version>${jfree.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math3</artifactId>
+      <version>${math3.version}</version>
     </dependency>
   </dependencies>
 

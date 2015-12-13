@@ -2,16 +2,20 @@ package nl.vu.ai.aso;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.DeviationRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.Layer;
+import org.jfree.data.xy.YIntervalSeries;
+import org.jfree.data.xy.YIntervalSeriesCollection;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,6 +33,7 @@ import java.util.stream.Collectors;
  */
 public class Charts {
 
+    private static final Paint[] DEFAULT_PALETTE = ChartColor.createDefaultPaintArray();
     private static final Splitter LINE_SPLITTER = Splitter.on(' ').trimResults();
     private final List<StatLine> statLines;
 
@@ -57,6 +62,11 @@ public class Charts {
             collection, PlotOrientation.VERTICAL,
             true, true, false
         );
+
+        XYPlot plot = chart.getXYPlot();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        plot.setRenderer(renderer);
+
         return new ChartPanel(chart);
     }
 
@@ -105,33 +115,29 @@ public class Charts {
             charts.add(new Charts(runFile.getPath()));
         }
 
-        XYSeriesCollection collection = new XYSeriesCollection();
-        List<double[]> allVariances = Lists.newArrayList();
+        YIntervalSeriesCollection collection = new YIntervalSeriesCollection();
 
         for (int subpop = 0; subpop < charts.get(0).statLines.get(0).subpopData.size(); subpop++) {
-            XYSeries series = new XYSeries("Subpop " + subpop);
+            YIntervalSeries series = new YIntervalSeries("Subpop " + subpop);
             int totalGenerations = charts.get(0).statLines.size();
 
             for (int generation = 0; generation < totalGenerations; generation++) {
-                double sum = 0.0;
+                SummaryStatistics statistics = new SummaryStatistics();
+
                 for (Charts chart : charts) {
-                    sum += chart.statLines.get(generation).subpopData.get(subpop).mean;
+                    statistics.addValue(chart.statLines.get(generation).subpopData.get(subpop).mean);
                 }
-                series.add(generation, sum / charts.size());
+
+                final double mean = statistics.getMean();
+                final TDistribution tDist = new TDistribution(statistics.getN() - 1);
+                final double significance = .95;
+                final double criticalValue = tDist.inverseCumulativeProbability(1.0 - significance / 2);
+                final double width = criticalValue * statistics.getStandardDeviation() / Math.sqrt(statistics.getN());
+
+                series.add(generation, mean, mean - width, mean + width);
             }
 
             collection.addSeries(series);
-
-            double[] variances = new double[totalGenerations];
-            for (int generation = 0; generation < totalGenerations; generation++) {
-                double tmp = 0.0;
-                for (Charts chart : charts) {
-                    double v = chart.statLines.get(generation).subpopData.get(subpop).mean;
-                    tmp += (series.getY(generation).doubleValue() - v) * (series.getY(generation).doubleValue() - v);
-                }
-                variances[generation] = tmp / variances.length;
-            }
-            allVariances.add(variances);
         }
 
         JFreeChart chart = ChartFactory.createXYLineChart(
@@ -142,17 +148,14 @@ public class Charts {
         );
 
         XYPlot plot = chart.getXYPlot();
-        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        for (int subpop = 0; subpop < allVariances.size(); subpop++) {
-            double[] variances = allVariances.get(subpop);
-            for (int i = 0; i < variances.length; i++) {
-                double variance = variances[i];
-                double mean = collection.getSeries(subpop).getY(i).doubleValue();
-                IntervalMarker intervalMarker = new IntervalMarker(mean - variance, mean + variance);
-                plot.addRangeMarker(i, intervalMarker, Layer.BACKGROUND, false);
-            }
+        DeviationRenderer deviationrenderer = new DeviationRenderer(true, false);
+        for (int i = 0; i < collection.getSeriesCount(); i++) {
+            Color paint = (Color) DEFAULT_PALETTE[i];
+            deviationrenderer.setSeriesFillPaint(i, paint.darker());
+            deviationrenderer.setSeriesStroke(i, new BasicStroke(1F, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         }
-        plot.setRenderer(renderer);
+        deviationrenderer.setAlpha(0.2F);
+        plot.setRenderer(deviationrenderer);
 
         return new ChartPanel(chart);
     }

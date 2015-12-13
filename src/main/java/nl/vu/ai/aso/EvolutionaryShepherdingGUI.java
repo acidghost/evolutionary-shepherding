@@ -280,7 +280,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
                 try {
                     final String scenarioFilename = new File(EvolutionaryShepherding.STATISTICS_DIR).getPath() + selectedScenario;
                     JFrame runsFrame = new JFrame(selectedScenario);
-                    runsFrame.setContentPane(Charts.getMeanPerGenAcrossRuns(selectedScenario, scenarioFilename));
+                    runsFrame.setContentPane(Charts.getMeanVarPerGenAcrossRuns(selectedScenario, scenarioFilename));
                     runsFrame.setVisible(true);
                     runsFrame.setSize(600, 400);
 
