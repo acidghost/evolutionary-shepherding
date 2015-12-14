@@ -4,10 +4,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.jfree.chart.ChartColor;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
+import org.jfree.chart.*;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.DeviationRenderer;
@@ -108,7 +105,7 @@ public class Charts {
         return new ChartPanel(chart);
     }
 
-    private static Container getWithConfidencePerGenAcrossRuns(String title, String scenario, String fieldName, String yLabel)
+    private static Container getWithConfidencePerGenAcrossRuns(String title, String scenario, String fieldName, String yLabel, boolean save)
         throws IOException, NoSuchFieldException, IllegalAccessException {
 
         File scenarioDir = new File(scenario);
@@ -160,23 +157,27 @@ public class Charts {
         deviationrenderer.setAlpha(0.2F);
         plot.setRenderer(deviationrenderer);
 
+        if (save) {
+            ChartUtilities.saveChartAsJPEG(new File(scenario + File.separator + fieldName + ".jpeg"), chart, 1024, 800);
+        }
+
         return new ChartPanel(chart);
     }
 
-    public static Container getMeanWithConfidencePerGenAcrossRuns(String title, String scenario) throws IOException {
+    public static Container getMeanWithConfidencePerGenAcrossRuns(String title, String scenario, boolean save) throws IOException {
         Container container = null;
         try {
-            container = getWithConfidencePerGenAcrossRuns(title, scenario, "mean", "Mean fitness");
+            container = getWithConfidencePerGenAcrossRuns(title, scenario, "mean", "Mean fitness", save);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return container;
     }
 
-    public static Container getBestWithConfidencePerGenAcrossRuns(String title, String scenario) throws IOException {
+    public static Container getBestWithConfidencePerGenAcrossRuns(String title, String scenario, boolean save) throws IOException {
         Container container = null;
         try {
-            container = getWithConfidencePerGenAcrossRuns(title, scenario, "bestSoFar", "Best fitness so far");
+            container = getWithConfidencePerGenAcrossRuns(title, scenario, "bestSoFar", "Best fitness so far", save);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -260,7 +261,7 @@ public class Charts {
         frame.setSize(600, 400);
 
         JFrame frame2 = new JFrame("Runs demo");
-        frame2.setContentPane(Charts.getMeanWithConfidencePerGenAcrossRuns("Runs demo", EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1"));
+        frame2.setContentPane(Charts.getMeanWithConfidencePerGenAcrossRuns("Runs demo", EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1", false));
         frame2.setVisible(true);
         frame2.setSize(600, 400);
     }

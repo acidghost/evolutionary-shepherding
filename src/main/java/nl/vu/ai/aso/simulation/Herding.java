@@ -68,7 +68,7 @@ public class Herding extends SimState {
         shepherdAgents = new ArrayList<>();
         for (int i = 0; i < shepherds.size(); i++) {
             double[] shepherdWeights = shepherds.get(i);
-            Shepherd shepherd = new Shepherd(shepherdsPositions[i], shepherdWeights, 4);
+            Shepherd shepherd = new Shepherd(shepherdsPositions[i], shepherdWeights, this.shepherds.size() > 1 ? 4 : 2);
             shepherdAgents.add(shepherd);
             yard.setObjectLocation(shepherd, shepherdsPositions[i]);
             schedule.scheduleRepeating(shepherd, TIME_STEP_PERIOD);
