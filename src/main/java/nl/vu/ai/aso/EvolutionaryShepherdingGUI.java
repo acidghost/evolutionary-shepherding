@@ -342,7 +342,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
                         runFrame.setVisible(true);
                         runFrame.setSize(600, 400);
                     }
-                } catch (IOException e) {
+                } catch (IOException | IllegalAccessException | NoSuchFieldException e) {
                     e.printStackTrace();
                     Alert.alert(MessageType.ERROR, e.getClass().getSimpleName() + ": " + e.getMessage(), this);
                 }

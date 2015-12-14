@@ -102,34 +102,22 @@ public class Charts {
         return new ChartPanel(chart);
     }
 
-    public static Container getMeanSubpopPerGenAcrossRuns(String title, String scenario, boolean save) throws IOException {
-        Container container = null;
-        try {
-            container = getSubpopPerGenAcrossRuns(title, scenario, "mean", "Mean fitness", save);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return container;
+    public static Container getMeanSubpopPerGenAcrossRuns(String title, String scenario, boolean save)
+        throws IOException, NoSuchFieldException, IllegalAccessException {
+
+        return getSubpopPerGenAcrossRuns(title, scenario, "mean", "Mean fitness", save);
     }
 
-    public static Container getBestSubpopPerGenAcrossRuns(String title, String scenario, boolean save) throws IOException {
-        Container container = null;
-        try {
-            container = getSubpopPerGenAcrossRuns(title, scenario, "bestSoFar", "Best fitness so far", save);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return container;
+    public static Container getBestSubpopPerGenAcrossRuns(String title, String scenario, boolean save)
+        throws IOException, NoSuchFieldException, IllegalAccessException {
+
+        return getSubpopPerGenAcrossRuns(title, scenario, "bestSoFar", "Best fitness so far", save);
     }
 
-    public static Container getCorralledEscapedAcrossRuns(String title, String scenario, boolean save) throws IOException {
-        Container container = null;
-        try {
-            container = getPopPerGenAcrossRuns(title, scenario, "Cases / trials", save, "corralledRatio", "escapedRatio");
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return container;
+    public static Container getCorralledEscapedAcrossRuns(String title, String scenario, boolean save)
+        throws IOException, NoSuchFieldException, IllegalAccessException {
+
+        return getPopPerGenAcrossRuns(title, scenario, "Cases / trials", save, "corralledRatio", "escapedRatio");
     }
 
     private static List<Charts> getRunsCharts(String scenario) throws IOException {
@@ -318,7 +306,7 @@ public class Charts {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException {
         Charts charts = new Charts(EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1" + File.separator + "1.stat");
         JFrame frame = new JFrame("Hetero test");
         frame.setContentPane(charts.getMeanPerSubpopPerGeneration("Heterogeneous"));
