@@ -1,5 +1,6 @@
 package nl.vu.ai.aso;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.apache.commons.math3.distribution.TDistribution;
@@ -67,12 +68,8 @@ public class Charts {
         return new ChartPanel(chart);
     }
 
-    public static Container getMeanPerGenAcrossRuns(String title, String scenario) throws IOException {
-        File scenarioDir = new File(scenario);
-        List<Charts> charts = Lists.newArrayList();
-        for (File runFile : scenarioDir.listFiles(EvolutionaryShepherding.STATS_FILENAME_FILTER)) {
-            charts.add(new Charts(runFile.getPath()));
-        }
+    public static Container getMeanSubpopAcrossRuns(String title, String scenario) throws IOException {
+        List<Charts> charts = getRunsCharts(scenario);
 
         XYSeriesCollection collection = new XYSeriesCollection();
 
@@ -105,15 +102,106 @@ public class Charts {
         return new ChartPanel(chart);
     }
 
-    private static Container getWithConfidencePerGenAcrossRuns(String title, String scenario, String fieldName, String yLabel, boolean save)
-        throws IOException, NoSuchFieldException, IllegalAccessException {
+    public static Container getMeanSubpopPerGenAcrossRuns(String title, String scenario, boolean save) throws IOException {
+        Container container = null;
+        try {
+            container = getSubpopPerGenAcrossRuns(title, scenario, "mean", "Mean fitness", save);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return container;
+    }
 
+    public static Container getBestSubpopPerGenAcrossRuns(String title, String scenario, boolean save) throws IOException {
+        Container container = null;
+        try {
+            container = getSubpopPerGenAcrossRuns(title, scenario, "bestSoFar", "Best fitness so far", save);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return container;
+    }
+
+    public static Container getCorralledEscapedAcrossRuns(String title, String scenario, boolean save) throws IOException {
+        Container container = null;
+        try {
+            container = getPopPerGenAcrossRuns(title, scenario, "Cases / trials", save, "corralledRatio", "escapedRatio");
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return container;
+    }
+
+    private static List<Charts> getRunsCharts(String scenario) throws IOException {
         File scenarioDir = new File(scenario);
         List<Charts> charts = Lists.newArrayList();
         for (File runFile : scenarioDir.listFiles(EvolutionaryShepherding.STATS_FILENAME_FILTER)) {
             charts.add(new Charts(runFile.getPath()));
         }
+        return charts;
+    }
 
+    private static double getConfidenceWidth(SummaryStatistics statistics, double significance) {
+        final TDistribution tDist = new TDistribution(statistics.getN() - 1);
+        final double criticalValue = tDist.inverseCumulativeProbability(1.0 - significance / 2);
+        return criticalValue * statistics.getStandardDeviation() / Math.sqrt(statistics.getN());
+    }
+
+    private static Container getPopPerGenAcrossRuns(String title, String scenario, String yLabel, boolean save, String... fields)
+        throws IOException, NoSuchFieldException, IllegalAccessException {
+
+        List<Charts> charts = getRunsCharts(scenario);
+        YIntervalSeriesCollection collection = new YIntervalSeriesCollection();
+
+        for (String field : fields) {
+            YIntervalSeries series = new YIntervalSeries(field);
+            int totalGenerations = charts.get(0).statLines.size();
+
+            for (int generation = 0; generation < totalGenerations; generation++) {
+                SummaryStatistics statistics = new SummaryStatistics();
+
+                for (Charts chart : charts) {
+                    final StatLine statline = chart.statLines.get(generation);
+                    statistics.addValue(statline.getClass().getField(field).getDouble(statline));
+                }
+
+                final double mean = statistics.getMean();
+                final double width = getConfidenceWidth(statistics, .95);
+
+                series.add(generation, mean, mean - width, mean + width);
+            }
+
+            collection.addSeries(series);
+        }
+
+        JFreeChart chart = ChartFactory.createXYLineChart(
+            title + " - " + charts.size() + " runs",
+            "Generations", yLabel,
+            collection, PlotOrientation.VERTICAL,
+            true, true, false
+        );
+
+        XYPlot plot = chart.getXYPlot();
+        DeviationRenderer deviationrenderer = new DeviationRenderer(true, false);
+        for (int i = 0; i < collection.getSeriesCount(); i++) {
+            Color paint = (Color) DEFAULT_PALETTE[i];
+            deviationrenderer.setSeriesFillPaint(i, paint.darker());
+            deviationrenderer.setSeriesStroke(i, new BasicStroke(1F, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        }
+        deviationrenderer.setAlpha(0.2F);
+        plot.setRenderer(deviationrenderer);
+
+        if (save) {
+            ChartUtilities.saveChartAsJPEG(new File(scenario + File.separator + Joiner.on('-').join(fields) + ".jpeg"), chart, 1024, 800);
+        }
+
+        return new ChartPanel(chart);
+    }
+
+    private static Container getSubpopPerGenAcrossRuns(String title, String scenario, String fieldName, String yLabel, boolean save)
+        throws IOException, NoSuchFieldException, IllegalAccessException {
+
+        List<Charts> charts = getRunsCharts(scenario);
         YIntervalSeriesCollection collection = new YIntervalSeriesCollection();
 
         for (int subpop = 0; subpop < charts.get(0).statLines.get(0).subpopData.size(); subpop++) {
@@ -129,10 +217,7 @@ public class Charts {
                 }
 
                 final double mean = statistics.getMean();
-                final TDistribution tDist = new TDistribution(statistics.getN() - 1);
-                final double significance = .95;
-                final double criticalValue = tDist.inverseCumulativeProbability(1.0 - significance / 2);
-                final double width = criticalValue * statistics.getStandardDeviation() / Math.sqrt(statistics.getN());
+                final double width = getConfidenceWidth(statistics, .95);
 
                 series.add(generation, mean, mean - width, mean + width);
             }
@@ -162,26 +247,6 @@ public class Charts {
         }
 
         return new ChartPanel(chart);
-    }
-
-    public static Container getMeanWithConfidencePerGenAcrossRuns(String title, String scenario, boolean save) throws IOException {
-        Container container = null;
-        try {
-            container = getWithConfidencePerGenAcrossRuns(title, scenario, "mean", "Mean fitness", save);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return container;
-    }
-
-    public static Container getBestWithConfidencePerGenAcrossRuns(String title, String scenario, boolean save) throws IOException {
-        Container container = null;
-        try {
-            container = getWithConfidencePerGenAcrossRuns(title, scenario, "bestSoFar", "Best fitness so far", save);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return container;
     }
 
     private static class SubpopData {
@@ -261,7 +326,7 @@ public class Charts {
         frame.setSize(600, 400);
 
         JFrame frame2 = new JFrame("Runs demo");
-        frame2.setContentPane(Charts.getMeanWithConfidencePerGenAcrossRuns("Runs demo", EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1", false));
+        frame2.setContentPane(Charts.getMeanSubpopPerGenAcrossRuns("Runs demo", EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1", false));
         frame2.setVisible(true);
         frame2.setSize(600, 400);
     }
