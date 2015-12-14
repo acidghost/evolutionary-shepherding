@@ -29,21 +29,17 @@ public class Shepherd extends AgentWithNetwork {
     protected ShepherdInputs getInputs(Herding herding) {
         Yard yard = herding.yard;
         Object[] neighbors = yard.detectNearestNeighbors(this);
-        Double2D sheepCenter = yard.getSheepCenter();
-        // Double2D sheepCenter = yard.getObjectLocation(neighbors[1]);
-
-        // self coordinates
-        //double shepherd_r = getDistanceFromSheep(yard, this, sheepCenter);
-        //double shepherd_b = getBearingFromSheep(yard, this, sheepCenter, yard.corralPosition);
 
         // closest sheep coordinates
-        double closestSheep_r = getDistanceFromSheep(yard, (Sheep) neighbors[1], sheepCenter);
-        double closestSheep_b = getBearingFromSheep(yard, (Sheep) neighbors[1], sheepCenter, yard.corralPosition);
+        Double2D closestSheep = yard.getObjectLocation(neighbors[1]);
+        double closestSheep_r = getDistance(yard, this, closestSheep);
+        double closestSheep_b = getBearing(yard, this, closestSheep, yard.corralPosition);
 
-        // closest shepherd coordinates
         if (herding.shepherds.size() > 1) {
-            double closestShep_r = getDistanceFromSheep(yard, (Shepherd) neighbors[0], sheepCenter);
-            double closestShep_b = getBearingFromSheep(yard, (Shepherd) neighbors[0], sheepCenter, yard.corralPosition);
+            // closest shepherd coordinates
+            Double2D closestShepherd = yard.getObjectLocation(neighbors[0]);
+            double closestShep_r = getDistance(yard, this, closestShepherd);
+            double closestShep_b = getBearing(yard, this, closestShepherd, yard.corralPosition);
             // log("R - B:\t" + shepherd_r + "\t" + shepherd_b + "\t" + closestShep_r + "\t" + closestShep_b);
             return new ShepherdInputs(closestSheep_r, closestSheep_b, closestShep_r, closestShep_b);
         } else {

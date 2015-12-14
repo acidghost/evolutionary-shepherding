@@ -40,13 +40,20 @@ public abstract class AgentWithNetwork extends Entity {
 
             // output -> re-scale -> cartesian -> absolute centered
 
-            // Sheep-centric, so radius is distance from sheep center
-            // and angle is angle from sheep center respect to the corral
+            // Sheep/shepherd-centric, so radius is distance from nearest sheep/shepherd
+            // and angle is angle from nearest sheep/shepherd respect to the corral
             double radius = Herding.WIDTH * output[0];
             double angle = (2 * Math.PI * output[1]) - Math.PI;
             // log("Radius - angle: " + radius + "\t" + angle);
 
-            Double2D sheepCenter = yard.getSheepCenter();
+            // Double2D sheepCenter = yard.getSheepCenter();
+            Double2D sheepCenter;
+            if (this instanceof Sheep) {
+                sheepCenter = yard.getObjectLocation(yard.detectNearestNeighbors(this)[0]);
+            } else {
+                sheepCenter = yard.getObjectLocation(yard.detectNearestNeighbors(this)[1]);
+            }
+
             double sheepCorralAngle = Math.atan2(yard.corralPosition.y - sheepCenter.y, yard.corralPosition.x - sheepCenter.x);
             // log("Sheep-corral angle: " + sheepCorralAngle);
 
@@ -77,23 +84,18 @@ public abstract class AgentWithNetwork extends Entity {
         return new MutableDouble2D(newPosition.x - loc.x, newPosition.y - loc.y);
     }
 
-    protected double getDistanceFromSheep(Continuous2D yard, AgentWithNetwork agent, Double2D sheepCenter) {
+    protected double getDistance(Continuous2D yard, AgentWithNetwork agent, Double2D otherAgent) {
         Double2D agentPos = yard.getObjectLocation(agent);
-        return sheepCenter.distance(agentPos);
+        return otherAgent.distance(agentPos);
     }
 
-    protected double getBearingFromSheep(Continuous2D yard, AgentWithNetwork agent, Double2D sheepCenter, Double2D corralPosition) {
+    protected double getBearing(Continuous2D yard, AgentWithNetwork agent, Double2D otherAgent, Double2D corralPosition) {
         Double2D agentPos = yard.getObjectLocation(agent);
 
-        // double sheepCorralAngle = Math.atan2(corralPosition.y - sheepCenter.y, corralPosition.x - sheepCenter.x);
-        // double agentCorralAngle = Math.atan2(corralPosition.y - agentPos.y, corralPosition.x - agentPos.x);
+        double otherCorralAngle = Math.atan2(corralPosition.y - otherAgent.y, corralPosition.x - otherAgent.x);
+        double agentOtherAngle = Math.atan2(otherAgent.y - agentPos.y, otherAgent.x - agentPos.x);
 
-        // return Math.PI - (agentCorralAngle - sheepCorralAngle);
-
-        double sheepCorralAngle = Math.atan2(corralPosition.y - sheepCenter.y, corralPosition.x - sheepCenter.x);
-        double agentSheepAngle = Math.atan2(sheepCenter.y - agentPos.y, sheepCenter.x - agentPos.x);
-
-        return sheepCorralAngle + agentSheepAngle;
+        return otherCorralAngle + agentOtherAngle;
     }
 
 }
