@@ -1,0 +1,216 @@
+# Copyright 2006 by Sean Luke and George Mason University
+# Licensed under the Academic Free License version 3.0
+# See the file "LICENSE" for more information
+
+# Some rules about Java Property Lists, which is what the
+# system uses for parameters.  Java property lists are a little weird:
+#
+# 1. Lines with only whitespace are ignored.
+# 2. Lines beginning with a # are ignored.
+# 3. Initial whitespace is trimmed.  The property is everything up to
+#    the next chunk of whitespace or a '='
+# 4. A following '=' is *optional*
+# 5. After the chunk of whitespace and the optional '=', the next
+#    whitespace is trimmed.
+# 6. Typically, EVERYTHING after that is the value of the property,
+#    up to but not including a '\n'. However, my version trims off
+#    the final bit of whitespace if any.
+# 7. If two parameters of the same name are found, the later one
+#    is used.
+#
+# Some examples and warnings:
+#
+# LINE (begins at | )          PROPERTY(between /'s)  VALUE(between /'s)
+#
+# |yo.yo.yo! = heave ho               /yo.yo.yo!/            /heave ho/
+# |my parameter                       /my/                   /parameter/
+# |my=parameter                       /my/                   /parameter/
+# |my= parameter                      /my/                   /parameter/
+# |
+# |#this is a comment
+# |    # this is NOT                  /#/                    /this is NOT/
+# |
+# |   my    =parameter                /my/                   /parameter/
+# |my parameter = this                /my/                   /parameter = this/
+# |myparameter=                       /myparameter/          //
+# |myparameter                        /myparameter/          //
+# |=myparameter                       //                     /myparameter/
+# |watch out here!                    /watch/                /out here!/
+# |comments=don't work  #see?         /comments/             /don't work  #see?/
+#
+#
+# The '.' is the delimiter for hierarchical elements.
+# You generally shouldn't begin or end a property with an '.'
+#
+# If you want a list to first load some parent lists, include them as parameters:
+#
+#    parent.0 = filename for 0
+#    parent.1 = filename for 1
+#    ....
+#
+# The parameters will load as follows: your parameters will get checked first,
+# Then parent 0 (and all its ancestors), then parent 1 (and all its ancestors),
+# and so on.
+#
+
+
+
+
+
+#
+# Here are a few default values for administration stuff -- you can
+# find some basic evolution parameters in simple/params
+
+
+
+# ec.Evolve
+# ==============================
+
+# one thread
+evalthreads = 				1
+breedthreads = 				1
+
+# ECJ used to use this as its initial random seed by default.  No longer, now
+# it's assumed to be the wall clock time by default.
+# seed.0 = 				4357
+seed.0 =				time
+
+
+
+
+# ec.EvolutionState
+# ==============================
+
+# We're not writing checkpoint files.  If we were, we'd do it every
+# generation, and the prefix to all the files would be "ec.*"
+checkpoint =				false
+checkpoint-modulo =                     1
+checkpoint-prefix = 			ec
+
+
+
+
+# ECSUITE.params
+
+state = 				ec.simple.SimpleEvolutionState
+init = 					ec.simple.SimpleInitializer
+finish = 	        		ec.simple.SimpleFinisher
+exch = 					ec.simple.SimpleExchanger
+breed =					ec.simple.SimpleBreeder
+eval =					ec.simple.SimpleEvaluator
+stat =					ec.simple.SimpleStatistics
+quit-on-run-complete =			true
+pop = 					ec.Population
+pop.subpop.0 = 				ec.Subpopulation
+pop.subpop.0.duplicate-retries =	2
+pop.subpop.0.species =                  ec.vector.FloatVectorSpecies
+pop.subpop.0.species.pipe = 		ec.vector.breed.VectorMutationPipeline
+pop.subpop.0.species.pipe.source.0 = 	ec.vector.breed.VectorCrossoverPipeline
+pop.subpop.0.species.pipe.source.0.source.0 = ec.select.TournamentSelection
+pop.subpop.0.species.pipe.source.0.source.1 = same
+
+pop.subpop.0.species.fitness =		ec.simple.SimpleFitness
+pop.subpop.0.species.ind =		ec.vector.DoubleVectorIndividual
+pop.subpop.0.species.mutation-bounded =	true
+
+# Mind the expected ranges given in ECSuite.java
+pop.subpop.0.species.min-gene =	-5.12
+pop.subpop.0.species.max-gene =	5.12
+
+# You can change this to whatever you want, though Booth requires a genome size of 2
+pop.subpop.0.species.genome-size = 	100
+
+# ECJ will complain if this isn't set even if we don't use it, so here's a default
+pop.subpop.0.species.crossover-type = one
+
+select.tournament.size = 		2
+pop.subpop.0.species.mutation-prob = 0.01
+pop.subpop.0.species.mutation-stdev = 1.0
+pop.subpop.0.species.mutation-type = gauss
+
+
+pop.subpop.0.size =			1000
+stat.file				$out.stat
+
+stat = nl.vu.ai.aso.evolution.CoESStatistics
+stat.do-subpops = true
+
+
+
+# eval =                                  ec.coevolve.MultiPopCoevolutionaryEvaluator
+eval =                                  nl.vu.ai.aso.evolution.CoESEvaluator
+eval.problem =                          nl.vu.ai.aso.evolution.HomoHerdingProblem
+
+eval.num-shepherd =                     3
+eval.num-sheep =                        3
+
+eval.evaluations =                      1500
+
+eval.num-shuffled=		            	0
+eval.num-current=                       0
+eval.num-elites =                       1
+eval.num-prev =                         0
+eval.select-current =                   ec.select.RandomSelection
+eval.select-prev =                      ec.select.RandomSelection
+
+# breed =                                 ec.es.MuPlusLambdaBreeder
+breed =                                 nl.vu.ai.aso.evolution.CoESBreeder
+
+generations=                            100
+# select.tournament.size =                5
+pop.subpops =                           2
+
+es.mu.0 =                               10
+es.lambda.0 =                           100
+
+pop.subpop.0 =                          ec.Subpopulation
+pop.subpop.0.duplicate-retries =        0
+pop.subpop.0.size =                     10
+pop.subpop.0.species =                  ec.vector.FloatVectorSpecies
+pop.subpop.0.species.crossover-type =   one
+pop.subpop.0.species.genome-size =      37
+pop.subpop.0.species.min-gene =         -10
+pop.subpop.0.species.max-gene =         10
+pop.subpop.0.species.fitness =          nl.vu.ai.aso.evolution.CoESFitness
+pop.subpop.0.species.ind =              ec.vector.DoubleVectorIndividual
+pop.subpop.0.species.pipe =             ec.vector.breed.VectorMutationPipeline
+pop.subpop.0.species.pipe.source.0 =    ec.es.ESSelection
+pop.subpop.0.species.mutation-type =    gauss
+pop.subpop.0.species.mutation-stdev =   0.01
+pop.subpop.0.species.mutation-prob =    1.0
+pop.subpop.0.species.mutation-bounded =	true
+# pop.subpop.0.species.pipe = 		    ec.vector.breed.VectorMutationPipeline
+# pop.subpop.0.species.pipe.source.0 = 	ec.vector.breed.VectorCrossoverPipeline
+# pop.subpop.0.species.pipe.source.0.source.0 = ec.select.TournamentSelection
+# pop.subpop.0.species.pipe.source.0.source.1 = same
+
+
+es.mu.1 =                               10
+es.lambda.1 =                           100
+
+pop.subpop.1 =                          ec.Subpopulation
+pop.subpop.1.duplicate-retries =        0
+pop.subpop.1.size =                     10
+pop.subpop.1.species =                  ec.vector.FloatVectorSpecies
+pop.subpop.1.species.crossover-type =   one
+pop.subpop.1.species.genome-size =      37
+pop.subpop.1.species.min-gene =         -10
+pop.subpop.1.species.max-gene =         10
+pop.subpop.1.species.fitness =          nl.vu.ai.aso.evolution.CoESFitness
+pop.subpop.1.species.ind =              ec.vector.DoubleVectorIndividual
+pop.subpop.1.species.pipe =             ec.vector.breed.VectorMutationPipeline
+pop.subpop.1.species.pipe.source.0 =    ec.es.ESSelection
+pop.subpop.1.species.mutation-type =    gauss
+pop.subpop.1.species.mutation-stdev =   0.01
+pop.subpop.1.species.mutation-prob =    1.0
+pop.subpop.1.species.mutation-bounded =	true
+# pop.subpop.1.species.pipe = 		    ec.vector.breed.VectorMutationPipeline
+# pop.subpop.1.species.pipe.source.0 = 	ec.vector.breed.VectorCrossoverPipeline
+# pop.subpop.1.species.pipe.source.0.source.0 = ec.select.TournamentSelection
+# pop.subpop.1.species.pipe.source.0.source.1 = same
+
+
+pop.separator = 1
+pop.separator.default = 1
+eval.predator = false
+eval.predator.default = false
