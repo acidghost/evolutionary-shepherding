@@ -15,9 +15,6 @@ import java.util.List;
  */
 public class HomoHerdingProblem extends HerdingProblem {
 
-    private static final Parameter SHEPH_NUM = new Parameter("eval.num-shepherd");
-    private static final Parameter SHEEP_NUM = new Parameter("eval.num-sheep");
-
     @Override
     public void evaluate(EvolutionState evolutionState, Individual[] individuals, boolean[] updateFitness, boolean countVictoriesOnly, int[] subpops, int threadnum) {
         int numSheep = evolutionState.parameters.getInt(SHEEP_NUM, SHEEP_NUM);

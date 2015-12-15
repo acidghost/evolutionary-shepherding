@@ -27,6 +27,8 @@ public abstract class HerdingProblem extends Problem implements GroupedProblemFo
     public static final String EVO_FILE = "evo.file";
     public static final String EVO_RUN = "evo.run";
     public static final String STAT_FILE = "stat.file";
+    public static final Parameter SHEEP_NUM = new Parameter("eval.num-sheep");
+    public static final Parameter SHEPH_NUM = new Parameter("eval.num-shepherd");
 
     public static final double PROPORTION_NOT_IN_GUI = 1;
     public static final int TRIALS = 10;
