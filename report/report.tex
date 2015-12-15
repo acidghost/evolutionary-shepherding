@@ -9,6 +9,7 @@
 
 \usepackage{graphicx}
 \usepackage{textcomp}
+\usepackage{mathtools}
 
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
@@ -91,8 +92,8 @@ Assuming an intelligent sheep we state the following research questions:
  
 \begin{enumerate}
 	\item How does the competitive co-evolution affect the relation between homogeneous and heterogeneous shepherds' controllers, in a co-evolved herding task?
-	\item How does increasing the difficulty (e.g.: by incrementing the sheep’s speed) of a single task increases the necessity for heterogeneous controllers?
-	\item How does increasing task complexity by adding more sheep affects the effectiveness of herding?
+	\item How does increasing the number of shepherds increases the need for heterogeneous controllers?
+	\item How does increasing task complexity (by adding more sheep) affects the effectiveness of herding?
 \end{enumerate}
 
 \subsection{Hypothesis}
@@ -101,12 +102,12 @@ The following hypothesis are in one to one relationship with the aforementioned 
 
 \begin{enumerate}
 	\item Shepherds' fitness in the heterogeneous case is overall higher than in the homogeneous case.
-	\item Shepherds' fitness in the heterogeneous case and sheep’s speed are inversely related, such that fitness decreases as speed increases.
-	\item Shepherds' fitness in the heterogeneous case and sheep’s multiplicity are inversely related, such that fitness decreases as speed increases.
+	\item The number of shepherds herding one sheep is directly related to their fitness in heterogeneous cases, such that fitness increases as the number of shepherds increases.	
+	\item Increasing the number of sheep herd by a fixed number of shepherds decreases the number of corralled sheep.
 \end{enumerate}
 
-We now consider $H_1$ and we leave the testing of the others as future work. 
-The $H_0$, namely null hypothesis, is ``Shepherds’ fitness in the heterogeneous case is equivalent to the one of the homogeneous''.
+%We now consider $H_1$ and we leave the testing of the others as future work. 
+$H_0$, namely the null hypothesis, is ``Shepherds’ fitness in the heterogeneous case is equivalent to the one of the homogeneous''.
 
 \section{Literature}
  
@@ -141,33 +142,25 @@ However, increased difficulty was never implemented structurally nor tested meth
 
 
 \section{Model}
-Our model is based on Potter et al. work \cite{potter2001heterogeneity}. The task domain relates to a herding task that simulates shepherd robots trying to push sheep robots into a corral. The environment consists of a 37 x 37 foot pasture with fences on the top and bottom; the corral is positioned on the right side, and the pasture is open on the left side for the sheep to escape.
+Our model is based on Potter et al.'s work \cite{potter2001heterogeneity}. The task domain relates to a herding task that simulates shepherd robots trying to push sheep robots into a corral. The environment consists of a 37 x 37 foot pasture with fences on the top and bottom. The corral is positioned on the right side, and the pasture is open on the left side for the sheep to escape.
 
 We module the task complexity by controlling the number of agents of each type that take part in the task. Thus, we operationalize it as the sheep to dog ratio, with increased ratio implying a more complex task for the shepherds.
- 
-We compute the center of sheep - which is equal to the position of the sheep when there is only one - and take it as center for a polar coordinate system. Therefore, the first component for a coordinate is the distance to the center, called the range. The axis is created between this center and the midpoint for the entrance of the corral, from which angles are created for the second component of the polar coordinates, called bearings. 
+
+To have a general sense of the position of a group of sheep, we compute the center of mass - which is equal to the position of the sheep when there is only one.
+We work within a agent-centered polar coordinate system where an agent's position is relative to a second agent. Therefore, the first component for a coordinate is the distance to the second agent, called the range. The coordinate system's axis is created between the second agent's position and the midpoint for the entrance of the corral. Angles are created from this axis for the second component of the polar coordinates, called bearings. 
 
 
 \subsection{NN design}
-The controllers for the agents are composed of feed forward neural networks, with each agent containing a multiplayer perceptron with one hidden layer. The inputs for the networks come in pairs as the range and bearing of other agents in the polar coordinate system previously described. In a simple network, where an agent can only see one other agent, the network consists of two input nodes and a bias, and its hidden layer has three nodes. Alternatively, if the agent can see two other agents it has a more complex neural network, with four input nodes and a bias, and five nodes in its hidden layer. 
+The controllers for the agents are composed of feedforward neural networks, with each agent containing a multilayer perceptron with one hidden layer. The inputs for the networks come in pairs as the range and bearing of other agents in the polar coordinate system previously described. In a simple network, where an agent can only see one other agent, the network consists of two input nodes and a bias, and its hidden layer has three nodes. Alternatively, if the agent can see two other agents it has a more complex neural network, with four input nodes and a bias, and five nodes in its hidden layer. 
 
-The activation function is a sigmoid function centred at 0. The output of the network represents the coordinates where the agent will try to move to in the next time step. Since the output has a range from $(0, 1)$, it must be translated into a range of $[0, 37]$ for the ratio and $[-\pi, \pi]$ for the bearing. 
+The activation function is a sigmoid function centred at 0. The output of the network represents the coordinates where the agent will try to move to in the next time step. Since the output has a range from $(0, 1)$, it must be translated into a range of $[0, 37]$ for target ratios and $[-\pi, \pi]$ for target bearings. 
  
-
-\subsection{Evolution of NN controllers}
-The algorithm used to evolve the controllers follows the frameworks of evolutionary strategies. The genome is an array of doubles consisting of the weights for the neural network: 17 for a simple network and 37 for a complex network. The specific strategy is $\mu + \lambda$, with $\mu = 10$ and $\lambda = 100$. The survivor selection mechanism is tournament selection with size 5. 
-In order to calculate the fitness for an individual, all controllers are evaluated through 10 trials of the task and the average is taken as fitness. Every trial runs for a maximum of 2.5 simulated time steps, unless all but one sheep escape or get corralled, in which case the simulation stops. In cases where there is only one sheep, the sheep must be corralled or has to escape in order for the simulation to stop before the time expires.
-Different fitness functions are determined for each type of agent. On the one hand, the fitness for the shepherds is determined as the total distance from every sheep to the corral, added during the simulation time steps. Individual bonuses are giving to specific shepherd agents for bumping sheep and group penalties are assigned to all shepherds for letting sheep escape. The range for this function is $[-X, 0]$. 
-On the other hand, the fitness for a sheep is determined as its own distance to the corral over the simulation time steps. In scenarios where there are more than one sheep, a group component is added to motivate sheep to stay in groups. This is composed as the ratio of the group added over the simulation time steps. This ratio is calculated as the radius from the furthest sheep to the center of the sheep in a specific time step, the range for this function is $[0, +X]$.
-Both functions are set up as maximization problems. 
-In homogeneous set-ups, we evolve one controller per type of agent, meaning we have two subpopulations, one for shepherds and one for sheep, coevolving. However, to create heterogeneity a population per agent is created. For example, in a scenario with two shepherds and one sheep, there is a total of three subpopulations, two of them cooperating among each other and competing with the third one.  
-
 \subsection{Shepherds controllers}
 The inputs for the shepherd controllers are the information about the closest shepherd and the closest sheep. Thus, its inputs are: 
 
 \begin{enumerate}
-	\item \textit{closestSheep\_r}
-	\item \textit{closestSheep\_b}
+	\item \textit{closestSheep\_r}: the distance from closest shepherd
+	\item \textit{closestSheep\_b}: angle between this shepherd and closest shepherd 
 	\item \textit{closestShepherd\_r}
 	\item \textit{closestShepherd\_b}
 \end{enumerate}
@@ -177,7 +170,7 @@ We assume the shepherds need to evolve cooperation behaviours among themselves t
 
 \subsection{Sheep controllers}
 The sheep controllers are determined in a similar way. Once again, the inputs take information about the closest sheep and closest shepherd. Thus, we have the inputs as:
- 
+
 \begin{enumerate}
 	\item \textit{closestShepherd\_r}
 	\item \textit{closestShepherd\_b}
@@ -189,17 +182,78 @@ Once again, the third and fourth inputs are not taken into account in scenarios 
 The assumption for competitive and cooperative collective behaviour still holds. This time, in order to avoid the shepherd and be able to escape, sheep must have information about the closest shepherd. Yet, they also have a strong preference to stay in a group and so need information about the closest sheep around them in order to pursue this goal. 
 
 %talk about homo or hetero controllers
+ 
+
+\subsection{Evolution of NN controllers}
+The algorithm used to evolve the controllers follows the frameworks of evolutionary strategies. The genome is an array of doubles consisting of the weights for the neural network: 17 for a simple network and 37 for a complex network. The specific strategy is ($\mu + \lambda$), with $\mu = 10$ and $\lambda = 100$. 
+
+In order to calculate the fitness for an individual, all controllers are evaluated through 10 trials of the task and the average is taken as fitness.
+% TODO: how exactly are the controllers evaluated? For an agent in subpopulation 0, choose best from subpopulation 1? 
+Every trial runs for a maximum of 2.5 seconds. In cases where there is more than one sheep, a complex network is assigned to all sheep. The simulation ends before the time elapses if all but one sheep escape or get corralled. The reason for leaving one sheep left in the pasture when ending the simulation is that the number of inputs for the sheep controllers is fixed before the beginning of a trial, and having no other sheep left would lead to null inputs and misbehaviour. In cases where there is only one sheep, a simple controller is assigned. Thus, the sheep must either be corralled or has to escape in order for the simulation to stop before the time expires.
+
+Different fitness functions are created for each type of agent. Hereby we explain each of them and their motivation.
+
+\subsubsection{Shepherds fitness function}
+On the one hand, the fitness for shepherds is determined as the distance from the sheep center to the corral, added during the simulation time steps. For the shepherds, this distance is desired to be minimized to observe a herding behaviour.  
+
+$\displaystyle sheepDistance = corral - sheepCenter $
+
+At every step, a bonus  is awarded for corralling a sheep or a penalty is deducted for letting a sheep escape, after which the sheep is eliminated from further computations. Each of these stimulus is moduled by the time within the simulation, meaning that a bonus/penalty is larger the earlier it happens. 
+
+Bonus if sheep is corralled:
+
+$\displaystyle sheepDistance -= stimulusMultiplier * (totalSteps - stepsElapsed)$
+
+Penalty if sheep escapes:
+
+$\displaystyle sheepDistance += stimulusMultiplier * (totalSteps - stepsElapsed)$
+
+The final fitness looks as follows: 
+
+$\displaystyle fitness = \sum_{timeSteps=1}^{1500 or stop}(sheepDistance)_{timeSteps}$
+
+Note that the fitness is the same among a group of shepherds, since all the components reflect on the group's performance. This design choice is motivated by the fact that shepherds must work together to achieve a common goal. 
+
+\subsubsection{Sheep fitness function}
+On the other hand, the fitness for a sheep is determined by its own distance to the corral. In scenarios where there is more than one sheep, a group component is added to motivate sheep to stay in groups. This is the ratio of the group calculated as the distace from the furthest sheep to the center of mass in a specific time step. 
+
+$\displaystyle individualDistance = corral - thisSheepPosition $
+
+$\displaystyle sheepRatio = furthestSheep - sheepCenter $
+
+Since smaller ratios are desired, the fitness function is determined as the individual distance minus the group ratio, added over the simulation time steps. 
+
+$\displaystyle fitness = \sum_{timeSteps=1}^{1500 or stop}(individualDistance - sheepRatio)_{timeSteps}$
+
+Similar to the shepherds, bonuses and penalties are given when a sheep escapes or is corralled, accordingly.  
+
+Bonus if sheep escapes:
+
+$\displaystyle individualDistance += stimulusMultiplier * (totalSteps - stepsElapsed)$
+
+Penalty if sheep is corralled:
+
+$\displaystyle individualDistance -= stimulusMultiplier * (totalSteps - stepsElapsed)$\\
+
+In homogeneous set-ups we evolve one controller per type of agent, meaning we have two subpopulations, one for shepherds and one for sheep, coevolving. However, to create heterogeneity a population per agent is created. For example, in a scenario with two shepherds and one sheep, there is a total of three subpopulations, two of them cooperating among each other and competing with the third one.  
 
 
 \section{Implementation}
-The project is coded in Java with use of \textit{Mason} for handling agents and their movements, in order to introduce evolutionary computing, we combine it with \textit{ECJ}. 
-We use \textit{neuroph} as the library for neural networks. 
+The project is coded in Java with use of \textit{Mason} for handling agents and their movements, in order to introduce evolutionary computing, we combine it with \textit{ECJ}. We use \textit{neuroph} as the library for neural networks. 
+
+TODO: Since ECJ can only do maximization problems, the shepherd fitness is taken as 
+fitness = - cummulative distance 
+
+TODO: Mention value for parameters, for example stimulusMultiplier = pasture width
+
+A simulation consists of 2.5 second divided in 1500 discrete time steps. At every time step, an agent propagates the inputs through its neural network and computes a target position. 
+
+\subsection{Interpreting the NN output}
+Since the output for the network is represented as polar coordinates centered at the sheep center of mass, they have to be translated into Cartesian coordinates in the pasture. 
 
 \subsection{Obstacle avoidance}
 Given the output of the networks, the agents will try to move into a position, however, both types of agents have obstacle avoidance built into their behaviour which might prevent them from moving to the target position. Shepherds avoid bumping into fences, the corral or other agents within a 3 simulation unit ratio. Meanwhile, the sheep can only avoid fences and other agents within a 2 simulation unit ratio. 
 
-\subsection{Interpreting the NN output}
-Since the output for the network is represented as polar coordinates centered at the sheep center of mass, they have to be translated into Cartesian coordinates in the pasture. 
 
 
 \section{Experiment}
