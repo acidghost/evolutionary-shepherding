@@ -8,21 +8,22 @@
 
 
 \usepackage{graphicx}
+\usepackage{textcomp}
 
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
 
 
 \begin{document}
+ 
+\title{Competitive co-evolution in robots: \\ heterogeneity vs homogeneity}
 
-\title{The Creation of Competitive Co-evolution \\ by the Hands of God}
 
 
-
-\author{\IEEEauthorblockN{Enrico Rotundo, Selene Beaz Santamaria, Andrea Borchelli Peperoni, Tommie Limberjack}
-\IEEEauthorblockA{Vrije Universiteit Amsterdam \\
-Amsterdam, Netherlands\\
-Email: Enrico@smellLikePizza.italia}}
+\author{\IEEEauthorblockN{Enrico Rotundo, Selene Beaz Santamaria, Andrea Jemmet, Tommie Kerstens}
+\IEEEauthorblockA{
+Vrije Universiteit Amsterdam \\
+Amsterdam, Netherlands}}
 
 
 
@@ -31,10 +32,8 @@ Email: Enrico@smellLikePizza.italia}}
 
 \begin{abstract}
 In the context of robotics, intelligent behaviours are often achieved using neural networks as controllers evolved using  an evolutionary algorithm.
-% */ not sure if this sentence is needed:
 In the case of multiple individuals within a species, controllers can be either homogeneous or heterogeneous.
-%maybe ommit /*
-In this paper, we use competitive co-evolution of homo- and heterogeneous controllers in order to investigate its effects on the emergence of specialisation behaviour regarding a herding task.
+In this paper, we use competitive co-evolution of homogeneous and heterogeneous controllers in order to investigate its effects on the emergence of specialisation behaviour regarding a herding task.
 % TODO: add what we have discovered
 \end{abstract}
 
@@ -43,44 +42,56 @@ In this paper, we use competitive co-evolution of homo- and heterogeneous contro
 
 
 \section{Introduction}
-Evolutionary algorithms (EA) are biology inspired algorithms able to evolve entities over time through the generation, procreation and simulation of these entities. The entities subject to the evolution are referred to as individuals and the EA acts like the digital environment these individuals are born, live, procreate and die in.The evolution is usually controlled such that next generations improve along the runs.
+Evolutionary algorithms (EA) are biology inspired algorithms that, going through multiple steps (e.g., generation, procreation, etc.), are able to evolve entities over time.
+Thus, the entities subject to the evolution are referred to as individuals,
+%and the EA acts as the digital environment these individuals are born, live, procreate and die in.
+and the evolution is usually controlled such that next generations improve along the runs.
+In the field of robotics, EAs can be used to evolve the behavioural controller of a robot, these controllers are evolved as individuals in an EA.
+A Neural Network (NN) is a function estimator that can be used as a controller and its design is natural inspired by the biological nervous system.
+In order to employ a NN as a controller, inputs usually come from the sensors making observations of the environment, while the weights are evolved by an EA.
+The complete evolutionary process can be run in a simulation which exploits the computer's computational power in order to evaluate many individuals in a reasonable time. 
+Robotics employs both EAs and NNs in order to evolve intelligent behaviours that can pursue one or more given goals.
 
-In the field of robotics, EA's can be used to evolve the behavioural controller of a robot, these controllers are evolved as individuals in an EA.
-Neural Networks (NN) are functions estimators or approximators nautal inspired by biological nervous systems, their design allows them to accept a high number of dimensional inputs. Neural Networks can be used to control the behaviour robots, where the inputs are come from the sensors making observations and the NN's weights are evolved by an evolutionary algorithm.
-
-The complete evolutionary process can be run as a virtual simulation which exploits the current computer's computational power in order to evaluate many individuals in a reasonable time. Robotics employs both NNs and EAs in order to evolve intelligent behaviours that can pursue many given goals.
-
-Tasks composition and complexity can vary based on the specific use case, in general it is subject of many studies aiming to solve different tasks.
+Tasks composition and complexity can vary based on the specific scenario, in general it is subject of many studies aiming to solve different tasks.
 For instance, tasks can be relatively small (e.g., moving objects) or more based on collaboration between a number of individuals.
 Research investigates collective behaviour in order to asses to which extent collaboration between individuals is feasible.  
 
 In this paper, we consider competitive co-evolution within a herding task which consists of a number of shepherds that herd a sheep into a corral.
-Here we focus on evolving NNs as controllers for the agents.
-Controllers can be assigned to agents with different approaches, the homogeneous approach uses the same controller for each type of agent (e.g., shepherds), meaning that each shepherd will be assigned the same controller. This one single controller is also the only evolved individual in the EA. In the heterogeneous approach each agent of a type gets their own controller and both controllers are separately evolved in the EA, using species.
+We evolve NN controllers and assign them to the agents, the latter step can be done with the homogeneous or heterogeneous approach.
+While the former employs the same controller instance for each agent, 
+%meaning that each shepherd is assigned to the same controller. 
+%This one single controller is also the only evolved individual in the EA. 
+in the latter each agent gets its own instance of a controller, which is separately evolved by an EA.
 % TODO are we going to talk about increasing complexity here?
 Moreover, the task complexity can be increased by varying or introducing new agents like adding a fox.
 
-We recap our objectives in the following list:
+In this paper we employ the aforementioned components within a simulated herding task.
+Thus, we recap our objectives in the following list:
 
 \begin{itemize}
 	\item To compare homogeneity versus heterogeneity.
 	\item To estimate the effect on homo versus heterogeneity of increasingly difficult task.
- 	\item To develop controlled experiments through software simulations, using ad hoc Java libraries.
+ 	\item To develop controlled experiments through software simulations, using ad hoc libraries.
 	\item To collect comprehensive results data.
 \end{itemize}
  
 \subsection{Research questions}
-In the herding task, shepherds and sheep have opposing goals;
-While the shepherds try to herd sheep into the corral, the sheep tries to escape through the left side of the pasture. Thus, species can be competitively co-evolved in a race to evolve strategies to accomplish opposing goals. Furthermore, the task complexity can be influenced by varying different parameters such as the number of present agents per each type or their relative movement speeds. Another type of dimension used to scale the difficulty is the type of controller used. Instances of different controller types are "passive", "active" and "intelligent". 
-
-In this study an intelligent controller was added to the sheep, the intelligence of the controller is based on the assumption that since an artificial neural network is evolved, the sheep has the possibility to adapt to its environment through an evolutionary process. 
+In the herding task, shepherds and sheep have opposing goals.
+While the former tries to herd sheep into the corral, the latter tries to escape through the left side of the pasture. 
+Thus, species can be competitively co-evolved in a race to evolve strategies to accomplish opposing goals. 
+Furthermore, the task complexity can be influenced by varying different parameters such as the number of present agents per each type or their relative movement speeds. 
+Another type of dimension used to scale the difficulty is the type of controller used,
+Instances of different controller types can be either \textit{static} or \textit{intelligent}.
+A \textit{static} controller is simply a predefined set of rules that implements a specific behaviour.
+Although an \textit{intelligent} controller is more complex, it is able to  adapt itself over time.
+In this paper both the sheep and the shepherds have an \textit{intelligent} controller.
+The intelligence of the controller is based on the assumption that since a NN is evolved, the controller has the possibility to adapt to its environment through the evolutionary process. 
 This process, in which many strategies are simulated and evaluated, is comparable to a learning process and enables adaptivity. 
-
-Based on the assumption of intelligent sheep we state the following research questions:
+Assuming an intelligent sheep we state the following research questions:
  
 \begin{enumerate}
-	\item How does the competitive co-evolution affect the relation between homogeneous and heterogeneous (dog’s) controllers in a co-evolved herding task?
-	\item How does increasing the difficulty (e.g.: by increasing the sheep’s speed) of a single task increase the necessity for heterogeneous controllers?
+	\item How does the competitive co-evolution affect the relation between homogeneous and heterogeneous shepherds' controllers, in a co-evolved herding task?
+	\item How does increasing the difficulty (e.g.: by incrementing the sheep’s speed) of a single task increases the necessity for heterogeneous controllers?
 	\item How does increasing task complexity by adding more sheep affects the effectiveness of herding?
 \end{enumerate}
 
@@ -89,12 +100,13 @@ Based on the assumption of intelligent sheep we state the following research que
 The following hypothesis are in one to one relationship with the aforementioned research questions:
 
 \begin{enumerate}
-	\item Shepherds’ fitness in the heterogeneous case is overall higher than in the homogeneous case.
-	\item Shepherds’ fitness in the heterogeneous case and sheep’s speed are inversely related, such that fitness decreases as speed increases.
-	\item Shepherds’ fitness in the heterogeneous case and sheep’s multiplicity are inversely related, such that fitness decreases as speed increases.
+	\item Shepherds' fitness in the heterogeneous case is overall higher than in the homogeneous case.
+	\item Shepherds' fitness in the heterogeneous case and sheep’s speed are inversely related, such that fitness decreases as speed increases.
+	\item Shepherds' fitness in the heterogeneous case and sheep’s multiplicity are inversely related, such that fitness decreases as speed increases.
 \end{enumerate}
 
-We now consider $H_1$, we leave the testing of the others as future work. The $H_0$, namely null hypothesis, is ``Shepherds’ fitness in the heterogeneous case is equivalent to the one of the homogeneous''.
+We now consider $H_1$ and we leave the testing of the others as future work. 
+The $H_0$, namely null hypothesis, is ``Shepherds’ fitness in the heterogeneous case is equivalent to the one of the homogeneous''.
 
 \section{Literature}
  
