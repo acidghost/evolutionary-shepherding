@@ -31,7 +31,7 @@ import java.util.Objects;
 public class EvolutionaryShepherdingGUI extends Window implements Application {
 
     private static final Color BG_COLOR = Color.darkGray;
-    private static final Dimensions DIMENSION = new Dimensions(800, 450);
+    private static final Dimensions DIMENSION = new Dimensions(800, 550);
     private static final String TITLE = "Evolutionary Shepherding";
     private static final int LOG_LENGTH = 15;
     private static final Font ITALIC_FONT = new Font("Times", Font.ITALIC, 11);
@@ -57,6 +57,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     private Form.Section statsSection = new Form.Section();
     private Label statsSectionLabel = new Label();
     private ListButton availableStats = new ListButton();
+    private ListButton availableComparisons = new ListButton();
     private TextInput statsRun = new TextInput();
     private PushButton drawChartsButton = new PushButton();
     private ListView logView = new ListView();
@@ -133,6 +134,9 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
         }
 
         availableStats.setListData(scenarios);
+        List<String> copy = new ArrayList<>(scenarios);
+        copy.add("");
+        availableComparisons.setListData(copy);
     }
 
     private void initLeftPanel() {
@@ -320,6 +324,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
         drawChartsButton.setButtonData("Draw charts");
         drawChartsButton.getButtonPressListeners().add(button -> {
             String selectedScenario = (String) availableStats.getSelectedItem();
+            String selectedComparison = (String) availableComparisons.getSelectedItem();
             String selectedRun = statsRun.getText();
             if (selectedScenario == null || selectedScenario.equals("")) {
                 Alert.alert(MessageType.WARNING, "No stat file selected", this);
@@ -327,27 +332,42 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
                 try {
                     final String scenarioFilename = new File(EvolutionaryShepherding.STATISTICS_DIR).getPath() + selectedScenario;
 
-                    JFrame runsMeanFrame = new JFrame(selectedScenario);
-                    runsMeanFrame.setContentPane(Charts.getMeanSubpopPerGenAcrossRuns(selectedScenario, scenarioFilename, true));
-                    runsMeanFrame.setVisible(true);
-                    runsMeanFrame.setSize(600, 400);
+                    if (selectedComparison != null && !selectedComparison.equals("")) {
+                        final String comparisonFilename = new File(EvolutionaryShepherding.STATISTICS_DIR).getPath() + selectedComparison;
+                        final String cmpTitle = selectedScenario + " vs " + selectedComparison;
 
-                    JFrame runsBestSoFarFrame = new JFrame(selectedScenario);
-                    runsBestSoFarFrame.setContentPane(Charts.getBestSubpopPerGenAcrossRuns(selectedScenario, scenarioFilename, true));
-                    runsBestSoFarFrame.setVisible(true);
-                    runsBestSoFarFrame.setSize(600, 400);
+                        JFrame compareMeanFrame = new JFrame(cmpTitle);
+                        compareMeanFrame.setContentPane(Charts.getAggregatedMeanAcrossRuns(cmpTitle, true, scenarioFilename, comparisonFilename));
+                        compareMeanFrame.setVisible(true);
+                        compareMeanFrame.setSize(600, 400);
 
-                    JFrame runsCorralledEscapedFrame = new JFrame(selectedScenario);
-                    runsCorralledEscapedFrame.setContentPane(Charts.getCorralledEscapedAcrossRuns(selectedScenario, scenarioFilename, true));
-                    runsCorralledEscapedFrame.setVisible(true);
-                    runsCorralledEscapedFrame.setSize(600, 400);
+                        JFrame compareBestSoFarFrame = new JFrame(cmpTitle);
+                        compareBestSoFarFrame.setContentPane(Charts.getAggregatedBestAcrossRuns(cmpTitle, true, scenarioFilename, comparisonFilename));
+                        compareBestSoFarFrame.setVisible(true);
+                        compareBestSoFarFrame.setSize(600, 400);
+                    } else {
+                        JFrame runsMeanFrame = new JFrame(selectedScenario);
+                        runsMeanFrame.setContentPane(Charts.getMeanSubpopPerGenAcrossRuns(selectedScenario, scenarioFilename, true));
+                        runsMeanFrame.setVisible(true);
+                        runsMeanFrame.setSize(600, 400);
 
-                    if (selectedRun != null && !Objects.equals(selectedRun, "")) {
-                        Charts runChart = new Charts(scenarioFilename + File.separator + selectedRun + ".stat");
-                        JFrame runFrame = new JFrame(selectedScenario + " - run " + selectedRun);
-                        runFrame.setContentPane(runChart.getMeanPerSubpopPerGeneration(selectedScenario));
-                        runFrame.setVisible(true);
-                        runFrame.setSize(600, 400);
+                        JFrame runsBestSoFarFrame = new JFrame(selectedScenario);
+                        runsBestSoFarFrame.setContentPane(Charts.getBestSubpopPerGenAcrossRuns(selectedScenario, scenarioFilename, true));
+                        runsBestSoFarFrame.setVisible(true);
+                        runsBestSoFarFrame.setSize(600, 400);
+
+                        JFrame runsCorralledEscapedFrame = new JFrame(selectedScenario);
+                        runsCorralledEscapedFrame.setContentPane(Charts.getCorralledEscapedAcrossRuns(selectedScenario, scenarioFilename, true));
+                        runsCorralledEscapedFrame.setVisible(true);
+                        runsCorralledEscapedFrame.setSize(600, 400);
+
+                        if (selectedRun != null && !Objects.equals(selectedRun, "")) {
+                            Charts runChart = new Charts(scenarioFilename + File.separator + selectedRun + ".stat");
+                            JFrame runFrame = new JFrame(selectedScenario + " - run " + selectedRun);
+                            runFrame.setContentPane(runChart.getMeanPerSubpopPerGeneration(selectedScenario));
+                            runFrame.setVisible(true);
+                            runFrame.setSize(600, 400);
+                        }
                     }
                 } catch (IOException | IllegalAccessException | NoSuchFieldException e) {
                     e.printStackTrace();
@@ -358,6 +378,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
 
         statsSection.add(statsSectionLabel);
         statsSection.add(availableStats);
+        statsSection.add(availableComparisons);
         statsSection.add(statsRun);
         statsSection.add(drawChartsButton);
     }
