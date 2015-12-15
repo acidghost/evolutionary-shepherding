@@ -5,6 +5,7 @@ import ec.Individual;
 import ec.util.Parameter;
 import ec.vector.DoubleVectorIndividual;
 import nl.vu.ai.aso.shared.EvaluationResults;
+import nl.vu.ai.aso.shared.EvolutionType;
 import nl.vu.ai.aso.shared.Replay;
 import org.apache.commons.math3.stat.descriptive.summary.Sum;
 
@@ -81,7 +82,11 @@ public class HeteroHerdingProblem extends HerdingProblem {
 
     @Override
     public Replay getReplay(EvolutionState evolutionState, List<DoubleVectorIndividual> bestOfGeneration, int split, int totalSteps) {
-        return new Replay(bestOfGeneration, split, totalSteps);
+        int numSheep = 1;
+        if (evolutionState.parameters.exists(SHEEP_NUM, SHEEP_NUM)) {
+            numSheep = evolutionState.parameters.getInt(SHEEP_NUM, SHEEP_NUM);
+        }
+        return new Replay(bestOfGeneration, split, totalSteps, EvolutionType.HETERO, split, (bestOfGeneration.size() - split) * numSheep);
     }
 
 }

@@ -36,8 +36,6 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     private static final int LOG_LENGTH = 15;
     private static final Font ITALIC_FONT = new Font("Times", Font.ITALIC, 11);
 
-    private static final int MAX_RUNS = 50;
-
     private SplitPane mainPanel = new SplitPane();
     private FlowPane leftPanel = new FlowPane();
     private FlowPane rightPanel = new FlowPane();
@@ -52,6 +50,8 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     private Form.Section replaySection = new Form.Section();
     private Label replaySectionLabel = new Label();
     private ListButton availableReplays = new ListButton();
+    private TextInput replayRun = new TextInput();
+    private TextInput replayGeneration = new TextInput();
     private PushButton startReplay = new PushButton();
     private Slider speedSlider = new Slider();
     private Form.Section statsSection = new Form.Section();
@@ -103,42 +103,35 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
     }
 
     private void initAvailableReplays() {
-        List<String> listData = new ArrayList<>();
         File serialized = new File(EvolutionaryShepherding.SERIALIZED_DIR);
+        List<String> listData = new ArrayList<>();
 
-        try {
-            Files.find(
-                Paths.get(serialized.toURI()), 999,
-                (p, bfa) -> bfa.isRegularFile() && EvolutionaryShepherding.SERIALIZED_FILENAME_FILTER.accept(p.toFile(), p.getFileName().toString())
-            ).forEach(file -> listData.add(file.toFile().getPath().split(serialized.getPath())[1]));
-        } catch (IOException e) {
-            e.printStackTrace();
-            Alert.alert(MessageType.ERROR, e.getClass().getSimpleName() + ": " + e.getMessage(), this);
+        final File[] files = serialized.listFiles();
+        if (files == null) return;
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                listData.add(file.getPath().split(serialized.getPath())[1]);
+            }
         }
+
 
         availableReplays.setListData(listData);
     }
 
     private void initAvailableStats() {
         File statsDir = new File(EvolutionaryShepherding.STATISTICS_DIR);
-
-//        List<String> statFiles = new ArrayList<>();
-//        try {
-//            Files.find(
-//                Paths.get(statsDir.toURI()), 999,
-//                (p, bfa) -> bfa.isRegularFile() && EvolutionaryShepherding.STATS_FILENAME_FILTER.accept(p.toFile(), p.getFileName().toString())
-//            ).forEach(file -> statFiles.add(file.toFile().getPath().split(statsDir.getPath())[1]));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            Alert.alert(MessageType.ERROR, e.getClass().getSimpleName() + ": " + e.getMessage(), this);
-//        }
-
         List<String> scenarios = new ArrayList<>();
-        for (File file : statsDir.listFiles()) {
+
+        final File[] files = statsDir.listFiles();
+        if (files == null) return;
+
+        for (File file : files) {
             if (file.isDirectory()) {
                 scenarios.add(file.getPath().split(statsDir.getPath())[1]);
             }
         }
+
         availableStats.setListData(scenarios);
     }
 
@@ -263,34 +256,45 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
         replaySectionLabelStyles.put("font", ITALIC_FONT);
 
         initAvailableReplays();
+        replayRun.setPrompt("Replay run");
+        replayGeneration.setPrompt("Replay generation");
+
         speedSlider.setRange(10, 500);
         speedSlider.setValue(50);
+
         startReplay.setButtonData("Start replay");
         startReplay.getButtonPressListeners().add(button -> {
-            String selected = (String) availableReplays.getSelectedItem();
-            if (selected == null || selected.equals("")) {
-                Alert.alert(MessageType.WARNING, "Select a replay first!", this);
+            String selectedScenario = (String) availableReplays.getSelectedItem();
+            String selectedRun = replayRun.getText().trim();
+            String selectedGen = replayGeneration.getText().trim();
+            if (selectedScenario == null || selectedScenario.equals("")) {
+                Alert.alert(MessageType.WARNING, "Select a replay scenario!", this);
+                return;
+            } else if (selectedRun.equals("")) {
+                Alert.alert(MessageType.WARNING, "Select a replay run!", this);
+                return;
+            } else if (selectedGen.equals("")) {
+                Alert.alert(MessageType.WARNING, "Select a replay generation!", this);
                 return;
             }
-            String filename = new File(EvolutionaryShepherding.SERIALIZED_DIR).getPath() + selected;
             try {
-                simulationTask = EvolutionaryShepherding.replaySimulation(filename, speedSlider.getValue());
+                simulationTask = EvolutionaryShepherding.replaySimulation(selectedScenario, selectedRun, selectedGen, speedSlider.getValue());
                 simulationTask.execute(new TaskAdapter<>(new TaskListener<Optional<EvaluationResults>>() {
                     @Override
                     public void taskExecuted(Task<Optional<EvaluationResults>> task) {
-                        log("Replay of " + selected + " ended");
+                        log("Replay of " + selectedScenario + " ended");
                         log(task.getResult().get().toString());
                         setComponentsState(false);
                     }
 
                     @Override
                     public void executeFailed(Task<Optional<EvaluationResults>> task) {
-                        log("Replay of " + selected + " ended with errors");
+                        log("Replay of " + selectedScenario + " ended with errors");
                         setComponentsState(false);
                     }
                 }));
                 setComponentsState(true);
-                log("Replay of " + selected + " started");
+                log("Replay of " + selectedScenario + " started");
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
                 Alert.alert(MessageType.ERROR, e.getClass().getCanonicalName() + ": " + e.getMessage(), this);
@@ -299,6 +303,8 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
 
         replaySection.add(replaySectionLabel);
         replaySection.add(availableReplays);
+        replaySection.add(replayRun);
+        replaySection.add(replayGeneration);
         replaySection.add(speedSlider);
         replaySection.add(startReplay);
     }
@@ -309,6 +315,7 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
         statsSectionLabel.getStyles().put("color", Color.white);
 
         initAvailableStats();
+        statsRun.setPrompt("Chart single run (optional)");
 
         drawChartsButton.setButtonData("Draw charts");
         drawChartsButton.getButtonPressListeners().add(button -> {

@@ -18,21 +18,13 @@ public class Replay implements Serializable {
     private int numShepherd;
     private int numSheep;
 
-    private Replay(List<DoubleVectorIndividual> bestOfGeneration, int split, int totalSteps, EvolutionType evolutionType, int numShepherd, int numSheep) {
+    public Replay(List<DoubleVectorIndividual> bestOfGeneration, int split, int totalSteps, EvolutionType evolutionType, int numShepherd, int numSheep) {
         this.bestOfGeneration = bestOfGeneration;
         this.split = split;
         this.totalSteps = totalSteps;
         this.evolutionType = evolutionType;
         this.numShepherd = numShepherd;
         this.numSheep = numSheep;
-    }
-
-    public Replay(List<DoubleVectorIndividual> bestOfGeneration, int split, int totalSteps) {
-        this(bestOfGeneration, split, totalSteps, EvolutionType.HETERO, split, bestOfGeneration.size() - split);
-    }
-
-    public Replay(List<DoubleVectorIndividual> bestOfGeneration, int totalSteps, int numShepherd, int numSheep) {
-        this(bestOfGeneration, 1, totalSteps, EvolutionType.HOMO, numShepherd, numSheep);
     }
 
     public List<DoubleVectorIndividual> getBestOfGeneration() {

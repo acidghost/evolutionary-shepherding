@@ -5,6 +5,7 @@ import ec.Individual;
 import ec.util.Parameter;
 import ec.vector.DoubleVectorIndividual;
 import nl.vu.ai.aso.shared.EvaluationResults;
+import nl.vu.ai.aso.shared.EvolutionType;
 import nl.vu.ai.aso.shared.Replay;
 
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class HomoHerdingProblem extends HerdingProblem {
     public Replay getReplay(EvolutionState evolutionState, List<DoubleVectorIndividual> bestOfGeneration, int split, int totalSteps) {
         int numSheep = evolutionState.parameters.getInt(SHEEP_NUM, SHEEP_NUM);
         int numShepherd = evolutionState.parameters.getInt(SHEPH_NUM, SHEPH_NUM);
-        return new Replay(bestOfGeneration, totalSteps, numShepherd, numSheep);
+        return new Replay(bestOfGeneration, 1, totalSteps, EvolutionType.HOMO, numShepherd, numSheep);
     }
 
 }
