@@ -161,6 +161,12 @@ public class Charts {
         return getAggregatedScenarioComparison(title, "bestSoFar", "Best fitness so far", save, scenarioFiles);
     }
 
+    public static Container getCorralledEscapedAcrossRuns(String title, boolean save, String... scenarioFiles)
+        throws IllegalAccessException, NoSuchFieldException, IOException {
+
+        return getScenarioComparison(title, new String[] { "corralledRatio", "escapedRatio" }, "Cases / trials", save, scenarioFiles);
+    }
+
     private static int findSplit(String filename) throws IllegalArgumentException {
         for (Map.Entry<String, Integer> entry : SPLITS_MAP.entrySet()) {
             if (filename.contains(entry.getKey())) {
@@ -364,6 +370,26 @@ public class Charts {
         YIntervalSeriesCollection finalCollection = mergeCollections(collections, scenarioNames);
 
         JFreeChart chart = getDeviationChart(title + " - " + runs + " runs", new String[] { fieldName }, yLabel, save, scenarioNames, finalCollection);
+
+        return new ChartPanel(chart);
+    }
+
+    private static Container getScenarioComparison(String title, String[] fieldNames, String yLabel, boolean save, String... scenarioFiles)
+        throws IOException, NoSuchFieldException, IllegalAccessException {
+
+        int runs = 0;
+        List<YIntervalSeriesCollection> collections = Lists.newArrayList();
+        for (String scenario : scenarioFiles) {
+            List<Charts> charts = getRunsCharts(scenario);
+            runs = charts.size();
+            YIntervalSeriesCollection collection = getPopCollectionAcrossRuns(charts, fieldNames);
+            collections.add(collection);
+        }
+
+        List<String> scenarioNames = Arrays.asList(scenarioFiles).stream().map(Charts::findScenario).collect(Collectors.toList());
+        YIntervalSeriesCollection finalCollection = mergeCollections(collections, scenarioNames);
+
+        JFreeChart chart = getDeviationChart(title + " - " + runs + " runs", fieldNames, yLabel, save, scenarioNames, finalCollection);
 
         return new ChartPanel(chart);
     }

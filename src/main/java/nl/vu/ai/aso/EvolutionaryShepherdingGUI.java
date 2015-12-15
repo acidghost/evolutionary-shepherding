@@ -345,6 +345,11 @@ public class EvolutionaryShepherdingGUI extends Window implements Application {
                         compareBestSoFarFrame.setContentPane(Charts.getAggregatedBestAcrossRuns(cmpTitle, true, scenarioFilename, comparisonFilename));
                         compareBestSoFarFrame.setVisible(true);
                         compareBestSoFarFrame.setSize(600, 400);
+
+                        JFrame compareCorrEscFrame = new JFrame(cmpTitle);
+                        compareCorrEscFrame.setContentPane(Charts.getCorralledEscapedAcrossRuns(cmpTitle, true, scenarioFilename, comparisonFilename));
+                        compareCorrEscFrame.setVisible(true);
+                        compareCorrEscFrame.setSize(600, 400);
                     } else {
                         JFrame runsMeanFrame = new JFrame(selectedScenario);
                         runsMeanFrame.setContentPane(Charts.getMeanSubpopPerGenAcrossRuns(selectedScenario, scenarioFilename, true));
