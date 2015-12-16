@@ -193,44 +193,42 @@ Different fitness functions are created for each type of agent. Hereby we explai
 \subsubsection{Shepherds fitness function}
 On the one hand, the fitness for shepherds is determined as the distance from the sheep center to the corral, added during the simulation time steps. For the shepherds, this distance is desired to be minimized to observe a herding behaviour.  
 
-$\displaystyle sheepDistance = corral - sheepCenter $
+$$ dist_i(x) = pos(corral) - pos_i(sheepCenter) $$
 
-At every step, a bonus  is awarded for corralling a sheep or a penalty is deducted for letting a sheep escape, after which the sheep is eliminated from further computations. Each of these stimulus is moduled by the time within the simulation, meaning that a bonus/penalty is larger the earlier it happens. 
+At every step, a bonus  is awarded for corralling a sheep or a penalty is deducted for letting a sheep escape, after which the sheep is eliminated from further computations. Each of these stimulus is regulated by the time within the simulation, meaning that a bonus/penalty is larger the earlier it happens. 
 
 Bonus if sheep is corralled:
-
-$\displaystyle sheepDistance -= stimulusMultiplier * (totalSteps - stepsElapsed)$
+$$ dist_i(x) = dist_i(x) - stimulusMultiplier * (T_s - E_s) $$
 
 Penalty if sheep escapes:
-
-$\displaystyle sheepDistance += stimulusMultiplier * (totalSteps - stepsElapsed)$
+$$ dist_i(x) = dist_i(x) + stimulusMultiplier * (T_s - E_s) $$
+Where $T_s$ is the number of total steps (1500 in our experiments) and $E_s$ is the number of elapsed steps when the simulation stopped.
 
 The final fitness looks as follows: 
 
-$\displaystyle fitness = \sum_{timeSteps=1}^{1500 or stop}(sheepDistance)_{timeSteps}$
+$$ f_{sheph}(x) = \sum_{i=1}^{1500 or stop} dist_i(x) $$
 
 Note that the fitness is the same among a group of shepherds, since all the components reflect on the group's performance. This design choice is motivated by the fact that shepherds must work together to achieve a common goal. 
 
 \subsubsection{Sheep fitness function}
-On the other hand, the fitness for a sheep is determined by its own distance to the corral. In scenarios where there is more than one sheep, a group component is added to motivate sheep to stay in groups. This is the ratio of the group calculated as the distace from the furthest sheep to the center of mass in a specific time step. 
+On the other hand, the fitness for a sheep is determined by its own distance to the corral. In scenarios where there is more than one sheep, a group component is added to motivate sheep to stay in groups. This is the ratio of the group calculated as the distance from the furthest sheep to the center of mass in a specific time step. 
 
-$\displaystyle individualDistance = corral - thisSheepPosition $
+$$ dist_i(x) = pos(corral) - pos_i(x) $$
 
-$\displaystyle sheepRatio = furthestSheep - sheepCenter $
+$$ sheepRatio_i = furthestSheep_i - sheepCenter_i $$
 
 Since larger distances but smaller ratios are desired, the fitness function is determined as the individual distance minus the group ratio, added over the simulation time steps. 
 
-$\displaystyle fitness = \sum_{timeSteps=1}^{1500 or stop}(individualDistance - groupMultiplier * sheepRatio)_{timeSteps}$
+$$ f_{sheep}(x) = \sum_{i=1}^{1500 or stop}(dist_i(x) - 0.8 * sheepRatio_i) $$
 
 Similar to the shepherds, bonuses and penalties are given when a sheep escapes or is corralled, accordingly.  
 
 Bonus if sheep escapes:
-
-$\displaystyle individualDistance += stimulusMultiplier * (totalSteps - stepsElapsed)$
+$$ f_{sheep}(x) = f_{sheep}(x) + stimulusMultiplier * (T_s - E_s) $$
 
 Penalty if sheep is corralled:
-
-$\displaystyle individualDistance -= stimulusMultiplier * (totalSteps - stepsElapsed)$\\
+$$ f_{sheep}(x) = f_{sheep}(x) - stimulusMultiplier * (T_s - E_s) $$\\
+Where $T_s$ is the number of total steps (1500 in our experiments) and $E_s$ is the number of elapsed steps when the simulation stopped.
 
 In homogeneous set-ups we evolve one controller per type of agent, meaning we have two subpopulations, one for shepherds and one for sheep, coevolving. However, to create heterogeneity a population per agent is created. For example, in a scenario with two shepherds and one sheep, there is a total of three subpopulations, two of them cooperating among each other and competing with the third one.  
 
