@@ -21,7 +21,7 @@
 
 
 
-\author{\IEEEauthorblockN{Selene Beaz Santamaria, Andrea Jemmett, Tommie Kerstens, Enrico Rotundo}
+\author{\IEEEauthorblockN{Selene Baez Santamaria, Andrea Jemmett, Tommie Kerstens, Enrico Rotundo}
 \IEEEauthorblockA{
 Vrije Universiteit Amsterdam \\
 Amsterdam, Netherlands}}
@@ -77,6 +77,7 @@ Thus, we recap our objectives in the following list:
 \end{itemize}
  
 \subsection{Research questions}
+\label{sec:researchQuestions}
 In the herding task, shepherds and sheep have opposing goals.
 While the former tries to herd sheep into the corral, the latter tries to escape through the left side of the pasture. 
 Thus, species can be competitively co-evolved in a race to evolve strategies to accomplish opposing goals. 
@@ -105,8 +106,7 @@ The following hypothesis are in one to one relationship with the aforementioned 
 	\item The number of shepherds herding one sheep is directly related to their fitness in heterogeneous cases, such that fitness increases as the number of shepherds increases.	
 	\item Increasing the number of sheep herd by a fixed number of shepherds decreases the number of corralled sheep.
 \end{enumerate}
-
-%We now consider $H_1$ and we leave the testing of the others as future work. 
+ 
 $H_0$, namely the null hypothesis, is ``Shepherds’ fitness in the heterogeneous case is equivalent to the one of the homogeneous''.
 
 \section{Literature}
@@ -156,39 +156,36 @@ The controllers for the agents are composed of feedforward neural networks, with
 The activation function is a sigmoid function centred at 0. The output of the network represents the coordinates where the agent will try to move to in the next time step. Since the output has a range from $(0, 1)$, it must be translated into a range of $[0, 37]$ for target ratios and $[-\pi, \pi]$ for target bearings. 
  
 \subsection{Shepherds controllers}
-The inputs for the shepherd controllers are the information about the closest shepherd and the closest sheep. Thus, its inputs are: 
+We assume the shepherds need to evolve cooperation behaviours among themselves to successfully herd the sheep, but competitive behaviours against sheep who want to escape. To achieve the first objective, a shepherd needs information about the other shepherds around. However, in an attempt to be realistic and keep the network complexity low, we only provide the controller with information for the closest shepherd. Similarly, to achieve the second objective a shepherd needs information about the sheep. Following the same motivation, only the closest sheep position is fed into the network. Thus, the inputs for a sheprherd controller are: 
 
 \begin{enumerate}
-	\item \textit{closestSheep\_r}: the distance from closest shepherd
-	\item \textit{closestSheep\_b}: angle between this shepherd and closest shepherd 
-	\item \textit{closestShepherd\_r}
-	\item \textit{closestShepherd\_b}
+	\item \textit{closestSheep\_r}: distance from this shepherd to the closest sheep
+	\item \textit{closestSheep\_b}: angle between this shepherd and the closest sheep 
+	\item \textit{closestShepherd\_r}: distance from this shepherd to the closest shepherd
+	\item \textit{closestShepherd\_b}: angle between this shepherd and the closest shepherd
 \end{enumerate}
 
 The third and fourth input are not taken into account in scenarios where there is only one shepherd. 
-We assume the shepherds need to evolve cooperation behaviours among themselves to successfully herd the sheep, but competitive behaviours against sheep who want to escape. To achieve the first objective, a shepherd needs information about the other shepherds around. However, in an attempt to be realistic and keep the network complexity low, we only provide the controller with information for the closest shepherd. Similarly, to achieve the second objective a shepherd needs information about the sheep. Following the same motivation, only the closest sheep position is fed into the network. 
 
 \subsection{Sheep controllers}
-The sheep controllers are determined in a similar way. Once again, the inputs take information about the closest sheep and closest shepherd. Thus, we have the inputs as:
+In case of the sheep, the assumption for competitive and cooperative collective behaviour still holds. This time, in order to avoid the shepherd and be able to escape, sheep must have information about the closest shepherd. Yet, they have a strong preference to stay in a group and so need information about the closest sheep around them in order to pursue this goal. Thus, similar to the shepherd's controllers, the inputs are:
 
 \begin{enumerate}
-	\item \textit{closestShepherd\_r}
-	\item \textit{closestShepherd\_b}
-	\item \textit{closestSheep\_r}
-	\item \textit{closestSheep\_b}
+	\item \textit{closestShepherd\_r}: distance from this shepherd to the closest shepherd
+	\item \textit{closestShepherd\_b}: angle between this shepherd and the closest shepherd
+	\item \textit{closestSheep\_r}: distance from this shepherd to the closest sheep
+	\item \textit{closestSheep\_b}: angle between this shepherd and the closest sheep
 \end{enumerate}
 
 Once again, the third and fourth inputs are not taken into account in scenarios where there is only one sheep. 
-The assumption for competitive and cooperative collective behaviour still holds. This time, in order to avoid the shepherd and be able to escape, sheep must have information about the closest shepherd. Yet, they also have a strong preference to stay in a group and so need information about the closest sheep around them in order to pursue this goal. 
-
-%talk about homo or hetero controllers
- 
+%NOTE consider combining the two previous subsections 
 
 \subsection{Evolution of NN controllers}
 The algorithm used to evolve the controllers follows the frameworks of evolutionary strategies. The genome is an array of doubles consisting of the weights for the neural network: 17 for a simple network and 37 for a complex network. The specific strategy is ($\mu + \lambda$), with $\mu = 10$ and $\lambda = 100$. 
 
 In order to calculate the fitness for an individual, all controllers are evaluated through 10 trials of the task and the average is taken as fitness.
-% TODO: how exactly are the controllers evaluated? For an agent in subpopulation 0, choose best from subpopulation 1? 
+
+\textbf{TODO: how exactly are the controllers evaluated? For an agent in subpopulation 0, choose best from subpopulation 1? }
 Every trial runs for a maximum of 2.5 seconds. In cases where there is more than one sheep, a complex network is assigned to all sheep. The simulation ends before the time elapses if all but one sheep escape or get corralled. The reason for leaving one sheep left in the pasture when ending the simulation is that the number of inputs for the sheep controllers is fixed before the beginning of a trial, and having no other sheep left would lead to null inputs and misbehaviour. In cases where there is only one sheep, a simple controller is assigned. Thus, the sheep must either be corralled or has to escape in order for the simulation to stop before the time expires.
 
 Different fitness functions are created for each type of agent. Hereby we explain each of them and their motivation.
@@ -221,9 +218,9 @@ $\displaystyle individualDistance = corral - thisSheepPosition $
 
 $\displaystyle sheepRatio = furthestSheep - sheepCenter $
 
-Since smaller ratios are desired, the fitness function is determined as the individual distance minus the group ratio, added over the simulation time steps. 
+Since larger distances but smaller ratios are desired, the fitness function is determined as the individual distance minus the group ratio, added over the simulation time steps. 
 
-$\displaystyle fitness = \sum_{timeSteps=1}^{1500 or stop}(individualDistance - sheepRatio)_{timeSteps}$
+$\displaystyle fitness = \sum_{timeSteps=1}^{1500 or stop}(individualDistance - groupMultiplier * sheepRatio)_{timeSteps}$
 
 Similar to the shepherds, bonuses and penalties are given when a sheep escapes or is corralled, accordingly.  
 
@@ -239,14 +236,16 @@ In homogeneous set-ups we evolve one controller per type of agent, meaning we ha
 
 
 \section{Implementation}
-The project is coded in Java with use of \textit{Mason} for handling agents and their movements, in order to introduce evolutionary computing, we combine it with \textit{ECJ}. We use \textit{neuroph} as the library for neural networks. 
+The project is coded in Java with use of \textit{Mason} for handling agents and their movements. In order to introduce evolutionary computing, we combine it with \textit{ECJ}. We use \textit{neuroph} as the library for neural networks. 
 
-TODO: Since ECJ can only do maximization problems, the shepherd fitness is taken as 
-fitness = - cummulative distance 
+\textbf{TODO: Since ECJ can only do maximization problems, the shepherd fitness is taken as 
+fitness = - cummulative distance}
 
-TODO: Mention value for parameters, for example stimulusMultiplier = pasture width
+\textbf{TODO: Mention value for parameters, for example stimulusMultiplier = pasture width, groupMultiplier = 0.8}
 
-A simulation consists of 2.5 second divided in 1500 discrete time steps. At every time step, an agent propagates the inputs through its neural network and computes a target position. 
+A simulation consists of 2.5 second divided in 1500 discrete time steps. At every time step, an agent propagates the inputs through its neural network and computes a target position.
+\textbf{TODO: pseudocode? diagram?}
+ 
 
 \subsection{Interpreting the NN output}
 Since the output for the network is represented as polar coordinates centered at the sheep center of mass, they have to be translated into Cartesian coordinates in the pasture. 
@@ -255,40 +254,115 @@ Since the output for the network is represented as polar coordinates centered at
 Given the output of the networks, the agents will try to move into a position, however, both types of agents have obstacle avoidance built into their behaviour which might prevent them from moving to the target position. Shepherds avoid bumping into fences, the corral or other agents within a 3 simulation unit ratio. Meanwhile, the sheep can only avoid fences and other agents within a 2 simulation unit ratio. 
 
 
-
 \section{Experiment}
 \label{sec:experiment}
-In this section we detail the design of the experiments performed in this paper. In order to test our hypothesis, we perform coevolution across 100 generations. We run the simulation 40 times and perform statistical analysis to get 95\% confidence intervals.
+In order to answer the research questions listed in section ~\ref{sec:researchQuestions} and test its corresponding hypothesis in section ~\ref{sec:hypothesis}, we perform coevolution across 100 generations. We run the simulation 40 times and perform statistical analysis to get 95\% confidence intervals.
 
-
-We first consider the experiments that relate to $H_1$ listed in ~\ref{sec:hypothesis}. To investigate the difference between homogeneous and heterogeneous controllers for the shepherd agents, we first explore a scenario with two shepherd and one sheep. 
+We first consider experiments that relate to $H_1$. To investigate the difference between homogeneous and heterogeneous controllers for the shepherd agents, we explore scenarios with fixed number of agents. 
 \begin{itemize}
-	\item 2 homogeneous shepherd’s vs 1 (intelligent) sheep
-	\item 2 heterogeneous shepherd’s vs 1 (intelligent) sheep
+	\item 2 homogeneous shepherds vs 1 sheep
+	\item 2 heterogeneous shepherds vs 1 sheep
+	\item 3 homogeneous shepherds vs 1 sheep
+	\item 3 heterogeneous shepherds vs 1 sheep
 \end{itemize}
  
- Later on, we compare different scenarios with different number of dogs corralling one sheep. This way the task complexity varies by having different sheep to dog ratios. 
+In order to test $H_2$, we compare different scenarios with different number of shepherds corralling one sheep:
+\begin{itemize}
+	\item 1 shepherd vs 1 sheep	
+	\item 2 homogeneous shepherds vs 1 sheep
+	\item 3 homogeneous shepherds vs 1 sheep
+	\item 2 heterogeneous shepherds vs 1 sheep
+	\item 3 heterogeneous shepherds vs 1 sheep
+	
+\end{itemize}
+
+Finally, $H_3$ is approached by comparing scenarios with a fixed number of shepherds, in this case three, and different number of sheep. 
+\begin{itemize}
+	\item 3 heterogeneous shepherds vs 1 sheep
+	\item 3 heterogeneous shepherds vs 2 homogeneous sheep
+	\item 3 heterogeneous shepherds vs 3 homogeneous sheep
+\end{itemize}
+
+The second and third round of experiments regulate the task complexity by having different sheep to shepherd ratios. 
+
+\begin{itemize}
+	\item one shepherd one sheep = 1 ratio
+	\item two shepherds one sheep = 0.5 ratio
+	\item three shepherds one sheep = 0.33 ratio
+	
+	\item three shepherd one sheep = 0.33 ratio
+	\item three shepherd two sheep = 0.66 ratio
+	\item three shepherd three sheep = 1
+\end{itemize}
 
 
 \section{Results}
 In this section we present the results of the experiment detailed in Section ~\ref{sec:experiment}.
 
+\subsection{Homogeneous vs heterogeneous}
 \begin{figure}[ht]
-\centering
-\includegraphics[width=3.3in]{imgs/homo_vs_hetero.png}
-\caption{TODO.}
-\label{fig:homo_vs_hetero}
+	\centering
+	\includegraphics[width=3.3in]{imgs/homo2v1-hetero2v1-bestSoFar.jpeg}
+	\caption{Best individuals fitness in scenario with two shepherds and one sheep. Both homogeneous and heterogeneous settings are shown}
+	\label{fig:2v1_homo_vs_hetero}
 \end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=3.3in]{imgs/homo3v1-hetero3v1-bestSoFar.jpeg}
+	\caption{Best individuals fitness in scenario with three shepherds and one sheep. Both homogeneous and heterogeneous settings are shown}
+	\label{fig:3v1_homo_vs_hetero}
+\end{figure}
+
+\textbf{TODO: interpret graph. Shepherd do better in homo. Sheep does better with hetero dogs}
+
+
+\subsection{Adding more shepherds}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=3.3in]{imgs/barchart.jpg}
+	\caption{Bar chart for corralled cases in heterogeneous setting. Shows mean, best and worse for scenarios with one, two and three shepherds herding one sheep}
+	\label{fig:corralled_oneSheep}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=3.3in]{imgs/barchart.jpg}
+	\caption{Bar chart for escaped cases in heterogeneous setting. Shows mean, best and worse for scenarios with one, two and three shepherds herding one sheep}
+	\label{fig:escaped_oneSheep}
+\end{figure}
+
+\textbf{TODO: Interpret trend as more shepherd get involved, how does hetero does?}
+\textbf{TODO: consider including same graphs in homogeneous scenarios}
+
+
+\subsection{Adding more sheep}
+o	Look at percentage of corralled and escaped of last generation
+
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=3.3in]{imgs/barchart.jpg}
+	\caption{Bar chart for corralled cases in heterogeneous setting. Shows mean, best and worse for scenarios with three shepherds herding one, two and three sheep}
+	\label{fig:corralled_threeShepherd}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=3.3in]{imgs/barchart.jpg}
+	\caption{Bar chart for escaped cases in heterogeneous setting. Shows mean, best and worse for scenarios with three shepherds herding one, two and three sheep}
+	\label{fig:escaped_threeShepherd}
+\end{figure}
+
+\textbf{TODO: Interpret trend as more sheep need to be corralled (task is more complex)}
+
 
 \section{Conclusion}
 The conclusion goes here.
 
 \subsection{Future work}
-TODO
 
--In a competitive co-evolution, how does increasing task complexity by adding more sheep affects the effectiveness of herding? %TODO: fix
-
--[In a competitive co-evolution, do heterogeneous sheep perform better than homogeneous?] %TODO: fix
 
 
 
