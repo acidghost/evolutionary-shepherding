@@ -140,12 +140,15 @@ The hypothesis was ``simply increasing the difficulty of a task is not enough to
 Task difficulty was varied by replacing one adversary's passive controller with an active variant supposedly proving that increased difficulty did not justify the use of heterogeneous controllers.
 However, increased difficulty was never implemented structurally nor tested methodologically. 
 
-
 \section{Model}
-Our model is based on Potter et al.'s work \cite{potter2001heterogeneity}. The task domain relates to a herding task that simulates shepherd robots trying to push sheep robots into a corral. The environment consists of a 37 x 37 foot pasture with fences on the top and bottom. The corral is positioned on the right side, and the pasture is open on the left side for the sheep to escape.
+% Herding environment
+Our model is based on Potter et al.'s work \cite{potter2001heterogeneity}. 
+The task domain relates to a herding task that simulates shepherd robots trying to push sheep robots into a corral. The environment consists of a 37 x 37 foot pasture with fences on the top and bottom. The corral is positioned on the right side, and the pasture is open on the left side for the sheep to escape.
 
+% Task complexity
 We module the task complexity by controlling the number of agents of each type that take part in the task. Thus, we operationalize it as the sheep to dog ratio, with increased ratio implying a more complex task for the shepherds.
 
+% Positioning system
 To have a general sense of the position of a group of sheep, we compute the center of mass - which is equal to the position of the sheep when there is only one.
 We work within a agent-centered polar coordinate system where an agent's position is relative to a second agent. Therefore, the first component for a coordinate is the distance to the second agent, called the range. The coordinate system's axis is created between the second agent's position and the midpoint for the entrance of the corral. Angles are created from this axis for the second component of the polar coordinates, called bearings. 
 
@@ -254,7 +257,11 @@ Given the output of the networks, the agents will try to move into a position, h
 
 \section{Experiment}
 \label{sec:experiment}
-In order to answer the research questions listed in section ~\ref{sec:researchQuestions} and test its corresponding hypothesis in section ~\ref{sec:hypothesis}, we perform coevolution across 100 generations. We run the simulation 40 times and perform statistical analysis to get 95\% confidence intervals.
+In order to answer the research questions listed in Section~\ref{sec:researchQuestions} and test its corresponding hypothesis in Section~\ref{sec:hypothesis}, we perform coevolution across 100 generations. 
+We run the simulation 40 times and perform statistical analysis to get 95\% confidence intervals.
+
+% Homo vs Etero experiment
+\subsection{Controllers comparison}
 We first consider experiments that relate to $H_1$. To investigate the difference between homogeneous and heterogeneous controllers for the shepherd agents, we explore scenarios with fixed number of agents. 
 \begin{itemize}
 	\item 2 homogeneous shepherds vs 1 sheep
@@ -262,6 +269,9 @@ We first consider experiments that relate to $H_1$. To investigate the differenc
 	\item 3 homogeneous shepherds vs 1 sheep
 	\item 3 heterogeneous shepherds vs 1 sheep
 \end{itemize}
+
+% Need for heterogeneous controllers
+\subsection{Need for heterogeneousity: shepherds number}
 In order to test $H_2$, we compare different scenarios with different number of shepherds corralling one sheep:
 \begin{itemize}
 	\item 1 shepherd vs 1 sheep	
@@ -271,6 +281,9 @@ In order to test $H_2$, we compare different scenarios with different number of 
 	\item 3 heterogeneous shepherds vs 1 sheep
 	
 \end{itemize}
+
+% Task complexity: more sheep!
+\subsection{Task complexity: sheep number}
 Finally, $H_3$ is approached by comparing scenarios with a fixed number of shepherds, in this case three, and different number of sheep. 
 \begin{itemize}
 	\item 3 heterogeneous shepherds vs 1 sheep
