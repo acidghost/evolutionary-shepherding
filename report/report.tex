@@ -169,50 +169,78 @@ Task difficulty was varied by replacing one adversary's passive controller with 
 However, increased difficulty was never implemented structurally nor tested methodologically. 
 
 \section{Model design}
-In this section we detail our model which aims to simulate a herding task by employing robots with intelligent controllers.
 %This can be considered as an extension of~\cite{potter2001heterogeneity} because the task, as well as part of the model, are similar. 
+In this section we detail our model which aims to simulate a herding task by employing robots with intelligent controllers.
 % Herding environment + Task complexity
-In particular, the herding task simulates shepherd robots trying to push sheep robots into a corral, is detailed in Section~\ref{sec:herding_task_environment},
-% Positioning system
-while the positioning system, which is used to control and direct movements of the agents, is described in Section~\ref{sec:positioning_system}. 
+The herding task involves shepherd robots trying to push sheep robots into a corral, this is further detailed in Section~\ref{sec:herding_task_environment}.
+%% Positioning system
+%In particular, the positioning system used to control and direct movements of the agents, is described in Section~\ref{sec:positioning_system}. 
 % NN_design
 Controllers of both shepherds and sheep are modelled as different evolutive NNs.
 Thus, their designs are explained in Section~\ref{sec:NN_design} and their evolution strategies are detailed in Section~\ref{sec:controllers_evolution}.
-% obstacle_avoidance
-Agents have a simple obstacle avoidance system that allows them to not collide each other, this is illustrated in~\ref{sec:obstacle_avoidance}.
-% NN_output_interpretation
-In order to actuate the movements, the output from the controller has to be translated into Cartesian coordinates readable by the moving methods of the agents.    
-This step is specified in Section~\ref{sec:NN_output_interpretation}.
+% obstacle_avoidance + NN_output_interpretation
+Agents have a simple obstacle avoidance system that allows them to not collide each other.
+Furthermore, in order to actuate the movements the output from the controller has to be translated into Cartesian coordinates readable by the moving system of the agents.    
+These both steps are finally specified in Section~\ref{sec:agents_design}.
 
 \subsection{Herding task and environment}
 \label{sec:herding_task_environment}
 % herding task + environment
-The task domain relates to a herding task that simulates shepherd robots trying to push sheep robots into a corral. The environment consists of a 37 x 37 foot pasture with fences on the top and bottom. The corral is positioned on the right side, and the pasture is open on the left side for the sheep to escape.
+The task domain relates to a herding task that simulates shepherd robots trying to push sheep robots into a corral. 
+The environment consists of a $l \times l$ squared pasture with fences on the top and bottom. The corral is positioned on the right side, and the pasture is open on the left side for the sheep to escape.
+% Task complexity
+We module the task complexity by controlling the number of agents of each type that take part in the task, respectively $D$ for the shepherds (or dogs) and $S$ for the sheep.
+Thus, we operationalize it as the sheep to shepherd ratio, defined as $\phi = D / S$, where an increased ratio implies a more complex task for the shepherds.
 
-% task complexity
-We module the task complexity by controlling the number of agents of each type that take part in the task. Thus, we operationalize it as the sheep to dog ratio, with increased ratio implying a more complex task for the shepherds.
-
-\vspace{1em}
-\subsubsection{Positioning system}
-\label{sec:positioning_system}
-To have a general sense of the position of a group of sheep, we compute the center of mass - which is equal to the position of the sheep when there is only one.
-We work within a agent-centered polar coordinate system where an agent's position is relative to a second agent. 
-Therefore, the first component for a coordinate is the distance to the second agent, called the range. 
+% Positioning system
+We use an agent centered polar coordinate system where an agent's position is relative to a second agent of the same type (i.e., shepherd or sheep).
 The coordinate system's axis is created between the second agent's position and the midpoint for the entrance of the corral. 
-Angles are created from this axis for the second component of the polar coordinates, called bearings. 
+Within this system, a coordinate pair is defined as $p = (r, b)$, where $r$ is the distance to the second agent (range) and $b$ is the angle from ???????????????????????????? (bearing). %TODO: fix 
+In order to define the position of a group of sheep, we take into account the center of mass $gc$, which is equal to the position of the sheep when there is only one.
+%TODO: explain how we calculate the gc
+The overall task environment described here is depicted in Figure~\ref{fig:task_env}. 
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.8\hsize]{imgs/herding_environment.png}
+	\caption{Herding task environment and detail of the positioning coordinates for a group of sheep.}
+	\label{fig:task_env}
+\end{figure}
+
 
 \subsection{Neural Networks design}
 \label{sec:NN_design}
-The controllers for the agents are composed of feedforward neural networks, with each agent containing a multilayer perceptron with one hidden layer. 
-The inputs for the networks come in pairs as the range and bearing of other agents in the polar coordinate system previously described. 
-In a simple network, where an agent can only see one other agent, the network consists of two input nodes and a bias, and its hidden layer has three nodes. 
-Alternatively, if the agent can see two other agents it has a more complex neural network, with four input nodes and a bias, and five nodes in its hidden layer. 
+The controllers for the agents are feedforward neural networks~\cite{bebis1994feed} and each agent contains a multilayer perceptron with one hidden layer.
+% Inputs
+The inputs for the NNs are a \textit{bias} and one or more instances of \textit{coordinate pairs} (defined in Section~\ref{sec:herding_task_environment}).
+While the former is a fixed value, the latter is dynamic and varies depending on the position of the other agents. 
+Furthermore, in order to design some NNs able to support scenarios with diverse number of agents, we design two different NNs: the \textit{single-pair} and the \textit{multi-pair} networks. 
+This is needed since in different experiment configurations the number of agents varies (see Section~\ref{sec:experiments_performances}).
 
+With the \textit{single-pair} network, an agent can only see one other agent so the network consists of two input nodes, one for each item of a \textit{coordinate pair} and its hidden layer has three nodes. 
+This network is showed in Figure~\ref{fig:single_pair_topology}.
+
+Alternatively, if the agent can see two other agents it has a more complex neural network, with four input nodes and a bias, and five nodes in its hidden layer. 
+% Activation function
 The activation function is a sigmoid function centred at 0. 
 The output of the network represents the coordinates where the agent will try to move to in the next time step. 
 Since the output has a range from $(0, 1)$, it must be translated into a range of $[0, 37]$ for target ratios and $[-\pi, \pi]$ for target bearings. 
  
-\vspace{1em}
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.8\hsize]{imgs/NN_topology.png}
+	\caption{single-pair NN.}
+	\label{fig:single_pair_topology}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.8\hsize]{imgs/NN_topology.png}
+	\caption{multi-pair NN.}
+	\label{fig:multi_pair_topology}
+\end{figure}
+
+\vspace{0.5em}
 % Shepherds controllers
 \subsubsection{Shepherds controllers}
 We assume the shepherds need to evolve cooperation behaviours among themselves to successfully herd the sheep, but competitive behaviours against sheep who want to escape. To achieve the first objective, a shepherd needs information about the other shepherds around. However, in an attempt to be realistic and keep the network complexity low, we only provide the controller with information for the closest shepherd. Similarly, to achieve the second objective a shepherd needs information about the sheep. Following the same motivation, only the closest sheep position is fed into the network. Thus, the inputs for a shepherd controller are: 
@@ -226,7 +254,7 @@ We assume the shepherds need to evolve cooperation behaviours among themselves t
 
 The third and fourth input are not taken into account in scenarios where there is only one shepherd. 
 
-\vspace{1em}
+\vspace{0.5em}
 % Sheep controllers
 \subsubsection{Sheep controllers}
 In case of the sheep, the assumption for competitive and cooperative collective behaviour still holds. This time, in order to avoid the shepherd and be able to escape, sheep must have information about the closest shepherd. Yet, they have a strong preference to stay in a group and so need information about the closest sheep around them in order to pursue this goal. Thus, similar to the shepherd's controllers, the inputs are:
@@ -255,7 +283,7 @@ In cases where there is only one sheep, a simple controller is assigned.
 Thus, the sheep must either be corralled or has to escape in order for the simulation to stop before the time expires.
 Different fitness functions are created for each type of agent. 
 Hereby we explain each of them and their motivation.
-\vspace{1em}
+\vspace{0.5em}
 \subsubsection{Shepherds fitness function}
 On the one hand, the fitness for shepherds is determined as the distance from the sheep center to the corral, added during the simulation time steps. For the shepherds, this distance is desired to be minimized to observe a herding behaviour.  
 
@@ -276,7 +304,7 @@ $$ f_{sheph}(x) = \sum_{i=1}^{1500 or stop} dist_i(x) $$
 
 Note that the fitness is the same among a group of shepherds, since all the components reflect on the group's performance. This design choice is motivated by the fact that shepherds must work together to achieve a common goal. 
 
-\vspace{1em}
+\vspace{0.5em}
 \subsubsection{Sheep fitness function}
 On the other hand, the fitness for a sheep is determined by its own distance to the corral. In scenarios where there is more than one sheep, a group component is added to motivate sheep to stay in groups. This is the ratio of the group calculated as the distance from the furthest sheep to the center of mass in a specific time step. 
 
@@ -299,23 +327,23 @@ Where $T_s$ is the number of total steps (1500 in our experiments) and $E_s$ is 
 
 In homogeneous set-ups we evolve one controller per type of agent, meaning we have two subpopulations, one for shepherds and one for sheep, coevolving. However, to create heterogeneity a population per agent is created. For example, in a scenario with two shepherds and one sheep, there is a total of three subpopulations, two of them cooperating among each other and competing with the third one.  
 
-\subsection{Obstacle avoidance}
-\label{sec:obstacle_avoidance}
+\subsection{Agents design}
+\label{sec:agents_design}
+% Obstacle avoidance
 Given the output of the networks, the agents will try to move into a position, however, both types of agents have obstacle avoidance built into their behaviour which might prevent them from moving to the target position. Shepherds avoid bumping into fences, the corral or other agents within a 3 simulation unit ratio. Meanwhile, the sheep can only avoid fences and other agents within a 2 simulation unit ratio. 
 
-\subsection{Interpreting the Neural Network output}
-\label{sec:NN_output_interpretation}
+% Interpreting the Neural Network output
 Since the output for the network is represented as polar coordinates centered at the sheep center of mass, they have to be translated into Cartesian coordinates in the pasture. 
 
+% Others properites: like speed....
 
 
 
 
-\section{Experiment}
+\section{Experimental results}
 \label{sec:experiment}
 In order to answer the research questions listed in Section~\ref{sec:researchQuestions} and test its corresponding hypothesis in Section~\ref{sec:hypothesis}, we perform coevolution across 100 generations. 
 We run the simulation 40 times and perform statistical analysis to get 95\% confidence intervals.
-
 
 \subsection{Implementation}
 %TODO: the implementation is the description of the instance of our model used to run the experiments, this means that all parameters should be defined (name+meaning) in the model section and instanciated in the implementation.  The impl. is not much about the code/classes etc unless we came up with a novel algortihm....
@@ -326,8 +354,26 @@ fitness = - cummulative distance}
 A simulation consists of 2.5 second divided in 1500 discrete time steps. At every time step, an agent propagates the inputs through its neural network and computes a target position.
 \textbf{TODO: pseudocode? diagram?}
 
+\subsubsection{Environment}
+pasture=37x37 foot, $l = 37$ foot
+
+
+\subsubsection{Neural Networks}
+TODO
+
+\subsubsection{Evolution}
+TODO
+
+\subsubsection{Agents properties and functioning}
+TODO
+
+
+
+\subsection{Performance details}
+\label{sec:experiments_performances}
 % Homo vs Etero experiment
-\subsection{Controllers comparison}
+\vspace{0.5em}
+\subsubsection{Controllers comparison}
 We first consider experiments that relate to $H_1$. To investigate the difference between homogeneous and heterogeneous controllers for the shepherd agents, we explore scenarios with fixed number of agents. 
 \begin{itemize}
 	\item 2 homogeneous shepherds vs 1 sheep
@@ -337,7 +383,8 @@ We first consider experiments that relate to $H_1$. To investigate the differenc
 \end{itemize}
 
 % Need for heterogeneous controllers
-\subsection{Need for heterogeneousity: shepherds number}
+\vspace{0.5em}
+\subsubsection{Need for heterogeneousity: shepherds number}
 In order to test $H_2$, we compare different scenarios with different number of shepherds corralling one sheep:
 \begin{itemize}
 	\item 1 shepherd vs 1 sheep	
@@ -349,7 +396,8 @@ In order to test $H_2$, we compare different scenarios with different number of 
 \end{itemize}
 
 % Task complexity: more sheep!
-\subsection{Task complexity: sheep number}
+\vspace{0.5em}
+\subsubsection{Task complexity: sheep number}
 Finally, $H_3$ is approached by comparing scenarios with a fixed number of shepherds, in this case three, and different number of sheep. 
 \begin{itemize}
 	\item 3 heterogeneous shepherds vs 1 sheep
@@ -371,7 +419,8 @@ The second and third round of experiments regulate the task complexity by having
 \section{Results}
 In this section we present the results of the experiment detailed in Section ~\ref{sec:experiment}.
 
-\subsection{Homogeneous vs heterogeneous}
+\vspace{0.5em}
+\subsubsection{Homogeneous vs heterogeneous}
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=3.3in]{imgs/homo2v1-hetero2v1-bestSoFar.jpeg}
@@ -388,8 +437,8 @@ In this section we present the results of the experiment detailed in Section ~\r
 
 \textbf{TODO: interpret graph. Shepherd do better in homo. Sheep does better with hetero dogs}
 
-
-\subsection{Adding more shepherds}
+\vspace{0.5em}
+\subsubsection{Adding more shepherds}
 
 \begin{figure}[ht]
 	\centering
@@ -408,8 +457,8 @@ In this section we present the results of the experiment detailed in Section ~\r
 \textbf{TODO: Interpret trend as more shepherd get involved, how does hetero does?}
 \textbf{TODO: consider including same graphs in homogeneous scenarios}
 
-
-\subsection{Adding more sheep}
+\vspace{0.5em}
+\subsubsection{Adding more sheep}
 o	Look at percentage of corralled and escaped of last generation
 
 
