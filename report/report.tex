@@ -34,7 +34,9 @@ Amsterdam, Netherlands}}
 \begin{abstract}
 In the context of robotics, intelligent behaviours are often achieved using neural networks as controllers evolved using  an evolutionary algorithm.
 In the case of multiple individuals within a species, controllers can be either homogeneous or heterogeneous.
-In this paper, we use competitive co-evolution of homogeneous and heterogeneous controllers in order to investigate its effects on the emergence of specialisation behaviour regarding a herding task.
+In this paper, we use competitive co-evolution of homogeneous and heterogeneous controllers in order to investigate its effects on the emergence of specialisation behaviour regarding a herding 
+
+TODO: add what we have discovered!!!!!!!
 % TODO: add what we have discovered
 \end{abstract}
 
@@ -43,20 +45,24 @@ In this paper, we use competitive co-evolution of homogeneous and heterogeneous 
 
 
 \section{Introduction}
+% Evolutionary Algorithms
 Evolutionary algorithms (EA) are biology inspired algorithms that, going through multiple steps (e.g., generation, procreation, etc.), are able to evolve entities over time.
 Thus, the entities subject to the evolution are referred to as individuals,
 %and the EA acts as the digital environment these individuals are born, live, procreate and die in.
 and the evolution is usually controlled such that next generations improve along the runs.
 In the field of robotics, EAs can be used to evolve the behavioural controller of a robot, these controllers are evolved as individuals in an EA.
+% Neural Networks
 A Neural Network (NN) is a function estimator that can be used as a controller and its design is natural inspired by the biological nervous system.
 In order to employ a NN as a controller, inputs usually come from the sensors making observations of the environment, while the weights are evolved by an EA.
 The complete evolutionary process can be run in a simulation which exploits the computer's computational power in order to evaluate many individuals in a reasonable time. 
 Robotics employs both EAs and NNs in order to evolve intelligent behaviours that can pursue one or more given goals.
 
+% Solvable tasks
 Tasks composition and complexity can vary based on the specific scenario, in general it is subject of many studies aiming to solve different tasks.
 For instance, tasks can be relatively small (e.g., moving objects) or more based on collaboration between a number of individuals.
 Research investigates collective behaviour in order to asses to which extent collaboration between individuals is feasible.  
 
+% Our task/paper
 In this paper, we consider competitive co-evolution within a herding task which consists of a number of shepherds that herd a sheep into a corral.
 We evolve NN controllers and assign them to the agents, the latter step can be done with the homogeneous or heterogeneous approach.
 While the former employs the same controller instance for each agent, 
@@ -106,8 +112,29 @@ The following hypothesis are in one to one relationship with the aforementioned 
 	\item The number of shepherds herding one sheep is directly related to their fitness in heterogeneous cases, such that fitness increases as the number of shepherds increases.	
 	\item Increasing the number of sheep herd by a fixed number of shepherds decreases the number of corralled sheep.
 \end{enumerate}
- 
 $H_0$, namely the null hypothesis, is ``Shepherds’ fitness in the heterogeneous case is equivalent to the one of the homogeneous''.
+%TODO: add null hyptoesis for H_2 and H_3
+
+\subsection{Contributions}
+In this paper we introduce our proposed model for running a herding task in a competitive co-evoulution framework. 
+We have built our model and run a thorough set of simulations in order to test the hypothesis detailed in Section~\ref{sec:hypothesis}. 
+In what follow, we list the main contributions this paper to the state-of-the-art:
+\begin{itemize}
+	\item BLA
+	\item PIZZA
+	\item PASTA
+	\item NESPRESSO....what else?
+\end{itemize}
+
+This work sheds a tiny light in the topic of competitive co-evoultion by showing to which extent it is feasible in a herding task accomplished by robots.
+
+\subsection{Organization}
+%TODO: finish this!
+The rest of this paper is organized as follows. 
+In Section X, we revise the state-of-the-art related to our research topic. 
+In Section Y, we present our model, describing its different components. 
+We evaluate the performance of our solution in Section Z. 
+Finally, in Section M we draw some conclusions and point out ways to further extend this work.
 
 \section{Literature}
  
@@ -235,8 +262,15 @@ Where $T_s$ is the number of total steps (1500 in our experiments) and $E_s$ is 
 
 In homogeneous set-ups we evolve one controller per type of agent, meaning we have two subpopulations, one for shepherds and one for sheep, coevolving. However, to create heterogeneity a population per agent is created. For example, in a scenario with two shepherds and one sheep, there is a total of three subpopulations, two of them cooperating among each other and competing with the third one.  
 
+\subsection{Interpreting the NN output}
+Since the output for the network is represented as polar coordinates centered at the sheep center of mass, they have to be translated into Cartesian coordinates in the pasture. 
+
+\subsection{Obstacle avoidance}
+Given the output of the networks, the agents will try to move into a position, however, both types of agents have obstacle avoidance built into their behaviour which might prevent them from moving to the target position. Shepherds avoid bumping into fences, the corral or other agents within a 3 simulation unit ratio. Meanwhile, the sheep can only avoid fences and other agents within a 2 simulation unit ratio. 
+
 
 \section{Implementation}
+%TODO: the implementation is the description of the instance of our model used to run the experiments, this means that all parameters should be defined (name+meaning) in the model section and instanciated in the implementation.  The impl. is not much about the code/classes etc unless we came up with a novel algortihm....
 The project is coded in Java with use of \textit{Mason} for handling agents and their movements. In order to introduce evolutionary computing, we combine it with \textit{ECJ}. We use \textit{neuroph} as the library for neural networks. 
 
 \textbf{TODO: Since ECJ can only do maximization problems, the shepherd fitness is taken as 
@@ -248,11 +282,6 @@ A simulation consists of 2.5 second divided in 1500 discrete time steps. At ever
 \textbf{TODO: pseudocode? diagram?}
  
 
-\subsection{Interpreting the NN output}
-Since the output for the network is represented as polar coordinates centered at the sheep center of mass, they have to be translated into Cartesian coordinates in the pasture. 
-
-\subsection{Obstacle avoidance}
-Given the output of the networks, the agents will try to move into a position, however, both types of agents have obstacle avoidance built into their behaviour which might prevent them from moving to the target position. Shepherds avoid bumping into fences, the corral or other agents within a 3 simulation unit ratio. Meanwhile, the sheep can only avoid fences and other agents within a 2 simulation unit ratio. 
 
 
 \section{Experiment}
