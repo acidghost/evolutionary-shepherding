@@ -215,16 +215,15 @@ The controllers for the agents are feedforward neural networks~\cite{bebis1994fe
 The inputs for the NNs are a \textit{bias} and one or more instances of \textit{coordinate pairs} (defined in Section~\ref{sec:herding_task_environment}).
 While the former is a fixed value, the latter is dynamic and varies depending on the position of the other agents. 
 Furthermore, in order to design some NNs able to support scenarios with diverse number of agents, we design two different NNs: the \textit{single-pair} and the \textit{multi-pair} networks. 
-This is needed since in different experiment configurations the number of agents varies (see Section~\ref{sec:experiments_performances}).
-
+% Single-pair NN
 With the \textit{single-pair} network, an agent can only see one other agent so the network consists of two input nodes, one for each item of a \textit{coordinate pair} and its hidden layer has three nodes. 
 This network is showed in Figure~\ref{fig:single_pair_topology}.
+% Multi-pair NN
+Alternatively, if the agent can see two other agents it has the \textit{multi-pair} neural network, with four input nodes for the coordinate, and five nodes in its hidden layer. 
 
-Alternatively, if the agent can see two other agents it has a more complex neural network, with four input nodes and a bias, and five nodes in its hidden layer. 
-% Activation function
-The activation function is a sigmoid function centred at 0. 
-The output of the network represents the coordinates where the agent will try to move to in the next time step. 
-Since the output has a range from $(0, 1)$, it must be translated into a range of $[0, 37]$ for target ratios and $[-\pi, \pi]$ for target bearings. 
+Moreover, for every NNs the activation function is a sigmoid function $S(t) = 1 / 1 + \epsilon^{-t}$, centred at $0$. 
+The output of the network is a polar \textit{coordinates pair}, namely \textit{target position}, that represents the space point in which the agent will try to move to in the next time step.
+Finally, the output of the NN has a range from $(0, 1)$, so in order to convert it into the used positioning system it is  translated into a range of $[0, l]$ for target ratios and $[-\pi, \pi]$ for target bearings. 
  
 \begin{figure}[t]
 	\centering
