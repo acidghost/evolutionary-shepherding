@@ -185,7 +185,7 @@ The algorithm used to evolve the controllers follows the frameworks of evolution
 
 In order to calculate the fitness for an individual, all controllers are evaluated through 10 trials of the task and the average is taken as fitness.
 
-\textbf{TODO: how exactly are the controllers evaluated? For an agent in subpopulation 0, choose best from subpopulation 1? }
+Each individual in a population is evaluated with the best individuals from the other populations, following an elitist approach.
 Every trial runs for a maximum of 2.5 seconds. In cases where there is more than one sheep, a complex network is assigned to all sheep. The simulation ends before the time elapses if all but one sheep escape or get corralled. The reason for leaving one sheep left in the pasture when ending the simulation is that the number of inputs for the sheep controllers is fixed before the beginning of a trial, and having no other sheep left would lead to null inputs and misbehaviour. In cases where there is only one sheep, a simple controller is assigned. Thus, the sheep must either be corralled or has to escape in order for the simulation to stop before the time expires.
 
 Different fitness functions are created for each type of agent. Hereby we explain each of them and their motivation.
