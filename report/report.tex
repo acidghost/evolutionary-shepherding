@@ -136,7 +136,7 @@ In Section Y, we present our model, describing its different components.
 We evaluate the performance of our solution in Section Z. 
 Finally, in Section M we draw some conclusions and point out ways to further extend this work.
 
-\section{Literature}
+\section{Literature review}
 In this section, we survey the main researches in related work, considering different the following topics: \textit{co-evolution}, \textit{competitive co-evolution}, \textit{evolving NNs} and \textit{homogeneity \& heterogeneity in NNs}.
  
 \subsection{Co-evolution}
@@ -168,21 +168,22 @@ The hypothesis was ``simply increasing the difficulty of a task is not enough to
 Task difficulty was varied by replacing one adversary's passive controller with an active variant supposedly proving that increased difficulty did not justify the use of heterogeneous controllers.
 However, increased difficulty was never implemented structurally nor tested methodologically. 
 
-\section{Model}
+\section{Model design}
 In this section we detail our model which aims to simulate a herding task by employing robots with intelligent controllers.
-This can be considered as an extension of~\cite{potter2001heterogeneity} because the task, as well as part of the model, are similar. 
+%This can be considered as an extension of~\cite{potter2001heterogeneity} because the task, as well as part of the model, are similar. 
 % Herding environment + Task complexity
-The herding task, that simulates shepherd robots trying to push sheep robots into a corral, is detailed in Section~\ref{sec:herding_task_environment},
+In particular, the herding task simulates shepherd robots trying to push sheep robots into a corral, is detailed in Section~\ref{sec:herding_task_environment},
 % Positioning system
 while the positioning system, which is used to control and direct movements of the agents, is described in Section~\ref{sec:positioning_system}. 
 % NN_design
-Controllers of both shepherds and sheep are modelled as NNs, thus their design s are explained in Section~\ref{sec:NN_design}.
-% Evolution of NN controllers
-
-% NN_output_interpretation
-
+Controllers of both shepherds and sheep are modelled as different evolutive NNs.
+Thus, their designs are explained in Section~\ref{sec:NN_design} and their evolution strategies are detailed in Section~\ref{sec:controllers_evolution}.
 % obstacle_avoidance
- 
+Agents have a simple obstacle avoidance system that allows them to not collide each other, this is illustrated in~\ref{sec:obstacle_avoidance}.
+% NN_output_interpretation
+In order to actuate the movements, the output from the controller has to be translated into Cartesian coordinates readable by the moving methods of the agents.    
+This step is specified in Section~\ref{sec:NN_output_interpretation}.
+
 \subsection{Herding task and environment}
 \label{sec:herding_task_environment}
 % herding task + environment
@@ -191,7 +192,7 @@ The task domain relates to a herding task that simulates shepherd robots trying 
 % task complexity
 We module the task complexity by controlling the number of agents of each type that take part in the task. Thus, we operationalize it as the sheep to dog ratio, with increased ratio implying a more complex task for the shepherds.
 
-
+\vspace{1em}
 \subsubsection{Positioning system}
 \label{sec:positioning_system}
 To have a general sense of the position of a group of sheep, we compute the center of mass - which is equal to the position of the sheep when there is only one.
@@ -211,6 +212,7 @@ The activation function is a sigmoid function centred at 0.
 The output of the network represents the coordinates where the agent will try to move to in the next time step. 
 Since the output has a range from $(0, 1)$, it must be translated into a range of $[0, 37]$ for target ratios and $[-\pi, \pi]$ for target bearings. 
  
+\vspace{1em}
 % Shepherds controllers
 \subsubsection{Shepherds controllers}
 We assume the shepherds need to evolve cooperation behaviours among themselves to successfully herd the sheep, but competitive behaviours against sheep who want to escape. To achieve the first objective, a shepherd needs information about the other shepherds around. However, in an attempt to be realistic and keep the network complexity low, we only provide the controller with information for the closest shepherd. Similarly, to achieve the second objective a shepherd needs information about the sheep. Following the same motivation, only the closest sheep position is fed into the network. Thus, the inputs for a shepherd controller are: 
@@ -224,6 +226,7 @@ We assume the shepherds need to evolve cooperation behaviours among themselves t
 
 The third and fourth input are not taken into account in scenarios where there is only one shepherd. 
 
+\vspace{1em}
 % Sheep controllers
 \subsubsection{Sheep controllers}
 In case of the sheep, the assumption for competitive and cooperative collective behaviour still holds. This time, in order to avoid the shepherd and be able to escape, sheep must have information about the closest shepherd. Yet, they have a strong preference to stay in a group and so need information about the closest sheep around them in order to pursue this goal. Thus, similar to the shepherd's controllers, the inputs are:
@@ -238,7 +241,8 @@ In case of the sheep, the assumption for competitive and cooperative collective 
 Once again, the third and fourth inputs are not taken into account in scenarios where there is only one sheep. 
 %NOTE consider combining the two previous subsections 
 
-\subsection{Evolution of Neural Network controllers}
+\subsection{Evolution of controllers}
+\label{sec:controllers_evolution}
 The algorithm used to evolve the controllers follows the frameworks of evolutionary strategies. 
 The genome is an array of doubles consisting of the weights for the neural network: 17 for a simple network and 37 for a complex network. The specific strategy is ($\mu + \lambda$), with $\mu = 10$ and $\lambda = 100$. 
 In order to calculate the fitness for an individual, all controllers are evaluated through 10 trials of the task and the average is taken as fitness.
@@ -295,25 +299,15 @@ Where $T_s$ is the number of total steps (1500 in our experiments) and $E_s$ is 
 
 In homogeneous set-ups we evolve one controller per type of agent, meaning we have two subpopulations, one for shepherds and one for sheep, coevolving. However, to create heterogeneity a population per agent is created. For example, in a scenario with two shepherds and one sheep, there is a total of three subpopulations, two of them cooperating among each other and competing with the third one.  
 
-\subsection{Interpreting the NN output}
-Since the output for the network is represented as polar coordinates centered at the sheep center of mass, they have to be translated into Cartesian coordinates in the pasture. 
-
 \subsection{Obstacle avoidance}
+\label{sec:obstacle_avoidance}
 Given the output of the networks, the agents will try to move into a position, however, both types of agents have obstacle avoidance built into their behaviour which might prevent them from moving to the target position. Shepherds avoid bumping into fences, the corral or other agents within a 3 simulation unit ratio. Meanwhile, the sheep can only avoid fences and other agents within a 2 simulation unit ratio. 
 
+\subsection{Interpreting the Neural Network output}
+\label{sec:NN_output_interpretation}
+Since the output for the network is represented as polar coordinates centered at the sheep center of mass, they have to be translated into Cartesian coordinates in the pasture. 
 
-\section{Implementation}
-%TODO: the implementation is the description of the instance of our model used to run the experiments, this means that all parameters should be defined (name+meaning) in the model section and instanciated in the implementation.  The impl. is not much about the code/classes etc unless we came up with a novel algortihm....
-The project is coded in Java with use of \textit{Mason} for handling agents and their movements. In order to introduce evolutionary computing, we combine it with \textit{ECJ}. We use \textit{neuroph} as the library for neural networks. 
 
-\textbf{TODO: Since ECJ can only do maximization problems, the shepherd fitness is taken as 
-fitness = - cummulative distance}
-
-\textbf{TODO: Mention value for parameters, for example stimulusMultiplier = pasture width, groupMultiplier = 0.8}
-
-A simulation consists of 2.5 second divided in 1500 discrete time steps. At every time step, an agent propagates the inputs through its neural network and computes a target position.
-\textbf{TODO: pseudocode? diagram?}
- 
 
 
 
@@ -321,6 +315,16 @@ A simulation consists of 2.5 second divided in 1500 discrete time steps. At ever
 \label{sec:experiment}
 In order to answer the research questions listed in Section~\ref{sec:researchQuestions} and test its corresponding hypothesis in Section~\ref{sec:hypothesis}, we perform coevolution across 100 generations. 
 We run the simulation 40 times and perform statistical analysis to get 95\% confidence intervals.
+
+
+\subsection{Implementation}
+%TODO: the implementation is the description of the instance of our model used to run the experiments, this means that all parameters should be defined (name+meaning) in the model section and instanciated in the implementation.  The impl. is not much about the code/classes etc unless we came up with a novel algortihm....
+The project is coded in Java with use of \textit{Mason} for handling agents and their movements. In order to introduce evolutionary computing, we combine it with \textit{ECJ}. We use \textit{neuroph} as the library for neural networks. 
+\textbf{TODO: Since ECJ can only do maximization problems, the shepherd fitness is taken as 
+fitness = - cummulative distance}
+\textbf{TODO: Mention value for parameters, for example stimulusMultiplier = pasture width, groupMultiplier = 0.8}
+A simulation consists of 2.5 second divided in 1500 discrete time steps. At every time step, an agent propagates the inputs through its neural network and computes a target position.
+\textbf{TODO: pseudocode? diagram?}
 
 % Homo vs Etero experiment
 \subsection{Controllers comparison}
