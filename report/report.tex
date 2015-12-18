@@ -201,7 +201,10 @@ Within this system, a coordinate pair is defined as $\mathbf{p} = (r, b)$, where
 In order to define the position of a group of sheep, we take into account the center of mass $\mathbf{gc}$, which is equal to the position of the sheep when there is only one.
 % explain how we calculate the gc
 The center the sheep group is calculated like the center of mass of a particle system, as following:
-$$ \mathbf{gc} = \frac{1}{S} \sum_{i=1}^{S}{\mathbf{x_i}} $$
+\begin{equation} \label{eq:gc}
+\mathbf{gc} = \frac{1}{S} \sum_{i=1}^{S}{\mathbf{x_i}}
+\end{equation}
+where $\mathbf{x_i}$ is the $i-th$ sheep's position in Cartesian coordinates.
 The overall task environment described here is depicted in Figure~\ref{fig:task_env}. 
 
 \begin{figure}[ht]
@@ -214,31 +217,33 @@ The overall task environment described here is depicted in Figure~\ref{fig:task_
 
 \subsection{Neural Networks design}
 \label{sec:NN_design}
-The controllers for the agents are feedforward neural networks~\cite{bebis1994feed} and each agent contains a multilayer perceptron with one hidden layer.
+The controllers for the agents are feedforward neural networks~\cite{bebis1994feed} with one hidden layer.
 % Inputs
-The inputs for the NNs are a \textit{bias} and one or more instances of \textit{coordinate pairs} (defined in Section~\ref{sec:herding_task_environment}).
-While the former is a fixed value, the latter is dynamic and varies depending on the position of the other agents. 
-Furthermore, in order to design some NNs able to support scenarios with diverse number of agents, we design two different NNs: the \textit{single-pair} and the \textit{multi-pair} networks. 
+The inputs for the NNs are a fixed \textit{bias} of $1$ and one or more instances of \textit{coordinate pairs} (defined in Section~\ref{sec:herding_task_environment}).
+In order to be able to support scenarios with diverse number of agents, we design two different NNs: the \textit{single-pair} and the \textit{multi-pair} networks. 
 % Single-pair NN
 With the \textit{single-pair} network, an agent can only see one other agent so the network consists of two input nodes, one for each item of a \textit{coordinate pair} and its hidden layer has three nodes. 
 This network is showed in Figure~\ref{fig:single_pair_topology}.
+The input nodes are labelled \textit{opponent} because the input given to the network represents coordinates of an opposing agent.
 % Multi-pair NN
-Alternatively, if the agent can see two other agents it has the \textit{multi-pair} neural network, with four input nodes for the coordinate, and five nodes in its hidden layer. 
+Alternatively, to enable and agent to cooperate with its allies, we assign to it the \textit{multi-pair} neural network, with four input nodes for the coordinate, and five nodes in its hidden layer.
+This NN design is shown in Figure~\ref{fig:multi_pair_topology}.
+The input nodes are labelled \textit{opponent} and \textit{ally} because the input given to the network represent coordinates of one opponent and one ally.
 
-Moreover, for every NNs the activation function is a sigmoid function $S(t) = 1 / 1 + \epsilon^{-t}$, centred at $0$. 
+Moreover, for every NNs the activation function is a sigmoid function $S(t) = (1 + e^{-t})^{-1}$, centred at $0$. 
 The output of the network is a polar \textit{coordinates pair}, namely \textit{target position}, that represents the space point in which the agent will try to move to in the next time step.
-Finally, the output of the NN has a range from $(0, 1)$, so in order to convert it into the used positioning system it is  translated into a range of $[0, l]$ for target ratios and $[-\pi, \pi]$ for target bearings. 
+Finally, the output of the NN has a range from $(0, 1)$, so in order to convert it into the used positioning system it is  translated into a range of $[0, l]$ for target ranges and $[-\pi, \pi]$ for target bearings. 
  
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=0.8\hsize]{imgs/NN_topology.png}
+	\includegraphics[width=0.8\hsize]{imgs/nn-design_single.png}
 	\caption{single-pair NN.}
 	\label{fig:single_pair_topology}
 \end{figure}
 
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=0.8\hsize]{imgs/NN_topology.png}
+	\includegraphics[width=0.8\hsize]{imgs/nn-design_multi.png}
 	\caption{multi-pair NN.}
 	\label{fig:multi_pair_topology}
 \end{figure}
@@ -250,43 +255,44 @@ The shepherds evolve \textit{cooperative} behaviours among themselves to success
 Therefore, the \textit{competitive} behaviour is against the sheep, who want to escape. 
 In order to pursue cooperation, a shepherd needs information about the other shepherds around. 
 However, in order to keep the network complexity low we only provide the controller with information for the closest shepherd. 
-Similarly, the competition implies a shepherd to have information about the sheep. 
-%Following the same motivation, only the closest sheep position is fed into the network. % there's not motivation motivation
+Similarly, the competition arises the need for the shepherd to have information about the sheep.
 Thus, the inputs for a shepherd controller are: 
 
 \begin{enumerate}
 	\item \textit{closestSheep\_r}: Distance from this shepherd to the closest sheep.
-	\item \textit{closestSheep\_b}: Angle between this shepherd and the closest sheep. 
-	\item \textit{closestShepherd\_r}: Distance from this shepherd to the closest shepherd.
-	\item \textit{closestShepherd\_b}: Angle between this shepherd and the closest shepherd.
+	\item \textit{closestSheep\_b}: Bearing between this shepherd and the closest sheep. 
+	\item \textit{closestShepherd\_r}: Distance from this shepherd to the closest other shepherd.
+	\item \textit{closestShepherd\_b}: Bearing between this shepherd and the closest other shepherd.
 \end{enumerate}
 
-We highlight the third and fourth input are not taken into account in scenarios where there is only one shepherd. 
+We highlight that the third and fourth inputs are not taken into account in scenarios where there is only one shepherd. 
 
 \vspace{0.5em}
 % Sheep controllers
 \subsubsection{Sheep controllers}
-In case of the sheep, competitive and cooperative collective behaviour is implemented similarly to the sheperd. 
+In case of the sheep, competitive and cooperative collective behaviours are pursued using the same logic as the shepherd's when defining the NN inputs. 
 This time, in order to avoid the shepherd and be able to escape, sheep have information about the closest shepherd. 
 Yet, they have a strong preference to stay in a group and so need information about the closest sheep around them in order to pursue this goal. 
 Thus, the inputs for a sheep's controller are:
 
 \begin{enumerate}
 	\item \textit{closestShepherd\_r}: Distance from this sheep to the closest shepherd.
-	\item \textit{closestShepherd\_b}: Angle between this sheep and the closest shepherd.
-	\item \textit{closestSheep\_r}: Distance from this sheep to the closest sheep.
-	\item \textit{closestSheep\_b}: Angle between this sheep and the closest sheep.
+	\item \textit{closestShepherd\_b}: Bearing between this sheep and the closest shepherd.
+	\item \textit{closestSheep\_r}: Distance from this sheep to the closest other sheep.
+	\item \textit{closestSheep\_b}: Bearing between this sheep and the closest other sheep.
 \end{enumerate}
 
 Once again, we point out the third and fourth inputs are not taken into account in scenarios where there is only one sheep. 
 
 \subsection{Evolution of controllers}
 \label{sec:controllers_evolution}
-The algorithm used to evolve the controllers follows the frameworks of evolutionary strategies. 
-The genome is an array of doubles consisting of the weights for the neural network: 17 for the \textit{simple-pair} network and 37 for the \textit{multi-pair} network. 
+The algorithm used to evolve the controllers follows the framework of evolution strategies (ES) \cite{back1993overview}. 
 We use the ($\mu + \lambda$) strategy, with $\mu = 10$ and $\lambda = 100$~\cite{eiben2003introduction}. 
+A ($\mu + \lambda$) ES generates $\lambda$ children from a population of $\mu$ individuals by mutating them; therefore no crossover operator is used.
+The $\mu + \lambda$ children are then evaluated and the best $\mu$ individuals among them are selected for the next generation.
+The genome is a real-valued vector representing the connection weights of the neural network and it can be of two sizes (depending on the scenario): $17$ for the \textit{simple-pair} network and $37$ for the \textit{multi-pair} network. 
 Furthermore, each individual in a population is evaluated with the best individuals from the other populations, following an elitist approach.
-Different fitness functions are created for each type of agent, we Hereby explain each of them and their motivation.
+Different fitness functions are created for each type of agent, we hereby explain each of them and the motivations behind.
 
 \vspace{0.5em}
 \subsubsection{Shepherd fitness function}
@@ -352,9 +358,14 @@ f_{sheep}(x) = \sum_{i=1}^{1500}(sd(i) - 0.8 * \phi(i))
 \label{sec:agents_design}
 % Obstacle avoidance
 Given the output of the networks, the agents will try to move into a position.
-However, both types of agents have obstacle avoidance built into their behaviour which might prevent them from moving to the target position. 
+However, both types of agents have obstacle avoidance an obstacle avoidance mechanism that may override the network's output hindering one agent's movement.
+To achieve this each agent is provided of a \textit{radius} which allows to push other agents with a smaller radius.
+Therefore we assign a radius of $3$ and $2$ simulation units to the shepherd and to the sheep respectively.
+By doing this we allow the shepherd to rim the sheep and push it towards the corral. 
+
 % Interpreting the Neural Network output
-Since the output for the network is represented as polar coordinates centered at the sheep center of mass, they are translated into Cartesian coordinates in the pasture. 
+Since the output for the network is represented as polar coordinates centered with polar axis passing through the nearest opponent, they are translated into Cartesian coordinates in the pasture. 
+% TODO: explain the transformation
 %TODO: Others properites: like speed....
 
 
