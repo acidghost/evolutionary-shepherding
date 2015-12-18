@@ -236,15 +236,15 @@ Finally, the output of the NN has a range from $(0, 1)$, so in order to convert 
  
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=0.8\hsize]{imgs/nn-design_single.png}
-	\caption{single-pair NN.}
+	\includegraphics[width=0.5\hsize]{imgs/nn-design_single.png}
+	\caption{Single-pair neural network.}
 	\label{fig:single_pair_topology}
 \end{figure}
 
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=0.8\hsize]{imgs/nn-design_multi.png}
-	\caption{multi-pair NN.}
+	\caption{Multi-pair neural network.}
 	\label{fig:multi_pair_topology}
 \end{figure}
 
@@ -303,18 +303,17 @@ Given $t$ as incremental index of the simulation time steps, it is defined as:
 gcd(t) = \sqrt{(cr_x - gc_x(t))^2 + (cr_y - gc_y(t))^2}
 \end{equation}
 This metric grows as the group of sheep distance itself from the corral in the attempt of escaping.
-Furthermore, at every time step a \textit{bonus} is awarded for corralling a sheep or a \textit{penalty} is deducted for letting a sheep escape, after which the sheep is eliminated from further computations. 
-Each of these stimulus is regulated by the time within the simulation, meaning that a bonus/penalty is larger the earlier it happens. 
+Furthermore, at every time step a \textit{bonus} is awarded for corralling a sheep or a \textit{penalty} is deducted for letting a sheep escape. 
+Each of these reward is regulated by the elapsed simulation time, meaning that a bonus/penalty is larger the earlier it happens. 
 % SHEPHERD BONUS
 \begin{equation} \label{eq:bonus}
-bonus(t) = - stimulusMultiplier * (T - t)
+bonus(t) = - l (T - t)
 \end{equation}
 % SHEPHERD PENALTY
 \begin{equation} \label{eq:penalty}
-penalty(t) = stimulusMultiplier * (T - t)
+penalty(t) = l (T - t)
 \end{equation}
 Where $T$ is the number of total steps (1500 in our experiments) and $t$ is the number of elapsed steps when the simulation stopped.
-Note that $stimulusMultiplier$ is a fixed coefficient used to control weight of the aforementioned values. 
 Finally, the fitness for shepherds is defined as the cumulative distance from the sheep center to the corral position~\eqref{eq:gcDist} taking into account bonuses~\eqref{eq:bonus} and penalties~\eqref{eq:penalty}, over every simulation time step:
 % SHEPHERD FITNESS
 \begin{equation} \label{eq:shep_fitness}
@@ -340,18 +339,19 @@ This is the ratio $\phi$ of the group calculated as the distance from the furthe
 Similarly to the shepherds, bonuses and penalties are given when a sheep escapes or is corralled, accordingly:
 % SHEEP BONUS
 \begin{equation} \label{eq:sheep_bonus}
-f_{sheep}(x) = f_{sheep}(x) + stimulusMultiplier * (T - t)
+f_{sheep}(x) = f_{sheep}(x) + l (T - t)
 \end{equation}
 % SHEEP PENALTY
 \begin{equation} \label{eq:sheep_pen}
-f_{sheep}(x) = f_{sheep}(x) - stimulusMultiplier * (T - t)
+f_{sheep}(x) = f_{sheep}(x) - l (T - t)
 \end{equation}
 Where $T$ is the number of total steps (1500 in our experiments) and $t$ is the number of elapsed steps when the simulation stopped.
 Since larger distances but smaller ratios are desired, the fitness function is determined as the individual distance minus the group ratio, added over the simulation time steps. 
 % SHEEP FITNESS
 \begin{equation} \label{eq:sheep_fitness}
-f_{sheep}(x) = \sum_{i=1}^{1500}(sd(i) - 0.8 * \phi(i))
+f_{sheep}(x) = \sum_{i=1}^{1500}(sd(i) - {RR} \phi(i))
 \end{equation}
+where $0 \leq RR \geq 1$ is a constant that controls the weight of the sheep-radius component on the sheep's fitness score.
 
 
 \subsection{Agents}
@@ -360,57 +360,75 @@ f_{sheep}(x) = \sum_{i=1}^{1500}(sd(i) - 0.8 * \phi(i))
 Given the output of the networks, the agents will try to move into a position.
 However, both types of agents have obstacle avoidance an obstacle avoidance mechanism that may override the network's output hindering one agent's movement.
 To achieve this each agent is provided of a \textit{radius} which allows to push other agents with a smaller radius.
-Therefore we assign a radius of $3$ and $2$ simulation units to the shepherd and to the sheep respectively.
+Therefore we assign a greater radius to the shepherd than the sheep's.
 By doing this we allow the shepherd to rim the sheep and push it towards the corral. 
 
 % Interpreting the Neural Network output
 Since the output for the network is represented as polar coordinates centered with polar axis passing through the nearest opponent, they are translated into Cartesian coordinates in the pasture. 
 % TODO: explain the transformation
 %TODO: Others properites: like speed....
-
+All agents have the same maximum speed and mass, so their simulated physical characteristics are the same.
+Both maximum speed and mass have a value of $1$ simulated units.
 
 
 
 \section{Experimental results}
 \label{sec:experiment}
-In order to answer the research questions listed in {Section~\ref{sec:researchQuestions}} and test its corresponding hypothesis in {Section~\ref{sec:hypothesis}}, we perform co-evolution across 100 generations. 
-We run the simulation 40 times and perform statistical analysis to get 95\% confidence intervals.
+In order to answer the research questions listed in {Section~\ref{sec:researchQuestions}} and test its corresponding hypothesis in {Section~\ref{sec:hypothesis}}, we execute the co-evolutionary algorithm in the different scenarios for $100$ generations. 
+We run the entire evolutionary process for $40$ times and perform statistical analysis to get $95\%$ confidence intervals.
 
 \subsection{Implementation}
 %TODO: the implementation is the description of the instance of our model used to run the experiments, this means that all parameters should be defined (name+meaning) in the model section and instanciated in the implementation.  The impl. is not much about the code/classes etc unless we came up with a novel algortihm....
-The project is coded in Java with use of \textit{Mason} for handling agents and their movements. In order to introduce evolutionary computing, we combine it with \textit{ECJ}. We use \textit{neuroph} as the library for neural networks. 
-\textbf{TODO: Since ECJ can only do maximization problems, the shepherd fitness is taken as 
-fitness = - cummulative distance}
-\textbf{TODO: Mention value for parameters, for example stimulusMultiplier = pasture width, groupMultiplier = 0.8}
-A simulation consists of 2.5 second divided in 1500 discrete time steps. At every time step, an agent propagates the inputs through its neural network and computes a target position.
-\textbf{TODO: pseudocode? diagram?}
+The project is coded in Java and has a GUI to launch the different experiments, replay the best individuals for each generation and plot statistics.
+The evolutionary algorithm is implemented through the use of \textit{ECJ} \cite{luke2006ecj}: an easy to use evolutionary computation research framework with out-of-the-box algorithms and tools that enabled us to implement our co-evolutionary ES.
+To realise the simulation environment and its agents, we use \textit{MASON} \cite{luke2005mason}, developed at the George Mason University's ECLab Evolutionary Computation Laboratory as a sister project of ECJ.
+Moreover we use \textit{neuroph} \footnote{http://neuroph.sourceforge.net/} to create and handle the neural networks.
+
+Because with a co-evolutionary setting ECJ can only do maximization problems, the shepherd fitness score is negated in the implementation, that is:
+$$ f_{sheph}(x) = -f_{sheph}(x) $$
+In our experiments we give a value of $0.8$ to the constant $RR$ of equation \eqref{eq:sheep_fitness}, reducing the weight given to the flocking behaviour produced by \eqref{eq:sheep_ratio}.
+
+Like in \cite{potter2001heterogeneity}, a simulation consists of 2.5 simulated minutes and the agents refresh their target position every 10Hz.
+This is equivalent to $1500$ simulation steps in which the agents refresh their target every step.
+To do so, an agent firstly acquires its inputs and then propagates them through its neural network computing a new target position that the simulation environment will translate in forces to be applied to the agent's virtual body.
 
 
 
+\subsubsection{Environment and Agents}
+The size of the pasture is fixed across all the experiments at $l = 37$ simulated units.
+As already stated in \ref{sec:agents_design}, the shepherd is equipped with a greater radius than the sheep's.
+This is to allow them to effectively herd the sheep by rimming and pushing it towards the corral.
+Therefore we assign a radius of $3$ and $2$ simulation units to the shepherd and to the sheep respectively.
+The pasture is closed on the top and bottom sides, with the corral positioned on the right side, opposite to an open side that enables the sheep to escape.
+The initial positions of the agents inside the pasture are shown in Figure \ref{fig:simulation_screenshot} for a full \textit{three vs. three} experiment.
+The initial locations values used in the experiments are:
+\begin{align}
+sheph_x &= \frac{l}{2} - 6 \\
+sheph_y(i) &= \frac{l}{2} + \begin{cases} 0 & \text{if } i=1 \\ -6 & \text{if } i=2 \\ +6 & \text{if } i=3 \end{cases} \\
+sheep_x &= \frac{l}{2} + 6 \\
+sheep_y(i) &= \frac{l}{2} + \begin{cases} 0 & \text{if } i=1 \\ -4 & \text{if } i=2 \\ +4 & \text{if } i=3 \end{cases}
+\end{align}
 
-\subsubsection{Environment}
-pasture=37x37 foot, $l = 37$ foot
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.5\hsize]{imgs/pasture.png}
+	\caption{Screenshot of the simulation with the shepherds (blue ones) and the sheep (gray ones), almost at the starting locations.}
+	\label{fig:simulation_screenshot}
+\end{figure}
 
-
-\subsubsection{Neural Networks}
-TODO
 
 \subsubsection{Evolution}
 In order to calculate the fitness for an individual, all controllers are evaluated through 10 trials of the task and the average is taken as fitness.
-Every trial runs for a maximum of 2.5 seconds. 
+Every trial runs for a maximum of $1500$ time steps. 
 In cases where there is more than one sheep, a complex network is assigned to all sheep. 
-The simulation ends before the time elapses if all but one sheep escape or get corralled. 
+The simulation ends before the time elapses as soon as one sheep is corralled or escapes. 
 The reason for leaving one sheep left in the pasture when ending the simulation is that the number of inputs for the sheep controllers is fixed before the beginning of a trial, and having no other sheep left would lead to null inputs and misbehaviour. 
 In cases where there is only one sheep, a simple controller is assigned. 
 Thus, the sheep must either be corralled or has to escape in order for the simulation to stop before the time expires.
 
-In homogeneous set-ups we evolve one controller per type of agent, meaning we have two subpopulations, one for shepherds and one for sheep, coevolving. 
+In homogeneous set-ups we evolve one controller per type of agent, meaning we have two subpopulations, one for shepherds and one for sheep, co-evolving. 
 However, to create heterogeneity a population per agent is created. 
 For example, in a scenario with two shepherds and one sheep, there is a total of three subpopulations, two of them cooperating among each other and competing with the third one.  
-
-\subsubsection{Agents properties and functioning}
-Shepherds avoid bumping into fences, the corral or other agents within a 3 simulation distance units. 
-Meanwhile, the sheep can only avoid fences and other agents within a 2 simulation distance units.
 
 
 
