@@ -242,106 +242,123 @@ Finally, the output of the NN has a range from $(0, 1)$, so in order to convert 
 \vspace{0.5em}
 % Shepherds controllers
 \subsubsection{Shepherds controllers}
-We assume the shepherds need to evolve cooperation behaviours among themselves to successfully herd the sheep, but competitive behaviours against sheep who want to escape. To achieve the first objective, a shepherd needs information about the other shepherds around. However, in an attempt to be realistic and keep the network complexity low, we only provide the controller with information for the closest shepherd. Similarly, to achieve the second objective a shepherd needs information about the sheep. Following the same motivation, only the closest sheep position is fed into the network. Thus, the inputs for a shepherd controller are: 
+The shepherds evolve \textit{cooperative} behaviours among themselves to successfully herd the sheep.
+Therefore, the \textit{competitive} behaviour is against the sheep, who want to escape. 
+In order to pursue cooperation, a shepherd needs information about the other shepherds around. 
+However, in order to keep the network complexity low we only provide the controller with information for the closest shepherd. 
+Similarly, the competition implies a shepherd to have information about the sheep. 
+%Following the same motivation, only the closest sheep position is fed into the network. % there's not motivation motivation
+Thus, the inputs for a shepherd controller are: 
 
 \begin{enumerate}
-	\item \textit{closestSheep\_r}: distance from this shepherd to the closest sheep
-	\item \textit{closestSheep\_b}: angle between this shepherd and the closest sheep 
-	\item \textit{closestShepherd\_r}: distance from this shepherd to the closest shepherd
-	\item \textit{closestShepherd\_b}: angle between this shepherd and the closest shepherd
+	\item \textit{closestSheep\_r}: Distance from this shepherd to the closest sheep.
+	\item \textit{closestSheep\_b}: Angle between this shepherd and the closest sheep. 
+	\item \textit{closestShepherd\_r}: Distance from this shepherd to the closest shepherd.
+	\item \textit{closestShepherd\_b}: Angle between this shepherd and the closest shepherd.
 \end{enumerate}
 
-The third and fourth input are not taken into account in scenarios where there is only one shepherd. 
+We highlight the third and fourth input are not taken into account in scenarios where there is only one shepherd. 
 
 \vspace{0.5em}
 % Sheep controllers
 \subsubsection{Sheep controllers}
-In case of the sheep, the assumption for competitive and cooperative collective behaviour still holds. This time, in order to avoid the shepherd and be able to escape, sheep must have information about the closest shepherd. Yet, they have a strong preference to stay in a group and so need information about the closest sheep around them in order to pursue this goal. Thus, similar to the shepherd's controllers, the inputs are:
+In case of the sheep, competitive and cooperative collective behaviour is implemented similarly to the sheperd. 
+This time, in order to avoid the shepherd and be able to escape, sheep have information about the closest shepherd. 
+Yet, they have a strong preference to stay in a group and so need information about the closest sheep around them in order to pursue this goal. 
+Thus, the inputs for a sheep's controller are:
 
 \begin{enumerate}
-	\item \textit{closestShepherd\_r}: distance from this shepherd to the closest shepherd
-	\item \textit{closestShepherd\_b}: angle between this shepherd and the closest shepherd
-	\item \textit{closestSheep\_r}: distance from this shepherd to the closest sheep
-	\item \textit{closestSheep\_b}: angle between this shepherd and the closest sheep
+	\item \textit{closestShepherd\_r}: Distance from this sheep to the closest shepherd.
+	\item \textit{closestShepherd\_b}: Angle between this sheep and the closest shepherd.
+	\item \textit{closestSheep\_r}: Distance from this sheep to the closest sheep.
+	\item \textit{closestSheep\_b}: Angle between this sheep and the closest sheep.
 \end{enumerate}
 
-Once again, the third and fourth inputs are not taken into account in scenarios where there is only one sheep. 
-%NOTE consider combining the two previous subsections 
+Once again, we point out the third and fourth inputs are not taken into account in scenarios where there is only one sheep. 
 
 \subsection{Evolution of controllers}
 \label{sec:controllers_evolution}
 The algorithm used to evolve the controllers follows the frameworks of evolutionary strategies. 
-The genome is an array of doubles consisting of the weights for the neural network: 17 for a simple network and 37 for a complex network. The specific strategy is ($\mu + \lambda$), with $\mu = 10$ and $\lambda = 100$. 
-In order to calculate the fitness for an individual, all controllers are evaluated through 10 trials of the task and the average is taken as fitness.
-Each individual in a population is evaluated with the best individuals from the other populations, following an elitist approach.
-Every trial runs for a maximum of 2.5 seconds. 
-In cases where there is more than one sheep, a complex network is assigned to all sheep. 
-The simulation ends before the time elapses if all but one sheep escape or get corralled. 
-The reason for leaving one sheep left in the pasture when ending the simulation is that the number of inputs for the sheep controllers is fixed before the beginning of a trial, and having no other sheep left would lead to null inputs and misbehaviour. 
-In cases where there is only one sheep, a simple controller is assigned. 
-Thus, the sheep must either be corralled or has to escape in order for the simulation to stop before the time expires.
-Different fitness functions are created for each type of agent. 
-Hereby we explain each of them and their motivation.
+The genome is an array of doubles consisting of the weights for the neural network: 17 for the \textit{simple-pair} network and 37 for the \textit{multi-pair} network. 
+We use the ($\mu + \lambda$) strategy, with $\mu = 10$ and $\lambda = 100$~\cite{eiben2003introduction}. 
+Furthermore, each individual in a population is evaluated with the best individuals from the other populations, following an elitist approach.
+Different fitness functions are created for each type of agent, we Hereby explain each of them and their motivation.
+
 \vspace{0.5em}
-\subsubsection{Shepherds fitness function}
-On the one hand, the fitness for shepherds is determined as the distance from the sheep center to the corral, added during the simulation time steps. For the shepherds, this distance is desired to be minimized to observe a herding behaviour.  
-
-$$ dist_i(x) = pos(corral) - pos_i(sheepCenter) $$
-
-At every step, a bonus  is awarded for corralling a sheep or a penalty is deducted for letting a sheep escape, after which the sheep is eliminated from further computations. Each of these stimulus is regulated by the time within the simulation, meaning that a bonus/penalty is larger the earlier it happens. 
-
-Bonus if sheep is corralled:
-$$ dist_i(x) = dist_i(x) - stimulusMultiplier * (T_s - E_s) $$
-
-Penalty if sheep escapes:
-$$ dist_i(x) = dist_i(x) + stimulusMultiplier * (T_s - E_s) $$
-Where $T_s$ is the number of total steps (1500 in our experiments) and $E_s$ is the number of elapsed steps when the simulation stopped.
-
-The final fitness looks as follows: 
-
-$$ f_{sheph}(x) = \sum_{i=1}^{1500 or stop} dist_i(x) $$
-
-Note that the fitness is the same among a group of shepherds, since all the components reflect on the group's performance. This design choice is motivated by the fact that shepherds must work together to achieve a common goal. 
+\subsubsection{Shepherd fitness function}
+In order to show the shepherd fitness function, we introduce here~\eqref{eq:gcDist}, the euclidean distance from the sheep center of group mass $gc$ (see Section~\ref{sec:herding_task_environment}) to the corral position $cr$.
+Given $t$ as incremental index of the simulation time steps, it is defined as:
+% GROUP CENTER OF MASS DISTANCE
+\begin{equation} \label{eq:gcDist}
+gcd(t) = \sqrt{(cr_x - gc_x(t))^2 + (cr_y - gc_y(t))^2}
+\end{equation}
+This metric grows as the group of sheep distance itself from the corral in the attempt of escaping.
+Furthermore, at every time step a \textit{bonus} is awarded for corralling a sheep or a \textit{penalty} is deducted for letting a sheep escape, after which the sheep is eliminated from further computations. 
+Each of these stimulus is regulated by the time within the simulation, meaning that a bonus/penalty is larger the earlier it happens. 
+% SHEPHERD BONUS
+\begin{equation} \label{eq:bonus}
+bonus(t) = - stimulusMultiplier * (T - t)
+\end{equation}
+% SHEPHERD PENALTY
+\begin{equation} \label{eq:penalty}
+penalty(t) = stimulusMultiplier * (T - t)
+\end{equation}
+Where $T$ is the number of total steps (1500 in our experiments) and $t$ is the number of elapsed steps when the simulation stopped.
+Note that $stimulusMultiplier$ is a fixed coefficient used to control weight of the aforementioned values. 
+Finally, the fitness for shepherds is defined as the cumulative distance from the sheep center to the corral position~\eqref{eq:gcDist} taking into account bonuses~\eqref{eq:bonus} and penalties~\eqref{eq:penalty}, over every simulation time step:
+% SHEPHERD FITNESS
+\begin{equation} \label{eq:shep_fitness}
+f_{sheph} = \sum_{i=1}^{1500} gcd(i)	+ bonus(i) + penalty(i)
+\end{equation}
+In order to to observe a herding behaviour,~\eqref{eq:shep_fitness} has to be minimized.
+Note that the fitness is the same among a group of shepherds, since all the components reflect on the group's performance. 
+This design choice is motivated by the fact that shepherds must work together to achieve a common goal. 
 
 \vspace{0.5em}
 \subsubsection{Sheep fitness function}
-On the other hand, the fitness for a sheep is determined by its own distance to the corral. In scenarios where there is more than one sheep, a group component is added to motivate sheep to stay in groups. This is the ratio of the group calculated as the distance from the furthest sheep to the center of mass in a specific time step. 
-
-$$ dist_i(x) = pos(corral) - pos_i(x) $$
-
-$$ sheepRatio_i = furthestSheep_i - sheepCenter_i $$
-
+The fitness for a sheep is determined by its own distance to the corral. 
+% SHEEP DISTANCE
+\begin{equation} \label{eq:sheep_dist}
+sd(t) = \sqrt{(cr_x - sheep_x(t))^2 + (cr_y - sheep_y(t))^2}
+\end{equation}
+In scenarios where there is more than one sheep, a group component is added to motivate sheep to stay in groups. 
+This is the ratio $\phi$ of the group calculated as the distance from the furthest sheep $\alpha$ to the center of mass $gc$ in a specific time step. 
+% SHEEP RATIO
+\begin{equation} \label{eq:sheep_ratio}
+\phi(t) = \sqrt{(\alpha_x(t) - gc_x(t))^2 + (\alpha_y - gc_y(t))^2}
+\end{equation}
+Similarly to the shepherds, bonuses and penalties are given when a sheep escapes or is corralled, accordingly:
+% SHEEP BONUS
+\begin{equation} \label{eq:sheep_bonus}
+f_{sheep}(x) = f_{sheep}(x) + stimulusMultiplier * (T - t)
+\end{equation}
+% SHEEP PENALTY
+\begin{equation} \label{eq:sheep_pen}
+f_{sheep}(x) = f_{sheep}(x) - stimulusMultiplier * (T - t)
+\end{equation}
+Where $T$ is the number of total steps (1500 in our experiments) and $t$ is the number of elapsed steps when the simulation stopped.
 Since larger distances but smaller ratios are desired, the fitness function is determined as the individual distance minus the group ratio, added over the simulation time steps. 
+% SHEEP FITNESS
+\begin{equation} \label{eq:sheep_fitness}
+f_{sheep}(x) = \sum_{i=1}^{1500}(sd(i) - 0.8 * \phi(i))
+\end{equation}
 
-$$ f_{sheep}(x) = \sum_{i=1}^{1500 or stop}(dist_i(x) - 0.8 * sheepRatio_i) $$
 
-Similar to the shepherds, bonuses and penalties are given when a sheep escapes or is corralled, accordingly.  
-
-Bonus if sheep escapes:
-$$ f_{sheep}(x) = f_{sheep}(x) + stimulusMultiplier * (T_s - E_s) $$
-
-Penalty if sheep is corralled:
-$$ f_{sheep}(x) = f_{sheep}(x) - stimulusMultiplier * (T_s - E_s) $$\\
-Where $T_s$ is the number of total steps (1500 in our experiments) and $E_s$ is the number of elapsed steps when the simulation stopped.
-
-In homogeneous set-ups we evolve one controller per type of agent, meaning we have two subpopulations, one for shepherds and one for sheep, coevolving. However, to create heterogeneity a population per agent is created. For example, in a scenario with two shepherds and one sheep, there is a total of three subpopulations, two of them cooperating among each other and competing with the third one.  
-
-\subsection{Agents design}
+\subsection{Agents}
 \label{sec:agents_design}
 % Obstacle avoidance
-Given the output of the networks, the agents will try to move into a position, however, both types of agents have obstacle avoidance built into their behaviour which might prevent them from moving to the target position. Shepherds avoid bumping into fences, the corral or other agents within a 3 simulation unit ratio. Meanwhile, the sheep can only avoid fences and other agents within a 2 simulation unit ratio. 
-
+Given the output of the networks, the agents will try to move into a position.
+However, both types of agents have obstacle avoidance built into their behaviour which might prevent them from moving to the target position. 
 % Interpreting the Neural Network output
-Since the output for the network is represented as polar coordinates centered at the sheep center of mass, they have to be translated into Cartesian coordinates in the pasture. 
-
-% Others properites: like speed....
+Since the output for the network is represented as polar coordinates centered at the sheep center of mass, they are translated into Cartesian coordinates in the pasture. 
+%TODO: Others properites: like speed....
 
 
 
 
 \section{Experimental results}
 \label{sec:experiment}
-In order to answer the research questions listed in Section~\ref{sec:researchQuestions} and test its corresponding hypothesis in Section~\ref{sec:hypothesis}, we perform coevolution across 100 generations. 
+In order to answer the research questions listed in {Section~\ref{sec:researchQuestions}} and test its corresponding hypothesis in {Section~\ref{sec:hypothesis}}, we perform co-evolution across 100 generations. 
 We run the simulation 40 times and perform statistical analysis to get 95\% confidence intervals.
 
 \subsection{Implementation}
@@ -353,6 +370,9 @@ fitness = - cummulative distance}
 A simulation consists of 2.5 second divided in 1500 discrete time steps. At every time step, an agent propagates the inputs through its neural network and computes a target position.
 \textbf{TODO: pseudocode? diagram?}
 
+
+
+
 \subsubsection{Environment}
 pasture=37x37 foot, $l = 37$ foot
 
@@ -361,10 +381,21 @@ pasture=37x37 foot, $l = 37$ foot
 TODO
 
 \subsubsection{Evolution}
-TODO
+In order to calculate the fitness for an individual, all controllers are evaluated through 10 trials of the task and the average is taken as fitness.
+Every trial runs for a maximum of 2.5 seconds. 
+In cases where there is more than one sheep, a complex network is assigned to all sheep. 
+The simulation ends before the time elapses if all but one sheep escape or get corralled. 
+The reason for leaving one sheep left in the pasture when ending the simulation is that the number of inputs for the sheep controllers is fixed before the beginning of a trial, and having no other sheep left would lead to null inputs and misbehaviour. 
+In cases where there is only one sheep, a simple controller is assigned. 
+Thus, the sheep must either be corralled or has to escape in order for the simulation to stop before the time expires.
+
+In homogeneous set-ups we evolve one controller per type of agent, meaning we have two subpopulations, one for shepherds and one for sheep, coevolving. 
+However, to create heterogeneity a population per agent is created. 
+For example, in a scenario with two shepherds and one sheep, there is a total of three subpopulations, two of them cooperating among each other and competing with the third one.  
 
 \subsubsection{Agents properties and functioning}
-TODO
+Shepherds avoid bumping into fences, the corral or other agents within a 3 simulation distance units. 
+Meanwhile, the sheep can only avoid fences and other agents within a 2 simulation distance units.
 
 
 
@@ -481,8 +512,8 @@ o	Look at percentage of corralled and escaped of last generation
 \section{Conclusion}
 The conclusion goes here.
 
-\subsection{Future work}
-
+%\subsection{Future work}
+%TODO: future work
 
 
 
