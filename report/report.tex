@@ -176,28 +176,32 @@ The herding task involves shepherd robots trying to push sheep robots into a cor
 %% Positioning system
 %In particular, the positioning system used to control and direct movements of the agents, is described in Section~\ref{sec:positioning_system}. 
 % NN_design
-Controllers of both shepherds and sheep are modelled as different evolutive NNs.
-Thus, their designs are explained in Section~\ref{sec:NN_design} and their evolution strategies are detailed in Section~\ref{sec:controllers_evolution}.
+Controllers of both shepherds and sheep are modelled as different in an high level manner using NNs.
+Thus, their designs are explained in Section~\ref{sec:NN_design} and and how they are evolved is detailed in Section~\ref{sec:controllers_evolution}.
 % obstacle_avoidance + NN_output_interpretation
-Agents have a simple obstacle avoidance system that allows them to not collide each other.
-Furthermore, in order to actuate the movements the output from the controller has to be translated into Cartesian coordinates readable by the moving system of the agents.    
-These both steps are finally specified in Section~\ref{sec:agents_design}.
+Agents have a simple obstacle avoidance system that allows them to interact with each other, bump into walls and makes the shepherd capable of herding the sheep.
+Furthermore, in order to actuate the movements the output from the controller has to be translated into Cartesian coordinates, in order for the simulation engine to move the agents on the screen.    
+Both steps are finally specified in Section~\ref{sec:agents_design}.
 
 \subsection{Herding task and environment}
 \label{sec:herding_task_environment}
 % herding task + environment
-The task domain relates to a herding task that simulates shepherd robots trying to push sheep robots into a corral. 
-The environment consists of a $l \times l$ squared pasture with fences on the top and bottom. The corral is positioned on the right side, and the pasture is open on the left side for the sheep to escape.
+The task domain is herding (a sub-domain of the more general pursuit evation task).
+Our objective is to simulate shepherd robots trying to push sheep robots into a corral. 
+The environment consists of a $l \times l$ squared pasture with fences on the top and bottom.
+The corral is positioned on the right side, and the pasture is open on the left side for the sheep to escape.
 % Task complexity
 We module the task complexity by controlling the number of agents of each type that take part in the task, respectively $D$ for the shepherds (or dogs) and $S$ for the sheep.
-Thus, we operationalize it as the sheep to shepherd ratio, defined as $\phi = D / S$, where an increased ratio implies a more complex task for the shepherds.
+Thus, we deploy it as the shepherd to sheep ratio, defined as $\phi = D / S$, where an increased ratio implies a more complex task for the shepherds.
 
 % Positioning system
 We use an agent centered polar coordinate system where an agent's position is relative to a second agent of the same type (i.e., shepherd or sheep).
-The coordinate system's axis is created between the second agent's position and the midpoint for the entrance of the corral. 
-Within this system, a coordinate pair is defined as $p = (r, b)$, where $r$ is the distance to the second agent (range) and $b$ is the angle from ???????????????????????????? (bearing). %TODO: fix 
-In order to define the position of a group of sheep, we take into account the center of mass $gc$, which is equal to the position of the sheep when there is only one.
-%TODO: explain how we calculate the gc
+The coordinate system's polar axis passes through the center of the corral and the second agent's position. 
+Within this system, a coordinate pair is defined as $\mathbf{p} = (r, b)$, where $r$ is the distance to the second agent (range) and $b$ is the angle from between the two agents, relative to the polar axis (bearing).
+In order to define the position of a group of sheep, we take into account the center of mass $\mathbf{gc}$, which is equal to the position of the sheep when there is only one.
+% explain how we calculate the gc
+The center the sheep group is calculated like the center of mass of a particle system, as following:
+$$ \mathbf{gc} = \frac{1}{S} \sum_{i=1}^{S}{\mathbf{x_i}} $$
 The overall task environment described here is depicted in Figure~\ref{fig:task_env}. 
 
 \begin{figure}[ht]
