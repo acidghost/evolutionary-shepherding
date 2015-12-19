@@ -8,11 +8,13 @@ import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.DeviationRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.Range;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.data.xy.YIntervalSeries;
@@ -431,6 +433,69 @@ public class Charts {
         return chart;
     }
 
+    private static Container getBarScenarioComparison(String title, String fieldName, String yLabel, boolean save, String... scenarioFiles)
+        throws IOException, NoSuchFieldException, IllegalAccessException {
+
+        List<String> scenarioNames = Arrays.asList(scenarioFiles).stream().map(Charts::findScenario).collect(Collectors.toList());
+
+        int runs = 0;
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        for (int i = 0; i < scenarioFiles.length; i++) {
+            String scenario = scenarioFiles[i];
+            List<Charts> charts = getRunsCharts(scenario);
+            runs = charts.size();
+
+            SummaryStatistics scenarioStats = new SummaryStatistics();
+            int totalGenerations = charts.get(0).statLines.size();
+            for (int generation = 0; generation < totalGenerations; generation++) {
+                SummaryStatistics genStats = new SummaryStatistics();
+
+                for (Charts chart : charts) {
+                    final StatLine statline = chart.statLines.get(generation);
+                    genStats.addValue(statline.getClass().getField(fieldName).getDouble(statline));
+                }
+
+                final double mean = genStats.getMean();
+
+                scenarioStats.addValue(mean);
+            }
+
+            final double mean = scenarioStats.getMean();
+            final double max = scenarioStats.getMax();
+            final double min = scenarioStats.getMin();
+
+            final String scenarioName = scenarioNames.get(i);
+            dataset.addValue(mean, scenarioName, "mean");
+            dataset.addValue(max, scenarioName, "max");
+            dataset.addValue(min, scenarioName, "min");
+        }
+
+        JFreeChart barChart = ChartFactory.createBarChart(
+            title + " - " + runs + " runs",
+            "Scenario", yLabel, dataset,
+            PlotOrientation.VERTICAL,
+            true, true, false);
+
+        CategoryPlot plot = (CategoryPlot) barChart.getPlot();
+        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+        yAxis.setRange(RANGES_MAP.get(fieldName));
+
+        if (save) {
+            final String start = EvolutionaryShepherding.STATISTICS_DIR + File.separator;
+            File jpgFile = new File(start + DASH_JOINER.join(scenarioNames) + "-" + fieldName + "-bar.jpeg");
+            ChartUtilities.saveChartAsJPEG(jpgFile, barChart, 1024, 800);
+        }
+
+        return new ChartPanel(barChart);
+    }
+
+    private static void plotBarCharts(String title, String yLabel, String field, String... scenarioFiles) throws IllegalAccessException, NoSuchFieldException, IOException {
+        JFrame frame = new JFrame("Bar charts");
+        frame.setContentPane(Charts.getBarScenarioComparison(title, field, yLabel, true, scenarioFiles));
+        frame.setVisible(true);
+        frame.setSize(600, 400);
+    }
+
     private static class SubpopData {
         public double mean;
         public double bestOfGeneration;
@@ -507,16 +572,25 @@ public class Charts {
     }
 
     public static void main(String[] args) throws IOException, NoSuchFieldException, IllegalAccessException {
-        Charts charts = new Charts(EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1" + File.separator + "1.stat");
-        JFrame frame = new JFrame("Hetero test");
-        frame.setContentPane(charts.getMeanPerSubpopPerGeneration("Heterogeneous"));
-        frame.setVisible(true);
-        frame.setSize(600, 400);
+//        Charts charts = new Charts(EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1" + File.separator + "1.stat");
+//        JFrame frame = new JFrame("Hetero test");
+//        frame.setContentPane(charts.getMeanPerSubpopPerGeneration("Heterogeneous"));
+//        frame.setVisible(true);
+//        frame.setSize(600, 400);
+//
+//        JFrame frame2 = new JFrame("Runs demo");
+//        frame2.setContentPane(Charts.getMeanSubpopPerGenAcrossRuns("Runs demo", EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1", false));
+//        frame2.setVisible(true);
+//        frame2.setSize(600, 400);
 
-        JFrame frame2 = new JFrame("Runs demo");
-        frame2.setContentPane(Charts.getMeanSubpopPerGenAcrossRuns("Runs demo", EvolutionaryShepherding.STATISTICS_DIR + File.separator + "hetero.2v1", false));
-        frame2.setVisible(true);
-        frame2.setSize(600, 400);
+        final String folder = EvolutionaryShepherding.STATISTICS_DIR + File.separator;
+        final String scenarios1[] = { folder + "hetero.1v1", folder + "hetero.2v1", folder + "hetero.3v1" };
+        plotBarCharts("Hetero vs. 1 sheep", "Corralled ratio", "corralledRatio", scenarios1);
+        plotBarCharts("Hetero vs. 1 sheep", "Escaped ratio", "escapedRatio", scenarios1);
+
+        final String scenarios2[] = { folder + "hetero.3v1", folder + "hetero.3v2.ho", folder + "hetero.3v3.ho" };
+        plotBarCharts("Hetero vs. more sheep", "Corralled ratio", "corralledRatio", scenarios2);
+        plotBarCharts("Hetero vs. more sheep", "Escaped ratio", "escapedRatio", scenarios2);
     }
 
 }
