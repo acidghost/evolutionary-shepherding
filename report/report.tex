@@ -115,7 +115,7 @@ $H_0$, namely the null hypothesis, is ``Shepherds’ fitness in the heterogeneou
 \subsection{Contributions}
 In this paper we introduce our proposed model for running a herding task in a competitive co-evoulution framework. 
 We have built our model and run a thorough set of simulations in order to test the hypothesis detailed in Section~\ref{sec:hypothesis}. 
-In what follow, we list the main contributions this paper to the state-of-the-art:
+In what follows, we list the main contributions of this paper to the state-of-the-art:
 \begin{itemize}
 	\item BLA
 	\item PIZZA
@@ -169,33 +169,34 @@ However, increased difficulty was never implemented structurally nor tested meth
 %This can be considered as an extension of~\cite{potter2001heterogeneity} because the task, as well as part of the model, are similar. 
 In this section we detail our model which aims to simulate a herding task by employing robots with intelligent controllers.
 % Herding environment + Task complexity
-The herding task involves shepherd robots trying to push sheep robots into a corral, this is further detailed in Section~\ref{sec:herding_task_environment}.
+The herding task involves shepherd agents trying to push sheep agents into a corral, this is further detailed in Section~\ref{sec:herding_task_environment}.
 %% Positioning system
 %In particular, the positioning system used to control and direct movements of the agents, is described in Section~\ref{sec:positioning_system}. 
 % NN_design
-Controllers of both shepherds and sheep are modelled as different in an high level manner using NNs.
-Thus, their designs are explained in Section~\ref{sec:NN_design} and and how they are evolved is detailed in Section~\ref{sec:controllers_evolution}.
+Controllers of both shepherds and sheep are modelled differently in a high level manner using NNs.
+The NN designs are explained in Section~\ref{sec:NN_design} and how the evolution process is detailed in Section~\ref{sec:controllers_evolution}.
 % obstacle_avoidance + NN_output_interpretation
 Agents have a simple obstacle avoidance system that allows them to interact with each other, bump into walls and makes the shepherd capable of herding the sheep.
-Furthermore, in order to actuate the movements the output from the controller has to be translated into Cartesian coordinates, in order for the simulation engine to move the agents on the screen.    
-Both steps are finally specified in Section~\ref{sec:agents_design}.
+Furthermore, in order to move agents using the output of the NN controllers, the NN output has to be translated into Cartesian coordinates.
+Both steps are specified in Section~\ref{sec:agents_design}.
 
 \subsection{Herding task and environment}
 \label{sec:herding_task_environment}
 % herding task + environment
-The task domain is herding (a sub-domain of the more general pursuit evation task).
-Our objective is to simulate shepherd robots trying to push sheep robots into a corral. 
+The task domain is herding (a sub-domain of the more general pursuit evasion task).
+%TODO do we need some source for this evasion task?
+Our objective is to simulate shepherd agents trying to push sheep agents into a corral. 
 The environment consists of a $l \times l$ squared pasture with fences on the top and bottom.
 The corral is positioned on the right side, and the pasture is open on the left side for the sheep to escape.
 % Task complexity
-We module the task complexity by controlling the number of agents of each type that take part in the task, respectively $D$ for the shepherds (or dogs) and $S$ for the sheep.
+We modulate the task complexity by controlling the number of agents of each type that take part in the task, respectively $D$ for the shepherds (or dogs) and $S$ for the sheep.
 Thus, we deploy it as the shepherd to sheep ratio, defined as $\phi = D / S$, where an increased ratio implies a more complex task for the shepherds.
 
 % Positioning system
-We use an agent centered polar coordinate system where an agent's position is relative to a second agent of the same type (i.e., shepherd or sheep).
+We use an agent centred polar coordinate system where an agent's position is relative to a second agent of the same type (i.e., shepherd or sheep).
 The coordinate system's polar axis passes through the center of the corral and the second agent's position. 
 Within this system, a coordinate pair is defined as $\mathbf{p} = (r, b)$, where $r$ is the distance to the second agent (range) and $b$ is the angle from between the two agents, relative to the polar axis (bearing).
-In order to define the position of a group of sheep, we take into account the center of mass $\mathbf{gc}$, which is equal to the position of the sheep when there is only one.
+In order to define the position of a group of sheep, we take into account the center of mass $\mathbf{gc}$, which is equal to the position of the sheep when only one sheep is present.
 % explain how we calculate the gc
 The center the sheep group is calculated like the center of mass of a particle system, as following:
 \begin{equation} \label{eq:gc}
@@ -217,19 +218,20 @@ The overall task environment described here is depicted in Figure~\ref{fig:task_
 The controllers for the agents are feedforward neural networks~\cite{bebis1994feed} with one hidden layer.
 % Inputs
 The inputs for the NNs are a fixed \textit{bias} of $1$ and one or more instances of \textit{coordinate pairs} (defined in Section~\ref{sec:herding_task_environment}).
-In order to be able to support scenarios with diverse number of agents, we design two different NNs: the \textit{single-pair} and the \textit{multi-pair} networks. 
+In order to support scenarios with diverse numbers of agents, we design two different NNs: the \textit{single-pair} and the \textit{multi-pair} networks. 
 % Single-pair NN
-With the \textit{single-pair} network, an agent can only see one other agent so the network consists of two input nodes, one for each item of a \textit{coordinate pair} and its hidden layer has three nodes. 
+In the case of a \textit{single-pair} network, an agent can only see one other agent so the network consists of two input nodes, one for each item of a \textit{coordinate pair} and its hidden layer has three nodes. 
 This network is showed in Figure~\ref{fig:single_pair_topology}.
 The input nodes are labelled \textit{opponent} because the input given to the network represents coordinates of an opposing agent.
 % Multi-pair NN
-Alternatively, to enable and agent to cooperate with its allies, we assign to it the \textit{multi-pair} neural network, with four input nodes for the coordinate, and five nodes in its hidden layer.
+Alternatively, to enable an agent to cooperate with its allies, we assign to it a \textit{multi-pair} neural network, with four input nodes for the coordinate, and five nodes in its hidden layer.
 This NN design is shown in Figure~\ref{fig:multi_pair_topology}.
-The input nodes are labelled \textit{opponent} and \textit{ally} because the input given to the network represent coordinates of one opponent and one ally.
+The input nodes are labelled \textit{opponent} and \textit{ally} because the inputs given to the network represent coordinates of one opponent and one ally.
 
 Moreover, for every NNs the activation function is a sigmoid function $S(t) = (1 + e^{-t})^{-1}$, centred at $0$. 
-The output of the network is a polar \textit{coordinates pair}, namely \textit{target position}, that represents the space point in which the agent will try to move to in the next time step.
-Finally, the output of the NN has a range from $(0, 1)$, so in order to convert it into the used positioning system it is  translated into a range of $[0, l]$ for target ranges and $[-\pi, \pi]$ for target bearings. 
+The output of the network is a polar \textit{coordinates pair}, namely \textit{target position}, that represents the
+location towards which the agent will try to move to in the next time step.
+Finally, the output of the NN has a range from $(0, 1)$, so in order to convert this into the used positioning system it is translated into a range of $[0, l]$ for target ranges and $[-\pi, \pi]$ for target bearings. 
  
 \begin{figure}[t]
 	\centering
@@ -248,11 +250,11 @@ Finally, the output of the NN has a range from $(0, 1)$, so in order to convert 
 \vspace{0.5em}
 % Shepherds controllers
 \subsubsection{Shepherds controllers}
-The shepherds evolve \textit{cooperative} behaviours among themselves to successfully herd the sheep.
-Therefore, the \textit{competitive} behaviour is against the sheep, who want to escape. 
+Shepherds evolve \textit{cooperative} behaviours among themselves to successfully herd sheep.
+Therefore, the \textit{competitive} behaviour is against the sheep, who temps to escape. 
 In order to pursue cooperation, a shepherd needs information about the other shepherds around. 
 However, in order to keep the network complexity low we only provide the controller with information for the closest shepherd. 
-Similarly, the competition arises the need for the shepherd to have information about the sheep.
+Similarly, the competition creates the need for the shepherd to have information about the sheep.
 Thus, the inputs for a shepherd controller are: 
 
 \begin{enumerate}
@@ -267,7 +269,7 @@ We highlight that the third and fourth inputs are not taken into account in scen
 \vspace{0.5em}
 % Sheep controllers
 \subsubsection{Sheep controllers}
-In case of the sheep, competitive and cooperative collective behaviours are pursued using the same logic as the shepherd's when defining the NN inputs. 
+In case of the sheep, competitive and cooperative behaviours are pursued using the same logic as the shepherd's when defining the NN inputs. 
 This time, in order to avoid the shepherd and be able to escape, sheep have information about the closest shepherd. 
 Yet, they have a strong preference to stay in a group and so need information about the closest sheep around them in order to pursue this goal. 
 Thus, the inputs for a sheep's controller are:
@@ -285,23 +287,24 @@ Once again, we point out the third and fourth inputs are not taken into account 
 \label{sec:controllers_evolution}
 The algorithm used to evolve the controllers follows the framework of evolution strategies (ES) \cite{back1993overview}. 
 We use the ($\mu + \lambda$) strategy, with $\mu = 10$ and $\lambda = 100$~\cite{eiben2003introduction}. 
-A ($\mu + \lambda$) ES generates $\lambda$ children from a population of $\mu$ individuals by mutating them; therefore no crossover operator is used.
+An ($\mu + \lambda$) ES generates $\lambda$ children from a population of $\mu$ individuals by mutating them; therefore no crossover operator is used.
 The $\mu + \lambda$ children are then evaluated and the best $\mu$ individuals among them are selected for the next generation.
-The genome is a real-valued vector representing the connection weights of the neural network and it can be of two sizes (depending on the scenario): $17$ for the \textit{simple-pair} network and $37$ for the \textit{multi-pair} network. 
+The genome is a real-valued vector representing the connection weights of the neural network
+The genome can be of two sizes (depending on the scenario): $17$ for the \textit{simple-pair} network and $37$ for the \textit{multi-pair} network. 
 Furthermore, each individual in a population is evaluated with the best individuals from the other populations, following an elitist approach.
-Different fitness functions are created for each type of agent, we hereby explain each of them and the motivations behind.
+Different fitness functions are created for each type of agent, we hereby explain each of them and motivate its design.
 
 \vspace{0.5em}
 \subsubsection{Shepherd fitness function}
 In order to show the shepherd fitness function, we introduce here~\eqref{eq:gcDist}, the euclidean distance from the sheep center of group mass $gc$ (see Section~\ref{sec:herding_task_environment}) to the corral position $cr$.
-Given $t$ as incremental index of the simulation time steps, it is defined as:
+Given $t$ as an incremental index of the simulation time steps, it is defined as:
 % GROUP CENTER OF MASS DISTANCE
 \begin{equation} \label{eq:gcDist}
 gcd(t) = \sqrt{(cr_x - gc_x(t))^2 + (cr_y - gc_y(t))^2}
 \end{equation}
-This metric grows as the group of sheep distance itself from the corral in the attempt of escaping.
-Furthermore, at every time step a \textit{bonus} is awarded for corralling a sheep or a \textit{penalty} is deducted for letting a sheep escape. 
-Each of these reward is regulated by the elapsed simulation time, meaning that a bonus/penalty is larger the earlier it happens. 
+This metric grows as the group of sheep distance itself from the corral in the attempt to escape.
+Furthermore, at every time step a \textit{bonus} is rewarded for corralling a sheep or a \textit{penalty} is deducted for letting a sheep escape. 
+Each of these rewards is regulated by the elapsed simulation time, meaning that a bonus/penalty is larger the earlier the rewarded event happens.
 % SHEPHERD BONUS
 \begin{equation} \label{eq:bonus}
 bonus(t) = - l (T - t)
@@ -310,13 +313,13 @@ bonus(t) = - l (T - t)
 \begin{equation} \label{eq:penalty}
 penalty(t) = l (T - t)
 \end{equation}
-Where $T$ is the number of total steps (1500 in our experiments) and $t$ is the number of elapsed steps when the simulation stopped.
+Where $T$ is the number of total steps (1500 in our experiments) and $t$ is the number of elapsed steps the moment the simulation is stopped.
 Finally, the fitness for shepherds is defined as the cumulative distance from the sheep center to the corral position~\eqref{eq:gcDist} taking into account bonuses~\eqref{eq:bonus} and penalties~\eqref{eq:penalty}, over every simulation time step:
 % SHEPHERD FITNESS
 \begin{equation} \label{eq:shep_fitness}
 f_{sheph} = \sum_{i=1}^{1500} gcd(i)	+ bonus(i) + penalty(i)
 \end{equation}
-In order to to observe a herding behaviour,~\eqref{eq:shep_fitness} has to be minimized.
+In order to observe herding behaviour,~\eqref{eq:shep_fitness} has to be minimized.
 Note that the fitness is the same among a group of shepherds, since all the components reflect on the group's performance. 
 This design choice is motivated by the fact that shepherds must work together to achieve a common goal. 
 
@@ -327,7 +330,7 @@ The fitness for a sheep is determined by its own distance to the corral.
 \begin{equation} \label{eq:sheep_dist}
 sd(t) = \sqrt{(cr_x - sheep_x(t))^2 + (cr_y - sheep_y(t))^2}
 \end{equation}
-In scenarios where there is more than one sheep, a group component is added to motivate sheep to stay in groups. 
+In scenarios involving more than one sheep, a group component is added to motivate sheep to stay together. 
 This is the ratio $\phi$ of the group calculated as the distance from the furthest sheep $\alpha$ to the center of mass $gc$ in a specific time step. 
 % SHEEP RATIO
 \begin{equation} \label{eq:sheep_ratio}
@@ -354,14 +357,14 @@ where $0 \leq RR \geq 1$ is a constant that controls the weight of the sheep-rad
 \subsection{Agents}
 \label{sec:agents_design}
 % Obstacle avoidance
-Given the output of the networks, the agents will try to move into a position.
-However, both types of agents have obstacle avoidance an obstacle avoidance mechanism that may override the network's output hindering one agent's movement.
-To achieve this each agent is provided of a \textit{radius} which allows to push other agents with a smaller radius.
-Therefore we assign a greater radius to the shepherd than the sheep's.
-By doing this we allow the shepherd to rim the sheep and push it towards the corral. 
+The output of the NN produce a target direction for the agents to move towards.
+However, both types of agents have an obstacle avoidance mechanism that may override the network's output, hindering an agent's movement when necessary.
+To achieve this each agent is provided with a \textit{radius} which allows to push other agents with a smaller radius.
+Obstacles entering this radius hinder the agent from moving in this direction and will reposition the agent preventing overlap between object and radius.
+We assign a greater radius to the shepherd then to the sheep, by doing so we allow the shepherd to push, and thus herd, the sheep towards the corral.
 
 % Interpreting the Neural Network output
-Since the output for the network is represented as polar coordinates centered with polar axis passing through the nearest opponent, they are translated into Cartesian coordinates in the pasture. 
+Since the output of the network is represented as polar coordinates centred with the polar axis passing through the nearest opponent, they are translated into Cartesian coordinates within the pasture to calculate the agents target position.
 % TODO: explain the transformation
 %TODO: Others properites: like speed....
 All agents have the same maximum speed and mass, so their simulated physical characteristics are the same.
