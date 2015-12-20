@@ -435,14 +435,10 @@ For example, in a scenario with two shepherds and one sheep, there is a total of
 In this section we present the results of the experiments run using the implementation detailed in Section~\ref{sec:implementation}.
 % Homo vs Etero experiment
 \vspace{0.5em}
-\subsubsection{Controllers comparison}
-We first consider experiments that relate to $H_1$. To investigate the difference between homogeneous and heterogeneous controllers for the shepherd agents, we explore scenarios with fixed number of agents. 
-\begin{itemize}
-	\item 2 homogeneous shepherds vs 1 sheep
-	\item 2 heterogeneous shepherds vs 1 sheep
-	\item 3 homogeneous shepherds vs 1 sheep
-	\item 3 heterogeneous shepherds vs 1 sheep
-\end{itemize}
+\subsubsection{Homo vs Etero}
+We first consider two experiments that relate to $H_1$, here the IV is the controller type (homo or etero).
+Note that the first and the second run involves respectively 2 and 3  shepherds.
+Figure~\ref{fig:2v1_homo_vs_hetero} reports the former case, while Figure~\ref{fig:3v1_homo_vs_hetero} the latter.
 
 \begin{figure}[ht]
 	\centering
@@ -459,38 +455,38 @@ We first consider experiments that relate to $H_1$. To investigate the differenc
 \end{figure}
 
 
-% Need for heterogeneous controllers
-\vspace{0.5em}
-\subsubsection{Need for heterogeneousity: shepherds number}
-In order to test $H_2$, we compare different scenarios with different number of shepherds corralling one sheep:
-\begin{itemize}
-	\item 1 shepherd vs 1 sheep	
-	\item 2 homogeneous shepherds vs 1 sheep
-	\item 3 homogeneous shepherds vs 1 sheep
-	\item 2 heterogeneous shepherds vs 1 sheep
-	\item 3 heterogeneous shepherds vs 1 sheep
-	
-\end{itemize}
+%% Need for heterogeneous controllers
+%\vspace{0.5em}
+%\subsubsection{Need for heterogeneousity}
+%In order to test $H_2$, we compare different scenarios with different number of shepherds corralling one sheep:
+%\begin{itemize}
+%	\item 1 shepherd vs 1 sheep	
+%	\item 2 homogeneous shepherds vs 1 sheep
+%	\item 3 homogeneous shepherds vs 1 sheep
+%	\item 2 heterogeneous shepherds vs 1 sheep
+%	\item 3 heterogeneous shepherds vs 1 sheep
+%	
+%\end{itemize}
 
-% Task complexity: more sheep!
-\vspace{0.5em}
-\subsubsection{Task complexity: sheep number}
-Finally, $H_3$ is approached by comparing scenarios with a fixed number of shepherds, in this case three, and different number of sheep. 
-\begin{itemize}
-	\item 3 heterogeneous shepherds vs 1 sheep
-	\item 3 heterogeneous shepherds vs 2 homogeneous sheep
-	\item 3 heterogeneous shepherds vs 3 homogeneous sheep
-\end{itemize}
-The second and third round of experiments regulate the task complexity by having different sheep to shepherd ratios. 
-\begin{itemize}
-	\item one shepherd one sheep = 1 ratio
-	\item two shepherds one sheep = 0.5 ratio
-	\item three shepherds one sheep = 0.33 ratio
-	
-	\item three shepherd one sheep = 0.33 ratio
-	\item three shepherd two sheep = 0.66 ratio
-	\item three shepherd three sheep = 1
-\end{itemize}
+%% Task complexity: more sheep!
+%\vspace{0.5em}
+%\subsubsection{Task complexity: sheep number}
+%Finally, $H_3$ is approached by comparing scenarios with a fixed number of shepherds, in this case three, and different number of sheep. 
+%\begin{itemize}
+%	\item 3 heterogeneous shepherds vs 1 sheep
+%	\item 3 heterogeneous shepherds vs 2 homogeneous sheep
+%	\item 3 heterogeneous shepherds vs 3 homogeneous sheep
+%\end{itemize}
+%The second and third round of experiments regulate the task complexity by having different sheep to shepherd ratios. 
+%\begin{itemize}
+%	\item one shepherd one sheep = 1 ratio
+%	\item two shepherds one sheep = 0.5 ratio
+%	\item three shepherds one sheep = 0.33 ratio
+%	
+%	\item three shepherd one sheep = 0.33 ratio
+%	\item three shepherd two sheep = 0.66 ratio
+%	\item three shepherd three sheep = 1
+%\end{itemize}
 
 
 
@@ -501,23 +497,18 @@ The second and third round of experiments regulate the task complexity by having
 %	\caption{Bar chart for corralled cases in heterogeneous setting. Shows mean, best and worse for scenarios with one, two and three shepherds herding one sheep}
 %	\label{fig:corralled_oneSheep}
 %\end{figure}
-
 %\begin{figure}[ht]
 %	\centering
 %	\includegraphics[width=3.3in]{imgs/hetero_1v1-hetero_2v1-hetero_3v1-escapedRatio-bar.jpeg}
 %	\caption{Bar chart for escaped cases in heterogeneous setting. Shows mean, best and worse for scenarios with one, two and three shepherds herding one sheep}
 %	\label{fig:escaped_oneSheep}
 %\end{figure}
-
-
 %\begin{figure}[ht]
 %	\centering
 %	\includegraphics[width=3.3in]{imgs/hetero_3v1-hetero_3v2-hetero_3v3-corralledRatio-bar.jpeg}
 %	\caption{Bar chart for corralled cases in heterogeneous setting. Shows mean, best and worse for scenarios with three shepherds herding one, two and three sheep}
 %	\label{fig:corralled_threeShepherd}
 %\end{figure}
-
-
 %\begin{figure}[ht]
 %	\centering
 %	\includegraphics[width=3.3in]{imgs/hetero_3v1-hetero_3v2-hetero_3v3-escapedRatio-bar.jpeg}
