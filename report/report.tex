@@ -15,8 +15,11 @@
 % acronyms
 \newacronym[plural=EAs, firstplural=Evolutionary Algorithms (EAs)]{ea}{EA}{Evolutionary Algorithm}
 \newacronym{er}{ER}{Evolutionary Robotics}
-\newacronym[plural=NNs]{nn}{NN}{Neural Network}
-\newacronym[plural=ANNs]{ann}{ANN}{Artificial Neural Network}
+\newacronym[plural=NNs, firstplural=Neural Networks]{nn}{NN}{Neural Network}
+\newacronym[plural=ANNs, firstplural=Artificial Neural Networks]{ann}{ANN}{Artificial Neural Network}
+\newacronym{tweann}{TWEANN}{Topology \& Weight Evolving Artificial Neural Network}
+\newacronym{neat}{NEAT}{NeuroEvolution of Augmenting Topologies}
+
 
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
@@ -117,11 +120,11 @@ The following hypothesis are in one to one relationship with the aforementioned 
 	\item The number of shepherds herding one sheep is directly related to their fitness in heterogeneous cases, such that fitness increases as the number of shepherds increases.	
 	\item Increasing the number of sheep herd by a fixed number of shepherds decreases the number of corralled sheep.
 \end{enumerate}
-$H_0$, namely the null hypothesis, is ``Shepherds’ fitness in the heterogeneous case is equivalent to the one of the homogeneous''.
+$H_0$, namely the null hypothesis, is ``Shepherds' fitness in the heterogeneous case is equivalent to the one of the homogeneous''.
 %TODO: add null hyptoesis for H_2 and H_3
 
 \subsection{Contributions}
-In this paper we introduce our proposed model for running a herding task in a competitive co-evoulution framework. 
+In this paper we introduce our proposed model for running a herding task in a competitive co-evolution framework. 
 We have built our model and run a thorough set of simulations in order to test the hypothesis detailed in Section~\ref{sec:hypothesis}. 
 In what follow, we list the main contributions this paper to the state-of-the-art:
 \begin{itemize}
@@ -131,49 +134,72 @@ In what follow, we list the main contributions this paper to the state-of-the-ar
 	\item NESPRESSO....what else?
 \end{itemize}
 
-This work sheds a tiny light in the topic of competitive co-evoultion by showing to which extent it is feasible in a herding task accomplished by robots.
+This work sheds a tiny light in the topic of competitive co-evolution by showing to which extent it is feasible in a herding task accomplished by robots.
 
 \subsection{Organization}
-%TODO: finish this!
 The rest of this paper is organized as follows. 
-In Section X, we revise the state-of-the-art related to our research topic. 
-In Section Y, we present our model, describing its different components. 
-We evaluate the performance of our solution in Section Z. 
-Finally, in Section M we draw some conclusions and point out ways to further extend this work.
+In Section \ref{sec:lit_review}, we revise the state-of-the-art related to our research topic. 
+In Section \ref{sec:model_design}, we present our model, describing its different components. 
+We evaluate the performance of our solution in Section \ref{sec:experiment}. 
+Finally, in Section \ref{sec:conclusion} we draw some conclusions and point out ways to further extend this work.
 
 \section{Literature review}
-In this section, we survey the main researches in related work, considering different the following topics: \textit{co-evolution}, \textit{competitive co-evolution}, \textit{evolving \glspl{nn}} and \textit{homogeneity \& heterogeneity in \glspl{nn}}.
+\label{sec:lit_review}
+In this Section, we survey the main researches in related work, considering the following topics: \textit{co-evolution}, \textit{\acrlong{er} \& neuroevolution} and \textit{homogeneous \& heterogeneous controllers}.
  
 \subsection{Co-evolution}
 Co-evolution in its foundation is a natural phenomena.
 It describes how the basic principles of evolution are propagated through a dynamic process in which species not only evolve due to the selection pressure produced by an environment, but also due to the selection pressure produced as a by-product of other species evolving within that same environment.
-The effects of co-evoultion in butterflies and plants have been studied as early as 1964 in ~\cite{ehrlich1964butterflies}.
+The effects of co-evolution in butterflies and plants have been studied as early as 1964 in ~\cite{ehrlich1964butterflies}.
 Furthermore, the authors of ~\cite{janzen1980coevolution} define co-evolution as ``an evolutionary change in a trait of the individuals in one population in response to a trait of the individuals of a second population''. 
 %In 1980 Janzen's \cite{janzen1980coevolution} formalised a clear definition for coevolution:
 %`` 'Coevolution' may be usefully defined as an evolutionary change in a trait of the individuals in one population in response to a trait of the individuals of a second population, followed by an evolutionary response by the second populations to the change in the first.''
 
+% forms of co-evolution
+Co-evolution may be deployed, as described in \cite{eiben2003introduction}, in two different forms: \textit{cooperative} and \textit{competitive}.
+% cooperative co-evolution
+In cooperative co-evolution, different species are evolved, each representing part of the solution to a problem.
+The individuals in each species have to cooperate in order to come to a solution to a larger problem.
+The advantage of this approach is that it permits a functional decomposition of the task to be solved.
+% competitive co-evolution
+In the competitive co-evolution mode, individuals compete against each other in an environment with limited resources, with the aim to increase its fitness at the expense of other's.
+With more than one species, it is possible to let entire species compete against each other.
+Competitive co-evolution has the advantage of creating selection pressure.
+The individuals have to adapt to a more and more challenging opponent, so that the fitness landscape changes over time and hopefully becomes harsher to optimize.
+Dawkins and Krebs describe in~\cite{dawkins1979arms} the dynamics and terminology for competitive co-evolution by providing examples of manifestations of competitive co-evolution in natural systems. 
+The paper captures the pure essential of competitive co-evolution giving the following description: ``An adaptation in one lineage (e.g. predators) may change the selection pressure on another lineage (e.g. prey), giving rise to a counter-adaptation. If this occurs reciprocally, an unstable runaway escalation or 'arms race' may result''.
 
-\subsection{Competitive Co-evolution}
-In extension to the broader co-evolution, competitive co-evolution has, as its name suggest, a focus towards competitive elements creating selection pressure.
-Dawkins and Krebs describe in~\cite{dawkins1979arms} the dynamics and terminology for competitive coevolution by providing examples of manifestations of competitive coevolution in natural systems. 
-The paper captures the pure essential of competitive coevolution giving the following description: ``An adaptation in one lineage (e.g. predators) may change the selection pressure on another lineage (e.g. prey), giving rise to a counter-adaptation. If this occurs reciprocally, an unstable runaway escalation or 'arms race' may result''.
+\subsection{\acrlong{er} \& Neuroevolution}
+% Evolutionary Robotics
+Floreano and Nolfi in \cite{nolfi2000evolutionary}, define \gls{er} as a method for automatic creation of autonomous robots, following the Darwinian principle of selective reproduction of the fittest.
+The term \acrlong{er} was firstly introduced in \cite{cli1993evolving}, but between 1992 and 1993, other two research groups reported promising results on artificial evolution of autonomous robots in \cite{lewis1992genetic} and \cite{nolfi1994evolve}.
+\gls{er} can be implemented in simulation or in the physical world.
+In simulation, \gls{er} is able to fast-forwarding time and make the entire process faster than running on real robots.
+Unfortunately evolution of physical entities in a virtual world may suffer from a \textit{reality gap} when the controllers are deployed in physical robots, as thoroughly investigated in \cite{jakobi1995noise}.
+By using physical robots, \gls{er} is able to bridge the reality gap but at expenses of deployment time
 
-\subsection{Evolving NNs}
-The weights of a NN can be evolved when possible configurations of these weights are subjected to selection pressure.
-Using this technique, strategies to reach the goals the controlled agent is tempting to achieve become encoded in the ANN.
+% Neuroevolution
+\textit{Neuroevolution} is a set of techniques that uses \glspl{ea} to train an \gls{ann}.
+It is widely applied in domain where an exhaustive mapping of the correct input and output is hard to define.
+Therefore neuroevolution uses only the performance at the task to train a network (e.g. the fitness score).
+Floreano in \cite{floreano2008neuroevolution} classifies three classes of genetic encoding of an \gls{ann}: direct, developmental and implicit.
+This genetic encoding may represent not only the synaptic weights of the network, but also its topology.
+The algorithms that evolve the network's topology and its parameters simultaneously are called \gls{tweann} algorithms.
 %get some paper showing simple evolution of NNs
+Neuroevolution has been applied with success in different domains like video games \cite{stanley2005real} \cite{hausknecht2014neuroevolution}, collective self-organization \cite{nitschke2008neuro} \cite{nitschke2010collective} and common robotics tasks %TODO add citations
 In~\cite{stanley2004competitive}, the authors show that through the complexification of agent controllers in a competitive co-evolutionary setting, the controller's added complexity can be utilized through the generation of more advanced strategies as complexity increases. 
-Complexification of the controllers was managed by increasing the size of the ANN gradually during the evolution run.
-Resizing the network was achieved using NeuroEvolution of Augmenting Topologies (NEAT).
-NEAT allows for the addition of connections and or nodes to a NN while maintaining learned behaviours by keeping the encoded information in the resized NN very close to its previous state.
+Complexification of the controllers was managed by increasing the size of the \gls{ann} gradually during the evolution run.
+Resizing the network was achieved using \gls{neat}.
+\gls{neat} allows for the addition of connections and or nodes to a \gls{nn} while maintaining learned behaviours by keeping the encoded information in the resized \gls{nn} very close to its previous state.
 
-\subsection{Homogeneity \& Heterogeneity in NNs}
+\subsection{Homogeneous \& Heterogeneous Controllers}
 \cite{potter2001heterogeneity} performed a study to a tradeoff of homogeneity versus heterogeneity in the control systems of robots by allowing teams to coevolve their high-level controllers given different levels of difficulty of the task.
 The hypothesis was ``simply increasing the difficulty of a task is not enough to induce a team of robots to create specialists''.
 Task difficulty was varied by replacing one adversary's passive controller with an active variant supposedly proving that increased difficulty did not justify the use of heterogeneous controllers.
 However, increased difficulty was never implemented structurally nor tested methodologically. 
 
 \section{Model design}
+\label{sec:model_design}
 %This can be considered as an extension of~\cite{potter2001heterogeneity} because the task, as well as part of the model, are similar. 
 In this section we detail our model which aims to simulate a herding task by employing robots with intelligent controllers.
 % Herding environment + Task complexity
@@ -536,6 +562,7 @@ The second and third round of experiments regulate the task complexity by having
 
 
 \section{Conclusion}
+\label{sec:conclusion}
 The conclusion goes here.
 
 
