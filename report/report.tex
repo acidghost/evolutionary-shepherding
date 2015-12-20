@@ -10,6 +10,13 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{mathtools}
+\usepackage[acronym]{glossaries}
+
+% acronyms
+\newacronym[plural=EAs, firstplural=Evolutionary Algorithms (EAs)]{ea}{EA}{Evolutionary Algorithm}
+\newacronym{er}{ER}{Evolutionary Robotics}
+\newacronym[plural=NNs]{nn}{NN}{Neural Network}
+\newacronym[plural=ANNs]{ann}{ANN}{Artificial Neural Network}
 
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
@@ -46,16 +53,17 @@ TODO: add what we have discovered!!!!!!!
 
 \section{Introduction}
 % Evolutionary Algorithms
-Evolutionary algorithms (EA) are biology inspired algorithms that, going through multiple steps (e.g., generation, procreation, etc.), are able to evolve entities over time.
-Thus, the entities subject to the evolution are referred to as individuals,
-%and the EA acts as the digital environment these individuals are born, live, procreate and die in.
-and the evolution is usually controlled such that next generations improve along runs.
-In the field of robotics, EAs can be used to evolve the behavioural controller of robots, these controllers are evolved as individuals in an EA.
+\glspl{ea} are biology inspired algorithms that, going through multiple steps (reproduction, mutation, recombination and selection), are able to evolve entities over time.
+Thus, the entities subject to the evolution are referred to as individuals and represent a candidate solution to an optimization problem.
+An \gls{ea} measures the quality of individuals using a \textit{fitness function} and its aim is to improve individuals' fitness score along successive generations.
+\gls{er} is a technique that uses \gls{ea}s to develop a policy for an autonomous robot.
+Its main objective is to evolve intelligent robots behaviours required to solve some real-word task.
+\gls{er} implementations often rely on an \gls{ann} to represent their controllers.
 % Neural Networks
-A Neural Network (NN) is a function estimator that can be used as a controller and its design is natural inspired by the biological nervous system.
-In order to employ a NN as a controller, inputs usually come from sensors making observations of the environment, while the weights are evolved by an EA.
-The complete evolutionary process can be run in a simulation which exploits the computer's computational power in order to evaluate many individuals in a reasonable time frame. 
-In the field of robotics both EAs and NNs are employed to evolve intelligent behaviours that can pursue one or more given goals.
+An \gls{ann}, commonly referred to as \gls{nn} in this field, is a function estimator that can be used as a policy for an autonomous agent and its design is natural inspired by the biological nervous system.
+In order to employ it as a controller, inputs usually come from sensors making observations of the environment and the output is then used to control an actuation schema.
+The evaluation of the individuals' controllers can be made in a simulation.
+This exploits the computer's computational power in order to evaluate many individuals in a reasonable time frame.
 
 % Solvable tasks
 Tasks composition and complexity can vary based on specific scenarios, in general it is the subject of many studies aiming to solve different tasks.
@@ -64,9 +72,9 @@ Research investigates collective behaviour in order to asses to which extent col
 
 % Our task/paper
 In this paper, we consider competitive co-evolution within a herding task which consists of a number of shepherds that herd a sheep into a corral.
-We evolve NN controllers and assign them to the agents, the latter step can be done with a homogeneous or heterogeneous approach.
+We evolve \gls{nn} controllers and assign them to the agents, the latter step can be done with a homogeneous or heterogeneous approach.
 While the former employs the same controller instance for each agent,
-in the latter each agent gets its own instance of a controller, which is separately evolved by an EA.
+in the latter each agent gets its own instance of a controller, which is separately evolved by an \gls{ea}.
 Moreover, the task complexity can be increased by varying or introducing new agents like adding a fox.
 
 In this paper we employ the aforementioned components within a simulated herding task.
@@ -90,7 +98,7 @@ Instances of different controller types can be either \textit{static} or \textit
 A \textit{static} controller is simply a predefined set of rules that implements a specific behaviour.
 Although an \textit{intelligent} controller is more complex due to its ability to adept itself over time.
 In this paper both the sheep and the shepherds have an \textit{intelligent} controller.
-The intelligence of the controller is based on the assumption that the NN is evolved, and thus, the controller has the possibility to adapt to its environment through an evolutionary process. 
+The intelligence of the controller is based on the assumption that the \gls{nn} is evolved, and thus, the controller has the possibility to adapt to its environment through an evolutionary process. 
 This process, in which many strategies are simulated and evaluated, is comparable to a learning process and enables adaptivity. 
 Assuming an intelligent sheep we state the following research questions:
 
@@ -134,7 +142,7 @@ We evaluate the performance of our solution in Section Z.
 Finally, in Section M we draw some conclusions and point out ways to further extend this work.
 
 \section{Literature review}
-In this section, we survey the main researches in related work, considering different the following topics: \textit{co-evolution}, \textit{competitive co-evolution}, \textit{evolving NNs} and \textit{homogeneity \& heterogeneity in NNs}.
+In this section, we survey the main researches in related work, considering different the following topics: \textit{co-evolution}, \textit{competitive co-evolution}, \textit{evolving \glspl{nn}} and \textit{homogeneity \& heterogeneity in \glspl{nn}}.
  
 \subsection{Co-evolution}
 Co-evolution in its foundation is a natural phenomena.
