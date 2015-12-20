@@ -378,6 +378,7 @@ In order to answer the research questions listed in {Section~\ref{sec:researchQu
 We run the entire evolutionary process for $40$ times and perform statistical analysis to get $95\%$ confidence intervals.
 
 \subsection{Implementation}
+\label{sec:implementation}
 %TODO: the implementation is the description of the instance of our model used to run the experiments, this means that all parameters should be defined (name+meaning) in the model section and instanciated in the implementation.  The impl. is not much about the code/classes etc unless we came up with a novel algortihm....
 The project is coded in Java and has a GUI to launch the different experiments, replay the best individuals for each generation and plot statistics.
 The evolutionary algorithm is implemented through the use of \textit{ECJ} \cite{luke2006ecj}: an easy to use evolutionary computation research framework with out-of-the-box algorithms and tools that enabled us to implement our co-evolutionary ES.
@@ -434,6 +435,7 @@ For example, in a scenario with two shepherds and one sheep, there is a total of
 
 \subsection{Performance details}
 \label{sec:experiments_performances}
+In this section we present the results of the experiments run using the implementation detailed in Section~\ref{sec:implementation}.
 % Homo vs Etero experiment
 \vspace{0.5em}
 \subsubsection{Controllers comparison}
@@ -444,6 +446,21 @@ We first consider experiments that relate to $H_1$. To investigate the differenc
 	\item 3 homogeneous shepherds vs 1 sheep
 	\item 3 heterogeneous shepherds vs 1 sheep
 \end{itemize}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=3.3in]{imgs/homo2v1-hetero2v1-bestSoFar.jpeg}
+	\caption{Best individuals fitness in scenario with two shepherds and one sheep. Both homogeneous and heterogeneous settings are shown}
+	\label{fig:2v1_homo_vs_hetero}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=3.3in]{imgs/homo3v1-hetero3v1-bestSoFar.jpeg}
+	\caption{Best individuals fitness in scenario with three shepherds and one sheep. Both homogeneous and heterogeneous settings are shown}
+	\label{fig:3v1_homo_vs_hetero}
+\end{figure}
+
 
 % Need for heterogeneous controllers
 \vspace{0.5em}
@@ -479,74 +496,42 @@ The second and third round of experiments regulate the task complexity by having
 \end{itemize}
 
 
-\section{Results}
-In this section we present the results of the experiment detailed in Section ~\ref{sec:experiment}.
-
-\vspace{0.5em}
-\subsubsection{Homogeneous vs heterogeneous}
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=3.3in]{imgs/homo2v1-hetero2v1-bestSoFar.jpeg}
-	\caption{Best individuals fitness in scenario with two shepherds and one sheep. Both homogeneous and heterogeneous settings are shown}
-	\label{fig:2v1_homo_vs_hetero}
-\end{figure}
-
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=3.3in]{imgs/homo3v1-hetero3v1-bestSoFar.jpeg}
-	\caption{Best individuals fitness in scenario with three shepherds and one sheep. Both homogeneous and heterogeneous settings are shown}
-	\label{fig:3v1_homo_vs_hetero}
-\end{figure}
-
-\textbf{TODO: interpret graph. Shepherd do better in homo. Sheep does better with hetero dogs}
-
-\vspace{0.5em}
-\subsubsection{Adding more shepherds}
-
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=3.3in]{imgs/hetero_1v1-hetero_2v1-hetero_3v1-corralledRatio-bar.jpeg}
-	\caption{Bar chart for corralled cases in heterogeneous setting. Shows mean, best and worse for scenarios with one, two and three shepherds herding one sheep}
-	\label{fig:corralled_oneSheep}
-\end{figure}
-
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=3.3in]{imgs/hetero_1v1-hetero_2v1-hetero_3v1-escapedRatio-bar.jpeg}
-	\caption{Bar chart for escaped cases in heterogeneous setting. Shows mean, best and worse for scenarios with one, two and three shepherds herding one sheep}
-	\label{fig:escaped_oneSheep}
-\end{figure}
-
-\textbf{TODO: Interpret trend as more shepherd get involved, how does hetero does?}
-\textbf{TODO: consider including same graphs in homogeneous scenarios}
-
-\vspace{0.5em}
-\subsubsection{Adding more sheep}
-o	Look at percentage of corralled and escaped of last generation
 
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=3.3in]{imgs/hetero_3v1-hetero_3v2-hetero_3v3-corralledRatio-bar.jpeg}
-	\caption{Bar chart for corralled cases in heterogeneous setting. Shows mean, best and worse for scenarios with three shepherds herding one, two and three sheep}
-	\label{fig:corralled_threeShepherd}
-\end{figure}
+%\begin{figure}[ht]
+%	\centering
+%	\includegraphics[width=3.3in]{imgs/hetero_1v1-hetero_2v1-hetero_3v1-corralledRatio-bar.jpeg}
+%	\caption{Bar chart for corralled cases in heterogeneous setting. Shows mean, best and worse for scenarios with one, two and three shepherds herding one sheep}
+%	\label{fig:corralled_oneSheep}
+%\end{figure}
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=3.3in]{imgs/hetero_3v1-hetero_3v2-hetero_3v3-escapedRatio-bar.jpeg}
-	\caption{Bar chart for escaped cases in heterogeneous setting. Shows mean, best and worse for scenarios with three shepherds herding one, two and three sheep}
-	\label{fig:escaped_threeShepherd}
-\end{figure}
+%\begin{figure}[ht]
+%	\centering
+%	\includegraphics[width=3.3in]{imgs/hetero_1v1-hetero_2v1-hetero_3v1-escapedRatio-bar.jpeg}
+%	\caption{Bar chart for escaped cases in heterogeneous setting. Shows mean, best and worse for scenarios with one, two and three shepherds herding one sheep}
+%	\label{fig:escaped_oneSheep}
+%\end{figure}
 
-\textbf{TODO: Interpret trend as more sheep need to be corralled (task is more complex)}
+
+%\begin{figure}[ht]
+%	\centering
+%	\includegraphics[width=3.3in]{imgs/hetero_3v1-hetero_3v2-hetero_3v3-corralledRatio-bar.jpeg}
+%	\caption{Bar chart for corralled cases in heterogeneous setting. Shows mean, best and worse for scenarios with three shepherds herding one, two and three sheep}
+%	\label{fig:corralled_threeShepherd}
+%\end{figure}
+
+
+%\begin{figure}[ht]
+%	\centering
+%	\includegraphics[width=3.3in]{imgs/hetero_3v1-hetero_3v2-hetero_3v3-escapedRatio-bar.jpeg}
+%	\caption{Bar chart for escaped cases in heterogeneous setting. Shows mean, best and worse for scenarios with three shepherds herding one, two and three sheep}
+%	\label{fig:escaped_threeShepherd}
+%\end{figure}
+
 
 
 \section{Conclusion}
 The conclusion goes here.
-
-%\subsection{Future work}
-%TODO: future work
 
 
 
