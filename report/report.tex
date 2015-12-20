@@ -34,7 +34,7 @@ Amsterdam, Netherlands}}
 \begin{abstract}
 In the context of robotics, intelligent behaviours are often achieved using neural networks as controllers evolved using  an evolutionary algorithm.
 In the case of multiple individuals within a species, controllers can be either homogeneous or heterogeneous.
-In this paper, we use competitive co-evolution of homogeneous and heterogeneous controllers in order to investigate its effects on the emergence of specialisation behaviour regarding a herding 
+In this paper, we use competitive co-evolution of homogeneous and heterogeneous controllers in order to investigate its effects on the emergence of specialisation behaviour regarding a herding task.
 
 TODO: add what we have discovered!!!!!!!
 % TODO: add what we have discovered
@@ -49,31 +49,28 @@ TODO: add what we have discovered!!!!!!!
 Evolutionary algorithms (EA) are biology inspired algorithms that, going through multiple steps (e.g., generation, procreation, etc.), are able to evolve entities over time.
 Thus, the entities subject to the evolution are referred to as individuals,
 %and the EA acts as the digital environment these individuals are born, live, procreate and die in.
-and the evolution is usually controlled such that next generations improve along the runs.
-In the field of robotics, EAs can be used to evolve the behavioural controller of a robot, these controllers are evolved as individuals in an EA.
+and the evolution is usually controlled such that next generations improve along runs.
+In the field of robotics, EAs can be used to evolve the behavioural controller of robots, these controllers are evolved as individuals in an EA.
 % Neural Networks
 A Neural Network (NN) is a function estimator that can be used as a controller and its design is natural inspired by the biological nervous system.
-In order to employ a NN as a controller, inputs usually come from the sensors making observations of the environment, while the weights are evolved by an EA.
-The complete evolutionary process can be run in a simulation which exploits the computer's computational power in order to evaluate many individuals in a reasonable time. 
-Robotics employs both EAs and NNs in order to evolve intelligent behaviours that can pursue one or more given goals.
+In order to employ a NN as a controller, inputs usually come from sensors making observations of the environment, while the weights are evolved by an EA.
+The complete evolutionary process can be run in a simulation which exploits the computer's computational power in order to evaluate many individuals in a reasonable time frame. 
+In the field of robotics both EAs and NNs are employed to evolve intelligent behaviours that can pursue one or more given goals.
 
 % Solvable tasks
-Tasks composition and complexity can vary based on the specific scenario, in general it is subject of many studies aiming to solve different tasks.
+Tasks composition and complexity can vary based on specific scenarios, in general it is the subject of many studies aiming to solve different tasks.
 For instance, tasks can be relatively small (e.g., moving objects) or more based on collaboration between a number of individuals.
 Research investigates collective behaviour in order to asses to which extent collaboration between individuals is feasible.  
 
 % Our task/paper
 In this paper, we consider competitive co-evolution within a herding task which consists of a number of shepherds that herd a sheep into a corral.
-We evolve NN controllers and assign them to the agents, the latter step can be done with the homogeneous or heterogeneous approach.
-While the former employs the same controller instance for each agent, 
-%meaning that each shepherd is assigned to the same controller. 
-%This one single controller is also the only evolved individual in the EA. 
+We evolve NN controllers and assign them to the agents, the latter step can be done with a homogeneous or heterogeneous approach.
+While the former employs the same controller instance for each agent,
 in the latter each agent gets its own instance of a controller, which is separately evolved by an EA.
-% TODO are we going to talk about increasing complexity here?
 Moreover, the task complexity can be increased by varying or introducing new agents like adding a fox.
 
 In this paper we employ the aforementioned components within a simulated herding task.
-Thus, we recap our objectives in the following list:
+We recap our objectives in the following list:
 
 \begin{itemize}
 	\item To compare homogeneity versus heterogeneity.
@@ -85,22 +82,22 @@ Thus, we recap our objectives in the following list:
 \subsection{Research questions}
 \label{sec:researchQuestions}
 In the herding task, shepherds and sheep have opposing goals.
-While the former tries to herd sheep into the corral, the latter tries to escape through the left side of the pasture. 
-Thus, species can be competitively co-evolved in a race to evolve strategies to accomplish opposing goals. 
+While the former tries to herd sheep into a corral, the latter tries to escape through the left side of the pasture. 
+Species can be competitively co-evolved in a race to evolve strategies to accomplish opposing goals. 
 Furthermore, the task complexity can be influenced by varying different parameters such as the number of present agents per each type or their relative movement speeds. 
-Another type of dimension used to scale the difficulty is the type of controller used,
+Another type of dimension used to scale the difficulty is the type of controllers used,
 Instances of different controller types can be either \textit{static} or \textit{intelligent}.
 A \textit{static} controller is simply a predefined set of rules that implements a specific behaviour.
-Although an \textit{intelligent} controller is more complex, it is able to  adapt itself over time.
+Although an \textit{intelligent} controller is more complex due to its ability to adept itself over time.
 In this paper both the sheep and the shepherds have an \textit{intelligent} controller.
-The intelligence of the controller is based on the assumption that since a NN is evolved, the controller has the possibility to adapt to its environment through the evolutionary process. 
+The intelligence of the controller is based on the assumption that the NN is evolved, and thus, the controller has the possibility to adapt to its environment through an evolutionary process. 
 This process, in which many strategies are simulated and evaluated, is comparable to a learning process and enables adaptivity. 
 Assuming an intelligent sheep we state the following research questions:
 
 \begin{enumerate}
-	\item How does the competitive co-evolution affect the relation between homogeneous and heterogeneous shepherds' controllers, in a co-evolved herding task?
-	\item How does increasing the number of shepherds increases the need for heterogeneous controllers?
-	\item How does increasing task complexity (by adding more sheep) affects the effectiveness of herding?
+	\item How do homogenous and heterogenous shepherd controllers compare in a competitive co-evolved herding task?
+	\item How does increasing the number of shepherds increase the need for heterogeneous controllers?
+	\item How does increasing task complexity (by adding more sheep) affect the effectiveness of herding?
 \end{enumerate}
 
 \subsection{Hypothesis}
