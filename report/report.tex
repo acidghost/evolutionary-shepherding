@@ -446,10 +446,12 @@ For example, in a scenario with two shepherds and one sheep, there is a total of
 In this section we present the results of the experiments run using the implementation detailed in Section~\ref{sec:implementation}.
 % Homo vs Etero experiment
 \vspace{0.5em}
-\subsubsection{Homo vs Etero}
-We first consider two experiments that relate to $H_1$, here the IV is the controller type (homo or etero).
+\subsubsection{Homo vs Hetero}
+We first consider two experiments that relate to $H_1$, here the IV is the controller type (homo or hetero).
 Note that the first and the second run involves respectively 2 and 3  shepherds.
 Figure~\ref{fig:2v1_homo_vs_hetero} reports the former case, while Figure~\ref{fig:3v1_homo_vs_hetero} the latter.
+In order to provide a statistical point of view, we perform \textit{t}-test on the means of the homogeneous and heterogeneous trials, which produced a \textit{p}-value $\ll0.5$ for both cases.
+Thus, supported by the significant difference between the homogeneous and heterogeneous cases, we reject the null hyptoesis (see Section~\ref{sec:hypothesis}).
 
 \begin{figure}[ht]
 	\centering
