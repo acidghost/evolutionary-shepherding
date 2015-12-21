@@ -11,8 +11,8 @@ stats_path = "/Users/erotundo/git/UniNotes/ASO/statistics"
 runs = ['hetero.1v1',
 		'hetero.2v1',
 		'hetero.3v1',
-		'hetero.3v2',
-		'hetero.3v3']
+		'hetero.3v2.ho',
+		'hetero.3v3.ho']
 
 # public int generation;
 #         public List<SubpopData> subpopData;
@@ -43,8 +43,15 @@ for run in runs:
 		file_path = stats_path + str("/" + str(run) + "/" + str(i)+'.stat')		
 		df_run = pd.read_csv(file_path, sep=' ', header=None, index_col=0, skipfooter=1, engine='python')		# print run
 		fitness = df_run.iloc[fitness_cols[num_sub_pop]].mean(axis=1)
-		df[str(i)+"_fitness"] = fitness
-	print df.mean(axis=1).describe()
+		corralled_ratio = df_run.iloc[-5]
+		print corralled_ratio
+		
+		# THE FOLLOWING HAVE TO BE USED IN MUTUAL EXCLUSION
+		# df[str(i)+"_fitness"] = fitness
+		df[str(i)+"_corralled_ratio"] = corralled_ratio
+
+	# print df.mean(axis=1)
+	# print df.mean(axis=1).describe()
 	print ""
 
 
