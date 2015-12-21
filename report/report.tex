@@ -12,6 +12,7 @@
 \usepackage{mathtools}
 \usepackage[acronym]{glossaries}
 \usepackage[backend=bibtex, style=ieee]{biblatex}
+\usepackage{tabularx}
 
 \addbibresource{bibliography}
 % decomment below to reduce bib font size
@@ -28,6 +29,13 @@
 
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
+
+
+% tables config
+\renewcommand{\arraystretch}{2.4}
+\newcolumntype{L}[1]{>{\hsize=#1\hsize\raggedright\arraybackslash}X}%
+\newcolumntype{R}[1]{>{\hsize=#1\hsize\raggedleft\arraybackslash}X}%
+\newcolumntype{C}[1]{>{\hsize=#1\hsize\centering\arraybackslash}X}%
 
 
 \begin{document}
@@ -530,6 +538,28 @@ Additionally, both graphs show that homogeneous controllers outperform heterogen
 	\label{fig:ratios_threeShepherd}
 \end{figure}
 
+
+\begin{table*}[t]
+	\centering
+	\begin{tabularx}{6in}{| L{0.4} | L{0.4} | C{1} C{1} C{1} |}
+		\hline
+		\textit{\textbf{Shepherds}} & \textit{\textbf{Sheep}} & \multicolumn{3}{c|}{\textit{\textbf{Fitness}}} \\
+		& & \textit{Mean} & \textit{Minimum} & \textit{Maximum} \\
+		\hline
+		1 & 1 & 2 $\pm$ 0.1 & 0 & 10 \\
+		%\hline
+		2 & 1 & 2 $\pm$ 0.1 & 0 & 10 \\
+		\hline
+		3 & 1 & 2 $\pm$ 0.1 & 0 & 10 \\
+		\hline
+		3 & 2 & 2 $\pm$ 0.1 & 0 & 10 \\
+		%\hline
+		3 & 3 & 2 $\pm$ 0.1 & 0 & 10 \\
+		\hline
+	\end{tabularx}
+	\caption{\textbf{TODO} fill this caption}
+	\label{tab:1}
+\end{table*}
 
 % Task complexity
 \vspace{0.5em}
