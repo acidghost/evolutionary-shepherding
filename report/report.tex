@@ -11,6 +11,11 @@
 \usepackage{textcomp}
 \usepackage{mathtools}
 \usepackage[acronym]{glossaries}
+\usepackage[backend=bibtex, style=ieee]{biblatex}
+
+\addbibresource{bibliography}
+% decomment below to reduce bib font size
+% \renewcommand*{\bibfont}{\small}
 
 % acronyms
 \newacronym[plural=EAs, firstplural=Evolutionary Algorithms (EAs)]{ea}{EA}{Evolutionary Algorithm}
@@ -46,7 +51,7 @@ In the context of robotics, intelligent behaviours are often achieved using neur
 In the case of multiple individuals within a species, controllers can be either homogeneous or heterogeneous.
 In this paper, we use competitive co-evolution of homogeneous and heterogeneous controllers in order to investigate its effects on the effectiveness regarding a herding task.
 Our experiments show that shepherds perform better when assigned homogeneous controllers than heterogeneous controllers.
-Furthermore, the herding effectiveness in the heterogeneous settings is not strongly affected by the increment of number of sheep.
+Furthermore, we also find that task complexity is not sufficient to determine the effectiveness heterogeneous controllers have in a herding task.
 \end{abstract}
 
 
@@ -70,7 +75,7 @@ This exploits the computer's computational power in order to evaluate many indiv
 % Solvable tasks
 Tasks composition and complexity can vary based on specific scenarios, and in general it is the subject of many studies aiming to solve different tasks.
 For instance, tasks can be relatively small (e.g., moving objects) or they could be based on collaboration between a number of individuals.
-Research investigates collective behaviour in order to asses the extent to which collaboration between individuals is feasible.  
+Research investigates collective behaviour in order to asses the extent to which collaboration between individuals is feasible.
 
 % Our task/paper
 In this paper, we consider competitive co-evolution within a herding task which consists of a number of shepherds that herd a sheep into a corral.
@@ -115,11 +120,11 @@ The following hypothesis relate to the aforementioned research questions:
 
 \begin{enumerate}
 	\item Shepherds' fitness in the heterogeneous case is overall higher than in the homogeneous case.
-%	\item The number of shepherds herding one sheep is directly related to their fitness in heterogeneous cases, such that fitness increases as the number of shepherds increases.	
+%	\item The number of shepherds herding one sheep is directly related to their fitness in heterogeneous cases, such that fitness increases as the number of shepherds increases.
 	\item Increasing the number of shepherd herding a fixed number of sheep increases the number of corralled sheep.
 	\item Increasing the number of sheep herd by a fixed number of shepherds decreases the number of corralled sheep.
 \end{enumerate}
-$H_1$ relates to the first research question, while $H_2$ and $H_3$ relate to the second research question. 
+$H_1$ relates to the first research question, while $H_2$ and $H_3$ relate to the second research question.
 Likewise, $H_0$, namely the corresponding null hypothesis are as follows:
 
 \begin{enumerate}
@@ -172,12 +177,12 @@ In competitive co-evolution, individuals compete against each other in an enviro
 With more than one species, it is possible to let entire species compete against each other.
 Competitive co-evolution has the advantage of creating selection pressure.
 The individuals have to adapt to an increasingly challenging opponent, so that the fitness landscape changes over time thus becoming harsher to optimize.
-Dawkins and Krebs describe in~\cite{dawkins1979arms} the dynamics and terminology for competitive co-evolution by providing examples of manifestations of competitive co-evolution in natural systems. 
+\citeauthor{dawkins1979arms} describe in~\cite{dawkins1979arms} the dynamics and terminology for competitive co-evolution by providing examples of manifestations of competitive co-evolution in natural systems.
 The paper captures the pure essential of competitive co-evolution giving the following description: ``An adaptation in one lineage (e.g. predators) may change the selection pressure on another lineage (e.g. prey), giving rise to a counter-adaptation. If this occurs reciprocally, an unstable runaway escalation or 'arms race' may result''.
 
 \subsection{\acrlong{er} \& Neuroevolution}
 % Evolutionary Robotics
-Floreano and Nolfi in \cite{nolfi2000evolutionary}, define \gls{er} as a method for automatic creation of autonomous robots, following the Darwinian principle of selective reproduction of the fittest.
+\citeauthor{nolfi2000evolutionary} in \cite{nolfi2000evolutionary}, define \gls{er} as a method for automatic creation of autonomous robots, following the Darwinian principle of selective reproduction of the fittest.
 The term \acrlong{er} was firstly introduced in \cite{cli1993evolving}, but between 1992 and 1993, other two research groups reported promising results on artificial evolution of autonomous robots in \cite{lewis1992genetic} and \cite{nolfi1994evolve}.
 \gls{er} can be implemented in simulation or in the physical world.
 In simulation, \gls{er} is able to fast-forwarding time and make the entire process faster than running on real robots.
@@ -188,20 +193,32 @@ By using physical robots, \gls{er} is able to bridge the reality gap but at expe
 \textit{Neuroevolution} is a set of techniques that uses \glspl{ea} to train \gls{nn}'s.
 It is widely applied in domains where an exhaustive mapping of the correct input and output is hard to define.
 Therefore neuroevolution uses only the performance at the task to train a network (e.g. the fitness score).
-Floreano in \cite{floreano2008neuroevolution} classifies three classes of genetic encoding of an \gls{nn}: direct, developmental and implicit.
+\citeauthor{floreano2008neuroevolution} in \cite{floreano2008neuroevolution} classify three classes of genetic encoding of an \gls{ann}: direct, developmental and implicit.
 This genetic encoding may represent not only the synaptic weights of the network, but also its topology.
 The algorithms that evolve the network's topology and its parameters simultaneously are called \gls{tweann} algorithms.
 % get some paper showing simple evolution of NNs
-Neuroevolution has been applied with success in different domains such as video games \cite{hausknecht2014neuroevolution} \cite{stanley2005real}, collective self-organization \cite{nitschke2008neuro} \cite{nitschke2010collective} and robotics control systems \cite{brooks1989robot} \cite{floreano1996evolution} \cite{kodjabachian1998evolution}.
+Neuroevolution has been applied with success in different domains such as video games \cite{hausknecht2014neuroevolution, stanley2005real}, collective self-organization \cite{nitschke2008neuro, nitschke2010collective} and robotics control systems \cite{brooks1989robot, floreano1996evolution, kodjabachian1998evolution}.
 % complexification
 An advanced \gls{tweann} technique is \gls{neat} \cite{stanley2002evolving}.
 \gls{neat} introduces the concept of \textit{complexification} of controllers; an \gls{ann} is evolved starting from a simple topology by adding new neurons and new synaptic connections, besides evolving the weights, by means of evolutionary operators.
-In~\cite{stanley2004competitive}, the authors show that through the complexification of agent controllers in a competitive co-evolutionary setting, the controller's added complexity can be used through the generation of more advanced strategies as complexity increases.
-\gls{neat} allows for the addition of connections and or nodes to a \gls{nn} while maintaining learned behaviours by keeping the encoded information in the resized \gls{nn} very close to its previous state, resolving the problem of \textit{competing conventions} with genetic markers as explained in \cite{floreano2008neuroevolution} and \cite{stanley2002evolving}.
+In~\cite{stanley2004competitive}, \citeauthor{stanley2004competitive} show that through the complexification of agent controllers in a competitive co-evolutionary setting, the controller's added complexity can be used through the generation of more advanced strategies as complexity increases.
+\gls{neat} allows for the addition of connections and or nodes to a \gls{nn} while maintaining learned behaviours by keeping the encoded information in the resized \gls{nn} very close to its previous state, resolving the problem of \textit{competing conventions} with genetic markers as explained in \cite{floreano2008neuroevolution, stanley2002evolving}.
 
 \subsection{Homogeneous \& Heterogeneous Controllers}
-\cite{potter2001heterogeneity} performed a study to a tradeoff of homogeneity versus heterogeneity in the control systems of robots by allowing teams to coevolve their high-level controllers given different levels of difficulty of the task.
-The hypothesis was ``Simply increasing the difficulty of a task is not enough to induce a team of robots to create specialists''.
+Assigning controllers to a group of agents can be done in two different modes: \textit{homogeneous} and \textit{heterogeneous}.
+% explain homogeneity
+In homogeneous mode, the agents are assigned the same high-level controller.
+This allows redundancy of the robots' behaviour so that if one fails, the rest of the team can still complete the task.
+\citeauthor{balch1998behavioral} in \cite{balch1998behavioral} shows that certain tasks, such as foraging, were solved more easily by a team of homogeneous robots.
+% explain heterogeneity
+In heterogeneous mode instead, agents are allowed to co-evolve their own controllers and therefore each agent has its own control structure.
+This approach allows the emergence of specialization within a team of robots, as detailed in \cite{balch1998behavioral}.
+Thus it may be a great fit in domains such as soccer, where multiple roles are required.
+\citeauthor{luke1998genetic} give a good exemplification of the different challenges in homogeneous and heterogeneous approaches in \cite{luke1998genetic}.
+They developed a team of robots for the \textit{RoboCup97} with both approaches but only the homogeneous team was entered the competition.
+The heterogeneous team had a much bigger search space to search for and one of the goals of the authors was to obtain the best possible team in a limited amount of time.
+In \cite{potter2001heterogeneity}, the authors analysed the trade-off of homogeneity versus heterogeneity in robotics control systems by allowing teams to co-evolve their high-level controllers given different levels of difficulty of the task.
+The hypothesis was ``simply increasing the difficulty of a task is not enough to induce a team of robots to create specialists''.
 Task difficulty was varied by replacing one adversary's passive controller with an active variant supposedly proving that increased difficulty did not justify the use of heterogeneous controllers.
 However, increased difficulty was never implemented structurally nor tested methodologically. 
 
@@ -291,7 +308,7 @@ Finally, the output of the NN has a range from $(0, 1)$, so in order to convert 
 % Shepherds controllers
 \subsubsection{Shepherds controllers}
 Shepherds evolve \textit{cooperative} behaviours among themselves to successfully herd sheep.
-Therefore, the \textit{competitive} behaviour is against the sheep, who attemps to escape. 
+Therefore, the \textit{competitive} behaviour is against the sheep, who attemps to escape.
 In order to pursue cooperation, a shepherd needs information about the other shepherds around. 
 However, in order to keep the network complexity low we only provide the controller with information for the closest shepherd. 
 Similarly, the competition creates the need for the shepherd to have information about the sheep.
@@ -371,7 +388,7 @@ The fitness for a sheep is determined by its own distance to the corral.
 sd(t) = \sqrt{(cr_x - sheep_x(t))^2 + (cr_y - sheep_y(t))^2}
 \end{equation}
 In scenarios involving more than one sheep, a group component is added to motivate sheep to stay together. 
-This is the radius $\rho$ of the group calculated as the distance from the furthest sheep $\alpha$ to the center of mass $gc$ in a specific time step. 
+This is the radius $\rho$ of the group calculated as the distance from the furthest sheep $\alpha$ to the center of mass $gc$ in a specific time step.
 % SHEEP RATIO
 \begin{equation} \label{eq:sheep_ratio}
 \rho(t) = \sqrt{(\alpha_x(t) - gc_x(t))^2 + (\alpha_y - gc_y(t))^2}
@@ -482,7 +499,7 @@ Figure~\ref{fig:2v1_homo_vs_hetero} reports the shepherds' fitness score on a sc
 The graphs represent the mean fitness of the best individual seen so far, averaged over 40 trials, with 95-percent confidence intervals.
 Moreover, we perform \textit{t}-test on the means of the homogeneous and heterogeneous trials. The test  produced a \textit{p}-value $\ll0.5$ for both cases.
 Thus, supported by the significant difference between the homogeneous and heterogeneous cases, we reject the corresponding null hypothesis (see Section~\ref{sec:hypothesis}).
-Additionally, both graphs show that homogeneous controllers outperform heterogeneous controllers. Thus, we reject hypothesis $H_1$ as well. 
+Additionally, both graphs show that homogeneous controllers outperform heterogeneous controllers. Thus, we reject hypothesis $H_1$ as well.
 
 \begin{figure}[ht]
 	\centering
@@ -520,7 +537,7 @@ Figure~\ref{fig:ratios_oneSheep} shows the corralled and escaped ratios for diff
 %TODO confidence intervals. Mention in text only. 
 The chart in Figure ~\ref{fig:ratios_oneSheep} provides supporting evidence for $H_2$. Adding a second shepherd to the task improves the corralled score by 400\% while adding a third shepherd has an increase of 800\% compared to a simple case with just one shepherd. 
 However, we notice that the ratio for escaped cases increases as well, meaning that overall the tied cases (cases where the simulations run till the end without shepherds of sheep being successful) are decreased. 
-Relating this to competitive co-evolution, it is reasonable to think that increasing the number of shepherds encourages both shepherds and sheep to pursue their goals more aggresively.
+Relating this to competitive co-evolution, it is reasonable to think that increasing the number of shepherds encourages both shepherds and sheep to pursue their goals more aggressively.
 Contrarily, the chart in Figure ~\ref{fig:ratios_threeShepherd} does not provide supporting evidence for $H_3$ since adding sheep to the task does not have an evident effect. Therefore, we accept the corresponding null hypothesis (see Section~\ref{sec:hypothesis}). 
 
 \begin{figure}[ht]
@@ -545,11 +562,7 @@ Given heterogeneous controllers and a fixed number of shepherds, adding more she
 The last two findings lead to the conclusion that simply changing the task complexity does not have a conclusive effect on the effectiveness of herding. The number of each type of agent matters, and some specific conditions make co-evolution more competitive.
 
 
-
-\bibliographystyle{abbrv}
-\bibliography{bibliography}
-
-
+\printbibliography
 
 \end{document}
 
