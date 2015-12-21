@@ -231,11 +231,11 @@ The herding task involves shepherd agents trying to push sheep agents into a cor
 %% Positioning system
 %In particular, the positioning system used to control and direct movements of the agents, is described in Section~\ref{sec:positioning_system}. 
 % NN_design
-Controllers of both shepherds and sheep are modelled differently in a high level manner using NNs.
-The NN designs are explained in Section~\ref{sec:NN_design} and the evolution process is detailed in Section~\ref{sec:controllers_evolution}.
+Controllers of both shepherds and sheep are modelled differently in a high level manner using \glspl{nn}.
+The \gls{nn} designs are explained in Section~\ref{sec:NN_design} and the evolution process is detailed in Section~\ref{sec:controllers_evolution}.
 % obstacle_avoidance + NN_output_interpretation
 Agents have a simple obstacle avoidance system that allows them to interact with each other, bump into walls and makes the shepherd capable of herding the sheep.
-Furthermore, in order to move agents using the output of the NN controllers, the NN output has to be translated into Cartesian coordinates.
+Furthermore, in order to move agents using the output of the \gls{nn} controllers, the \gls{nn} output has to be translated into Cartesian coordinates.
 Both steps are specified in Section~\ref{sec:agents_design}.
 
 \subsection{Herding task and environment}
@@ -274,7 +274,7 @@ The overall task environment described here is depicted in Figure~\ref{fig:task_
 \label{sec:NN_design}
 The controllers for the agents are feedforward neural networks~\cite{bebis1994feed} with one hidden layer.
 % Inputs
-The inputs for the NNs are a fixed \textit{bias} of $1$ and one or more instances of \textit{coordinate pairs} (defined in Section~\ref{sec:herding_task_environment}).
+The inputs for the \glspl{nn} are a fixed \textit{bias} of $1$ and one or more instances of \textit{coordinate pairs} (defined in Section~\ref{sec:herding_task_environment}).
 In order to support scenarios with diverse numbers of agents, we design two different NNs: the \textit{single-pair} and the \textit{multi-pair} networks. 
 % Single-pair NN
 In the case of a \textit{single-pair} network, an agent can only see one other agent so the network consists of two input nodes, one for each item of a \textit{coordinate pair} and its hidden layer has three nodes. 
@@ -282,13 +282,13 @@ This network is showed in Figure~\ref{fig:single_pair_topology}.
 The input nodes are labelled \textit{opponent} because the input given to the network represents coordinates of an opposing agent.
 % Multi-pair NN
 Alternatively, to enable an agent to cooperate with its allies, we assign to it a \textit{multi-pair} neural network, with four input nodes for the \textit{coordinate pairs}, and five nodes in its hidden layer.
-This NN design is shown in Figure~\ref{fig:multi_pair_topology}.
+This \gls{nn} design is shown in Figure~\ref{fig:multi_pair_topology}.
 The input nodes are labelled \textit{opponent} and \textit{ally} because the inputs given to the network represent coordinates of one opponent and one ally.
 
-Moreover, for every NNs the activation function is a sigmoid function $S(t) = (1 + e^{-t})^{-1}$, centred at $0$. 
+Moreover, for every \glspl{nn} the activation function is a sigmoid function $S(t) = (1 + e^{-t})^{-1}$, centred at $0$. 
 The output of the network is a polar \textit{coordinates pair}, namely \textit{target position}, that represents the
 location towards which the agent will try to move to in the next time step.
-Finally, the output of the NN has a range from $(0, 1)$, so in order to convert this into the used positioning system it is translated into a range of $[0, l]$ for target ranges and $[-\pi, \pi]$ for target bearings. 
+Finally, the output of the \gls{nn} has a range from $(0, 1)$, so in order to convert this into the used positioning system it is translated into a range of $[0, l]$ for target ranges and $[-\pi, \pi]$ for target bearings. 
  
 \begin{figure}[t]
 	\centering
@@ -308,7 +308,7 @@ Finally, the output of the NN has a range from $(0, 1)$, so in order to convert 
 % Shepherds controllers
 \subsubsection{Shepherds controllers}
 Shepherds evolve \textit{cooperative} behaviours among themselves to successfully herd sheep.
-Therefore, the \textit{competitive} behaviour is against the sheep, who attemps to escape.
+Therefore, the \textit{competitive} behaviour is against the sheep, who attempts to escape.
 In order to pursue cooperation, a shepherd needs information about the other shepherds around. 
 However, in order to keep the network complexity low we only provide the controller with information for the closest shepherd. 
 Similarly, the competition creates the need for the shepherd to have information about the sheep.
@@ -326,7 +326,7 @@ We highlight that the third and fourth inputs are not taken into account in scen
 \vspace{0.5em}
 % Sheep controllers
 \subsubsection{Sheep controllers}
-In case of the sheep, competitive and cooperative behaviours are pursued using the same logic as the shepherd's when defining the NN inputs. 
+In case of the sheep, competitive and cooperative behaviours are pursued using the same logic as the shepherd's when defining the \gls{nn} inputs. 
 This time, in order to avoid the shepherd and be able to escape, sheep have information about the closest shepherd. 
 Yet, they have a strong preference to stay in a group and so need information about the closest sheep around them in order to pursue this goal. 
 Thus, the inputs for a sheep's controller are:
@@ -414,7 +414,7 @@ where $0 \leq RR \leq 1$ is a constant that controls the weight of the sheep-rad
 \subsection{Agents}
 \label{sec:agents_design}
 % Obstacle avoidance
-The output of the NN produces a target position for the agents to move towards.
+The output of the \gls{nn} produces a target position for the agents to move towards.
 However, both types of agents have an obstacle avoidance mechanism that may override the network's output, hindering an agent's movement when necessary.
 To achieve this, each agent is provided with a \textit{radius} which allows to push other agents with a smaller radius.
 Obstacles entering this radius hinder the agent from moving in this direction and will reposition the agent preventing overlap between object and radius.
