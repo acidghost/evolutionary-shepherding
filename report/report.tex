@@ -428,14 +428,7 @@ Obstacles entering this radius hinder the agent from moving in this direction an
 We assign a greater radius to the shepherd than to the sheep, by doing so we allow the shepherd to push, and thus herd, the sheep towards the corral.
 
 % Interpreting the Neural Network output
-
-Since the output of the network is represented as polar coordinates centred with its polar axis passing through the nearest opponent, the polar- are translated into Cartesian coordinates within the pasture to calculate the agent's target position.
-% TODO: explain the transformation
-%TODO: Others properites: like speed....
-
 Since the output of the network is represented as polar coordinates centred with the polar axis passing through the nearest opponent, they are translated into Cartesian coordinates within the pasture to calculate the agents target position.
-
-
 All agents have the same maximum speed and mass, so their simulated physical characteristics are the same.
 Both maximum speed and mass have a value of $1$ simulated units.
 
@@ -608,7 +601,7 @@ Given heterogeneous controllers and a fixed number of sheep to be herded, adding
 Given heterogeneous controllers and a fixed number of shepherds, adding more sheep to the task has no direct influence on the effectiveness in herding.
 The last two findings lead to the conclusion that simply changing the task complexity does not have a conclusive effect on the effectiveness of herding. The number of each type of agent matters, and some specific conditions make co-evolution more competitive.
 
-
+\newpage
 \printbibliography
 
 \end{document}
