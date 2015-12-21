@@ -573,25 +573,37 @@ Figure~\ref{fig:ratios_threeShepherd} shows the corralled and escaped ratios for
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=1\hsize]{imgs/barchart_vs_one_sheep.png}
-	\caption{Corralled and escaped ratios in heterogeneous setting, averaged over 40 runs. Cases with one (red), two (blue) and three (green) shepherds herding one sheep are shown in different bars.}
+	\caption{Corralled and escaped ratios in heterogeneous setting, averaged over 40 runs. Cases with one (red), two (blue) and three (green) shepherds herding one sheep are shown in different bars with 95\% confidence intervals.}
 	\label{fig:ratios_oneSheep}
 \end{figure}
 
-The chart in Figure ~\ref{fig:ratios_oneSheep} shows that the optimal scenario is two shepherd herding one sheep, since it displays the highest corralled ratio with non overlaping confidence intervals compared to one shepherd herding one sheep. 
-Since the confidence intervals for one and three shepherd(s) herding one sheep overlap, we perform \textit{t}-test. The test produced \textit{p}-value of 0.005098, which is $\ll0.05$.
-Yet, we must accept the corresponding null hypothesis since there is no evident proportional relationship between the number of shepherds and the corralled ratio.
+The chart in Figure ~\ref{fig:ratios_oneSheep} shows that the optimal scenario is two shepherd herding one sheep, since it displays the highest corralled ratio. 
+Moreover, adding a third shepherd to the task has a negative effect on the effectiveness, since the escaped ratio rises. 
+%\textit{t}-tests were performed to corroborate the statistical difference of the above. We select a threshold of 5\%.
+%For the corralled ratio, scenarios with one shepherd and three shepherds produced \textit{p}-values of %TODO compared to two shepherds herding one sheep. 
+%Similarly, for the escaped ratio scenarios with two and one shepherds produce \textit{p}-values of %TODO compared to three shepherds herding one sheep
+
+Therefore, we accept the corresponding null hypothesis since there is no evident proportional relationship between the number of shepherds and the corralled ratio. 
+However, we can draw a conclusion since the escaped ratio has a proportional relationship with the number of shepherds in the task.
 
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=1\hsize]{imgs/barchart_vs_more_sheep.png}
-	\caption{Corralled and escaped ratios in heterogeneous setting, averaged over 40 runs. Cases with one shepherd herding one (red), two (blue) and three (green) sheep are shown in different bars.}
+	\caption{Corralled and escaped ratios in heterogeneous setting, averaged over 40 runs. Cases with one shepherd herding one (red), two (blue) and three (green) sheep are shown in different bars with 95\% confidence intervals.}
 	\label{fig:ratios_threeShepherd}
 \end{figure}
 
 Similarly, the chart in Figure ~\ref{fig:ratios_threeShepherd} shows that the optimal scenario is three shepherds herding two sheep. Since it displays the highes corralled ratio. 
+This time, having only one sheep leads to the highest number of escape ratio. 
+
 %TODO add t/test p values
-Once again, there is no evident proportional relationship between the number of sheep herd and the corralled ratio. Thus we accept the corresponding numm hypothesis. 
+%3v2 and 3v1 corralled
+%3v2 and 3v3 corralled
+%3v1 and 3v2 escaped
+%3v1 and 3v3 escaped
+
+Once again, there is no evident proportional relationship between the number of sheep herd and the corralled ratio. Thus we accept the corresponding null hypothesis. 
 
 
 \section{Conclusion}
