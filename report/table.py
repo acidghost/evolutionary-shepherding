@@ -63,15 +63,32 @@ for scenario in scenarios:
 ## T-TEST
 hetero1v1 = dfs["hetero.1v1"]
 hetero3v3ho = dfs["hetero.3v3.ho"]
-print "Fitness T-test"
+print "Fitness T-test 1vs1 - 3vs3"
 print "%.6f\n" % ttest_ind(hetero1v1.loc[:, "fitness"].values, hetero3v3ho.loc[:, "fitness"].values)[1]
-print "Corralled ratio T-test"
+print "Corralled ratio T-test 1vs1 - 3vs3"
 print "%.6f\n" % ttest_ind(hetero1v1.loc[:, "corralled_ratio"].values, hetero3v3ho.loc[:, "corralled_ratio"].values)[1]
 
+hetero3v1 = dfs["hetero.3v1"]
+print "Fitness T-test 1vs1 - 3vs1"
+print "%.6f\n" % ttest_ind(hetero1v1.loc[:, "fitness"].values, hetero3v1.loc[:, "fitness"].values)[1]
+print "Corralled ratio T-test 1vs1 - 3vs1"
+print "%.6f\n" % ttest_ind(hetero1v1.loc[:, "corralled_ratio"].values, hetero3v1.loc[:, "corralled_ratio"].values)[1]
 
-dfs_vals = dfs.values()
-data1 = dfs_vals[0:3]
-data2 = [dfs_vals[0], dfs_vals[3], dfs_vals[4]]
+print "Fitness T-test 3vs1 - 3vs3"
+print "%.6f\n" % ttest_ind(hetero3v1.loc[:, "fitness"].values, hetero3v3ho.loc[:, "fitness"].values)[1]
+print "Corralled ratio T-test 3vs1 - 3vs3"
+print "%.6f\n" % ttest_ind(hetero3v1.loc[:, "corralled_ratio"].values, hetero3v3ho.loc[:, "corralled_ratio"].values)[1]
+
+hetero3v2ho = dfs["hetero.3v2.ho"]
+print "Fitness T-test 3vs2 - 3vs3"
+print "%.6f\n" % ttest_ind(hetero3v2ho.loc[:, "fitness"].values, hetero3v3ho.loc[:, "fitness"].values)[1]
+print "Corralled ratio T-test 3vs2 - 3vs3"
+print "%.6f\n" % ttest_ind(hetero3v2ho.loc[:, "corralled_ratio"].values, hetero3v3ho.loc[:, "corralled_ratio"].values)[1]
+
+
+## BAR CHARTS
+data1 = [hetero1v1, dfs["hetero.2v1"], hetero3v1]
+data2 = [hetero3v1, hetero3v2ho, hetero3v3ho]
 data = [data1, data2]
 
 ind = np.arange(2)
