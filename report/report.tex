@@ -459,13 +459,13 @@ In our experiments we give a value of $0.8$ to the constant $RR$ of equation \eq
 
 Similarly to \cite{potter2001heterogeneity}, a simulation consists of 2.5 simulated minutes and the agents refresh their target position every 10Hz.
 This is equivalent to $1500$ simulation steps in which the agents refresh their target every step.
-To do so, an agent firstly acquires its inputs and then propagates them through its NN, computing a new target position that the simulation environment will translate in movement to be applied to the agent's virtual body.
+To do so, an agent firstly acquires its inputs and then propagates them through its \gls{nn}, computing a new target position that the simulation environment will translate in movement to be applied to the agent's virtual body.
 
 \vspace{0.5em}
 \subsubsection{Environment and Agents}
 The size of the pasture is fixed across all the experiments at $l = 37$ simulated units.
 As already stated in Section \ref{sec:agents_design}, shepherds are equipped with a greater collision radius than sheep.
-This is to allows them to effectively herd the sheep by rimming and pushing it towards the corral.
+This is to allow them to effectively herd the sheep by rimming and pushing it towards the corral.
 Therefore we assign a radius of $3$ and $2$ simulation units to the shepherd and sheep respectively.
 The pasture is closed on the top and bottom, with the corral positioned on the right side, opposite to the open side that enables sheep to escape.
 The initial positions of the agents inside the pasture are shown in Figure \ref{fig:simulation_screenshot} for a full \textit{three vs. three} experiment.
@@ -548,20 +548,20 @@ Additionally, both graphs show that homogeneous controllers outperform heterogen
 
 \begin{table*}[t]
 	\centering
-	\begin{tabularx}{6in}{| L{0.5} | L{0.5} | C{1} C{1} C{1} |}
+	\begin{tabularx}{6in}{| L{0.5} | L{0.5} | C{1} C{1} C{1} | C{1} |}
 		\hline
-		\textit{\textbf{Shepherds}} & \textit{\textbf{Sheep}} & \multicolumn{3}{c|}{\textit{\textbf{Fitness}}} \\
-		& & \textit{Mean} & \textit{Minimum} & \textit{Maximum} \\
+		\textit{\textbf{Shepherds}} & \textit{\textbf{Sheep}} & \multicolumn{3}{c|}{\textit{\textbf{Fitness}}} & \textbf{\textit{Corralled ratio}} \\
+		& & \textit{Mean} & \textit{Minimum} & \textit{Maximum} &  \\
 		\hline
-		1 & 1 & 2 $\pm$ 0.1 & 0 & 10 \\
+		1 & 1 & 2 $\pm$ 0.1 & 0 & 10 & 0.5 \\
 		%\hline
-		2 & 1 & 2 $\pm$ 0.1 & 0 & 10 \\
+		2 & 1 & 2 $\pm$ 0.1 & 0 & 10 & 0.5 \\
 		\hline
-		3 & 1 & 2 $\pm$ 0.1 & 0 & 10 \\
+		3 & 1 & 2 $\pm$ 0.1 & 0 & 10 & 0.5 \\
 		\hline
-		3 & 2 & 2 $\pm$ 0.1 & 0 & 10 \\
+		3 & 2 & 2 $\pm$ 0.1 & 0 & 10 & 0.5 \\
 		%\hline
-		3 & 3 & 2 $\pm$ 0.1 & 0 & 10 \\
+		3 & 3 & 2 $\pm$ 0.1 & 0 & 10 & 0.5 \\
 		\hline
 	\end{tabularx}
 	\caption{\textbf{TODO} Comparison of the mean fitness of the heterogeneous shepherds vs. homogeneous sheep over 40 runs.}
