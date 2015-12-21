@@ -525,10 +525,10 @@ Additionally, both graphs show that homogeneous controllers outperform heterogen
 
 \begin{table*}[t]
 	\centering
-	\begin{tabularx}{\textwidth}{| L{0.6} | L{0.5} | C{1.9} C{1} C{1} | C{1} | C{1} | C{1} |}
+	\begin{tabularx}{\textwidth}{| L{0.5} | L{0.5} | C{2} C{1} C{1} | C{1} | C{1} | C{1} |}
 		\hline
 		\textit{\textbf{Shepherds}} & \textit{\textbf{Sheep}} & \multicolumn{3}{c|}{\textit{\textbf{Fitness}}} & \textbf{\textit{Corralled ratio}} & \textbf{\textit{Escaped ratio}} & \textbf{\textit{Performance}}\\
-		& & \textit{Mean} & \textit{Minimum} & \textit{Maximum} & & & \\
+		& & \textit{Mean} & \textit{Minimum} & \textit{Maximum} & &  \\
 		\hline
 		1 & 1 & 9884 $\pm$ 28397 & -27922 & 53253 & 0.043 $\pm$ 0.106 & 0.339 $\pm$ 0.274 & 0.126\\
 		%\hline
@@ -611,7 +611,8 @@ This might happen because of the flocking behaviour of scenarios with more then 
 \label{sec:conclusion}
 Given the above information, we conclude that shepherds benefit from homogeneous controllers in a competitive co-evolved herding task. 
 
-Given heterogeneous controllers, the sheep to shepherd ratio cannot predict the effectiveness shepherds will have in herding sheep. Different scenarios proved to be statistically different, with scenarios with two shepherds herding one sheep and three shepherds herding two sheep being optimal for herding. 
+Given heterogeneous controllers, the sheep to shepherd ratio cannot predict the effectiveness shepherds will have in a herding task.
+Different scenarios proved to be different, with scenarios with two shepherds herding one sheep and three shepherds herding two sheep being optimal for herding. 
 
 These findings support and expand Potter et al.'s work ~\cite{potter2001heterogeneity}. We show that by increasing task complexity alone, there is not need to implement heterogeneous controllers. Having more adaptable sheep in fact weakens heterogeneity in the scenarios we explored, while varying the sheep to dog ratio is uninformative of the shepherds fitness scores. 
 %TODO discussion
