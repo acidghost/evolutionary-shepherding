@@ -589,7 +589,7 @@ From the results we see performance increasing from a higher number of sheep.
 This leads us to state that the $H_3$ is not valid.
 This might happen because of the flocking behaviour of scenarios with more then one sheep, making the herding task easier due to cohesion between sheep, preventing scattering.
 %ncreasing the number of sheep being herded by a fixed number of shepherds decreases the performance of shepherding.
-%no statistical tests were performed due to poor t-test values...
+%no statistical tests were performed due to poor t-test values.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=1\hsize]{imgs/barchart_vs_more_sheep.png}
@@ -606,17 +606,16 @@ This might happen because of the flocking behaviour of scenarios with more then 
 %3v1 and 3v3 escaped
 %Once again, there is no evident proportional relationship between the number of sheep herd and the corralled ratio. Thus we accept the corresponding null hypothesis. 
 
-
 \section{Conclusion}
 \label{sec:conclusion}
 Given the above information, we conclude that shepherds benefit from homogeneous controllers in a competitive co-evolved herding task. 
 
-Given heterogeneous controllers, the sheep to shepherd ratio cannot predict the effectiveness shepherds will have in a herding task.
-Different scenarios proved to be different, with scenarios with two shepherds herding one sheep and three shepherds herding two sheep being optimal for herding. 
+Given heterogeneous controllers, the sheep to shepherd ratio cannot predictably influence the performance shepherds will have in a herding task.
+Structural changes to the sheep to shepherd ratio did not evoke similar structural changes to performance.
+%Different scenarios proved to be different, with scenarios with two shepherds herding one sheep and three shepherds herding two sheep being optimal for herding. 
 
-These findings support and expand Potter et al.'s work ~\cite{potter2001heterogeneity}. We show that by increasing task complexity alone, there is not need to implement heterogeneous controllers. Having more adaptable sheep in fact weakens heterogeneity in the scenarios we explored, while varying the sheep to dog ratio is uninformative of the shepherds fitness scores. 
-%TODO discussion
-% discuss why performance is noisy
+Our findings support and expand Potter et al.'s work ~\cite{potter2001heterogeneity}. We show that by increasing task complexity alone, there is no need to implement heterogeneous controllers. Having more adaptable sheep in fact weakens the use of heterogeneity in the scenarios we explored, while varying the sheep to dog ratio is uninformative of the shepherds fitness scores.
+
 \newpage
 \printbibliography
 
