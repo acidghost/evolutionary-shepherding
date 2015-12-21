@@ -284,7 +284,6 @@ The input nodes are labelled \textit{opponent} because the input given to the ne
 Alternatively, to enable an agent to cooperate with its allies, we assign to it a \textit{multi-pair} neural network, with four input nodes for the \textit{coordinate pairs}, and five nodes in its hidden layer.
 This \gls{nn} design is shown in Figure~\ref{fig:multi_pair_topology}.
 The input nodes are labelled \textit{opponent} and \textit{ally} because the inputs given to the network represent coordinates of one opponent and one ally.
-
 Moreover, for every \glspl{nn} the activation function is a sigmoid function $S(t) = (1 + e^{-t})^{-1}$, centred at $0$. 
 The output of the network is a polar \textit{coordinates pair}, namely \textit{target position}, that represents the
 location towards which the agent will try to move to in the next time step.
@@ -535,7 +534,9 @@ Additionally, both graphs show that homogeneous controllers outperform heterogen
 \vspace{0.5em}
 \subsubsection{Task complexity}
 Here we consider three experiments that relate to the second research question: \textit{How does varying task complexity (by moduling the sheep to shepherds ratio) affect the effectiveness of herding?}. 
-This time, the independent variable is the task complexity, previously defined as the sheep to shepherd ratios $\phi = S / D$. First we investigate $H_2$ by keeping a fixed number of sheep, and increasing the number of shepherd herding it thus decreasing the task complexity. The experiments consider the following scenarios:
+This time, the independent variable is the task complexity, previously defined as the sheep to shepherd ratio $\phi$.
+ First we investigate $H_2$ by keeping a fixed number of sheep, and increasing the number of shepherd herding it thus decreasing the task complexity. 
+ The experiments consider the following scenarios:
 \begin{itemize}
 	\item one shepherd herding one sheep: $\phi = 1$
 	\item two shepherds herding one sheep: $\phi = 0.5$
