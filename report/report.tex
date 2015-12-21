@@ -11,6 +11,11 @@
 \usepackage{textcomp}
 \usepackage{mathtools}
 \usepackage[acronym]{glossaries}
+\usepackage[backend=bibtex, style=ieee]{biblatex}
+
+\addbibresource{bibliography}
+% decomment below to reduce bib font size
+% \renewcommand*{\bibfont}{\small}
 
 % acronyms
 \newacronym[plural=EAs, firstplural=Evolutionary Algorithms (EAs)]{ea}{EA}{Evolutionary Algorithm}
@@ -167,12 +172,12 @@ In the competitive co-evolution mode, individuals compete against each other in 
 With more than one species, it is possible to let entire species compete against each other.
 Competitive co-evolution has the advantage of creating selection pressure.
 The individuals have to adapt to a more and more challenging opponent, so that the fitness landscape changes over time and hopefully becomes harsher to optimize.
-Dawkins and Krebs describe in~\cite{dawkins1979arms} the dynamics and terminology for competitive co-evolution by providing examples of manifestations of competitive co-evolution in natural systems. 
+\citeauthor{dawkins1979arms} describe in~\cite{dawkins1979arms} the dynamics and terminology for competitive co-evolution by providing examples of manifestations of competitive co-evolution in natural systems. 
 The paper captures the pure essential of competitive co-evolution giving the following description: ``An adaptation in one lineage (e.g. predators) may change the selection pressure on another lineage (e.g. prey), giving rise to a counter-adaptation. If this occurs reciprocally, an unstable runaway escalation or 'arms race' may result''.
 
 \subsection{\acrlong{er} \& Neuroevolution}
 % Evolutionary Robotics
-Floreano and Nolfi in \cite{nolfi2000evolutionary}, define \gls{er} as a method for automatic creation of autonomous robots, following the Darwinian principle of selective reproduction of the fittest.
+\citeauthor{nolfi2000evolutionary} in \cite{nolfi2000evolutionary}, define \gls{er} as a method for automatic creation of autonomous robots, following the Darwinian principle of selective reproduction of the fittest.
 The term \acrlong{er} was firstly introduced in \cite{cli1993evolving}, but between 1992 and 1993, other two research groups reported promising results on artificial evolution of autonomous robots in \cite{lewis1992genetic} and \cite{nolfi1994evolve}.
 \gls{er} can be implemented in simulation or in the physical world.
 In simulation, \gls{er} is able to fast-forwarding time and make the entire process faster than running on real robots.
@@ -183,19 +188,31 @@ By using physical robots, \gls{er} is able to bridge the reality gap but at expe
 \textit{Neuroevolution} is a set of techniques that uses \glspl{ea} to train an \gls{ann}.
 It is widely applied in domain where an exhaustive mapping of the correct input and output is hard to define.
 Therefore neuroevolution uses only the performance at the task to train a network (e.g. the fitness score).
-Floreano in \cite{floreano2008neuroevolution} classifies three classes of genetic encoding of an \gls{ann}: direct, developmental and implicit.
+\citeauthor{floreano2008neuroevolution} in \cite{floreano2008neuroevolution} classify three classes of genetic encoding of an \gls{ann}: direct, developmental and implicit.
 This genetic encoding may represent not only the synaptic weights of the network, but also its topology.
 The algorithms that evolve the network's topology and its parameters simultaneously are called \gls{tweann} algorithms.
 % get some paper showing simple evolution of NNs
-Neuroevolution has been applied with success in different domains such as video games \cite{hausknecht2014neuroevolution} \cite{stanley2005real}, collective self-organization \cite{nitschke2008neuro} \cite{nitschke2010collective} and robotics control systems \cite{brooks1989robot} \cite{floreano1996evolution} \cite{kodjabachian1998evolution}.
+Neuroevolution has been applied with success in different domains such as video games \cite{hausknecht2014neuroevolution, stanley2005real}, collective self-organization \cite{nitschke2008neuro, nitschke2010collective} and robotics control systems \cite{brooks1989robot, floreano1996evolution, kodjabachian1998evolution}.
 % complexification
 An advanced \gls{tweann} technique is \gls{neat} \cite{stanley2002evolving}.
 \gls{neat} introduces the concept of \textit{complexification} of controllers; an \gls{ann} is evolved starting from a simple topology by adding new neurons and new synaptic connections, besides evolving the weights, by means of evolutionary operators.
-In~\cite{stanley2004competitive}, the authors show that through the complexification of agent controllers in a competitive co-evolutionary setting, the controller's added complexity can be used through the generation of more advanced strategies as complexity increases.
-\gls{neat} allows for the addition of connections and or nodes to a \gls{nn} while maintaining learned behaviours by keeping the encoded information in the resized \gls{nn} very close to its previous state, resolving the problem of \textit{competing conventions} with genetic markers as explained in \cite{floreano2008neuroevolution} and \cite{stanley2002evolving}.
+In~\cite{stanley2004competitive}, \citeauthor{stanley2004competitive} show that through the complexification of agent controllers in a competitive co-evolutionary setting, the controller's added complexity can be used through the generation of more advanced strategies as complexity increases.
+\gls{neat} allows for the addition of connections and or nodes to a \gls{nn} while maintaining learned behaviours by keeping the encoded information in the resized \gls{nn} very close to its previous state, resolving the problem of \textit{competing conventions} with genetic markers as explained in \cite{floreano2008neuroevolution, stanley2002evolving}.
 
 \subsection{Homogeneous \& Heterogeneous Controllers}
-\cite{potter2001heterogeneity} performed a study to a tradeoff of homogeneity versus heterogeneity in the control systems of robots by allowing teams to coevolve their high-level controllers given different levels of difficulty of the task.
+Assigning controllers to a group of agents can be done in two different modes: \textit{homogeneous} and \textit{heterogeneous}.
+% explain homogeneity
+In homogeneous mode, the agents are assigned the same high-level controller.
+This allows redundancy of the robots' behaviour so that if one fails, the rest of the team can still complete the task.
+\citeauthor{balch1998behavioral} in \cite{balch1998behavioral} shows that certain tasks, such as foraging, were solved more easily by a team of homogeneous robots.
+% explain heterogeneity
+In heterogeneous mode instead, agents are allowed to co-evolve their own controllers and therefore each agent has its own control structure.
+This approach allows the emergence of specialization within a team of robots, as detailed in \cite{balch1998behavioral}.
+Thus it may be a great fit in domains such as soccer, where multiple roles are required.
+\citeauthor{luke1998genetic} give a good exemplification of the different challenges in homogeneous and heterogeneous approaches in \cite{luke1998genetic}.
+They developed a team of robots for the \textit{RoboCup97} with both approaches but only the homogeneous team was entered the competition.
+The heterogeneous team had a much bigger search space to search for and one of the goals of the authors was to obtain the best possible team in a limited amount of time.
+In \cite{potter2001heterogeneity}, the authors analysed the trade-off of homogeneity versus heterogeneity in robotics control systems by allowing teams to co-evolve their high-level controllers given different levels of difficulty of the task.
 The hypothesis was ``simply increasing the difficulty of a task is not enough to induce a team of robots to create specialists''.
 Task difficulty was varied by replacing one adversary's passive controller with an active variant supposedly proving that increased difficulty did not justify the use of heterogeneous controllers.
 However, increased difficulty was never implemented structurally nor tested methodologically. 
@@ -565,8 +582,9 @@ The conclusion goes here.
 
 
 
-\bibliographystyle{abbrv}
-\bibliography{bibliography}
+% \bibliographystyle{abbrv}
+% \bibliography{bibliography}
+\printbibliography
 
 
 

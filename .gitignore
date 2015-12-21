@@ -34,4 +34,6 @@ report/*.blg
 report/*.dvi
 report/*.synctex.gz
 report/*.log
+report/*-blx.bib
+report/*.run.xml
 
