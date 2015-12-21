@@ -84,6 +84,25 @@ print "Fitness T-test 3vs2 - 3vs3"
 print "%.6f\n" % ttest_ind(hetero3v2ho.loc[:, "fitness"].values, hetero3v3ho.loc[:, "fitness"].values)[1]
 print "Corralled ratio T-test 3vs2 - 3vs3"
 print "%.6f\n" % ttest_ind(hetero3v2ho.loc[:, "corralled_ratio"].values, hetero3v3ho.loc[:, "corralled_ratio"].values)[1]
+print "\n\n\n\n\n"
+
+
+## PERFORMANCE T-TEST
+hetero2v1 = dfs["hetero.2v1"]
+print "Performance ratio T-test 1vs1 - 2vs1"
+print "%.6f\n" % ttest_ind(hetero1v1.loc[:, "corralled_ratio"] / hetero1v1.loc[:, "escaped_ratio"], hetero2v1.loc[:, "corralled_ratio"] / hetero2v1.loc[:, "escaped_ratio"])[1]
+print "Performance ratio T-test 1vs1 - 3vs1"
+print "%.6f\n" % ttest_ind(hetero1v1.loc[:, "corralled_ratio"] / hetero1v1.loc[:, "escaped_ratio"], hetero3v1.loc[:, "corralled_ratio"] / hetero3v1.loc[:, "escaped_ratio"])[1]
+print "Performance ratio T-test 2vs1 - 3vs1"
+print "%.6f\n" % ttest_ind(hetero2v1.loc[:, "corralled_ratio"] / hetero2v1.loc[:, "escaped_ratio"], hetero3v1.loc[:, "corralled_ratio"] / hetero3v1.loc[:, "escaped_ratio"])[1]
+
+print "Performance ratio T-test 3vs1 - 3vs2"
+print "%.6f\n" % ttest_ind(hetero3v1.loc[:, "corralled_ratio"] / hetero3v1.loc[:, "escaped_ratio"], hetero3v2ho.loc[:, "corralled_ratio"] / hetero3v2ho.loc[:, "escaped_ratio"])[1]
+print "Performance ratio T-test 3vs1 - 3vs3"
+print "%.6f\n" % ttest_ind(hetero3v1.loc[:, "corralled_ratio"] / hetero3v1.loc[:, "escaped_ratio"], hetero3v3ho.loc[:, "corralled_ratio"] / hetero3v3ho.loc[:, "escaped_ratio"])[1]
+print "Performance ratio T-test 3vs2 - 3vs3"
+print "%.6f\n" % ttest_ind(hetero3v2ho.loc[:, "corralled_ratio"] / hetero3v2ho.loc[:, "escaped_ratio"], hetero3v3ho.loc[:, "corralled_ratio"] / hetero3v3ho.loc[:, "escaped_ratio"])[1]
+
 
 
 ## BAR CHARTS
