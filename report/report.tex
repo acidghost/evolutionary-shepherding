@@ -55,7 +55,7 @@ Amsterdam, Netherlands}}
 
 
 \begin{abstract}
-In the context of robotics, intelligent behaviours are often achieved using neural networks as controllers evolved using  an evolutionary algorithm.
+In the context of robotics, intelligent behaviours are often achieved using neural networks as controllers evolved using  evolutionary algorithms.
 In the case of multiple individuals within a species, controllers can be either homogeneous or heterogeneous.
 In this paper, we use competitive co-evolution of homogeneous and heterogeneous controllers in order to investigate its effects on the effectiveness regarding a herding task.
 Our experiments show that shepherds perform better when assigned homogeneous controllers than heterogeneous controllers.
@@ -68,14 +68,14 @@ Furthermore, we also find that task complexity is not sufficient to determine th
 
 \section{Introduction}
 % Evolutionary Algorithms
-\glspl{ea} are biology inspired algorithms that, going through multiple steps (reproduction, mutation, recombination and selection), are able to evolve entities over time.
-Thus, the entities subject to the evolution are referred to as individuals and represent candidate solutions to an optimization problem.
+\glspl{ea} are biologically inspired algorithms that, going through multiple steps (reproduction, mutation, recombination and selection), are able to evolve entities over time.
+The entities subject to the evolution are referred to as individuals and represent candidate solutions to an optimization problem.
 An \gls{ea} measures the quality of individuals using a \textit{fitness function} and its aim is to improve individuals' fitness score along successive generations.
 \gls{er} is a technique that uses \gls{ea}s to develop a policy for an autonomous robot.
-Its main objective is to evolve intelligent robots behaviours required to solve some real-word task.
+Its main objective is to evolve intelligent robot behaviours required to solve some real-word task.
 \gls{er} implementations often rely on an \gls{ann} to represent their controllers.
 % Neural Networks
-An \gls{ann}, commonly referred to as \gls{nn} in this field, is a function estimator that can be used as a policy for an autonomous agent and its design is natural inspired by the biological nervous system.
+An \gls{ann}, commonly referred to as \gls{nn} in this field, is a function estimator that can be used as a policy for an autonomous agent and its design is natural, inspired by the biological nervous system.
 In order to employ it as a controller, inputs usually come from sensors making observations of the environment and the output is then used to control an actuation schema.
 The evaluation of the individuals' controllers can be made in a simulation.
 This exploits the computer's computational power in order to evaluate many individuals in a reasonable time frame.
@@ -128,7 +128,6 @@ The following hypothesis relate to the aforementioned research questions:
 
 \begin{enumerate}
 	\item Shepherds' fitness in the heterogeneous case is overall higher than in the homogeneous case.
-%	\item The number of shepherds herding one sheep is directly related to their fitness in heterogeneous cases, such that fitness increases as the number of shepherds increases.
 	\item Increasing the number of shepherd herding a fixed number of sheep increases the number of corralled sheep.
 	\item Increasing the number of sheep herd by a fixed number of shepherds decreases the number of corralled sheep.
 \end{enumerate}
@@ -137,7 +136,6 @@ Likewise, $H_0$, namely the corresponding null hypothesis are as follows:
 
 \begin{enumerate}
 	\item Shepherds' fitness in the heterogeneous case is equivalent to the one of the homogeneous
-%	\item The number of shepherds herding one sheep does not affect their fitness in heterogeneous cases.
 	\item Increasing the number of shepherds herding a fixed number of sheep does not affect the number of corralled sheep.
 	\item Increasing the number of sheep herd by a fixed number of shepherds does not affect the number of corralled sheep.
 \end{enumerate}
@@ -164,15 +162,13 @@ Finally, in Section \ref{sec:conclusion} we draw some conclusions and point out 
 
 \section{Literature review}
 \label{sec:lit_review}
-In this Section, we survey the main researches in related work, considering the following topics: \textit{Co-evolution}, \textit{\acrlong{er} \& Neuroevolution} and \textit{Homogeneous \& Heterogeneous controllers}.
+In this section, we survey the main researches in related work, considering the following topics: \textit{Co-evolution}, \textit{\acrlong{er} \& Neuroevolution} and \textit{Homogeneous \& Heterogeneous controllers}.
  
 \subsection{Co-evolution}
-Co-evolution in its foundation is a natural phenomena.
+Co-evolution is in its foundation is a natural phenomena.
 It describes how the basic principles of evolution are propagated through a dynamic process in which species not only evolve due to the selection pressure produced by an environment, but also due to the selection pressure produced as a by-product of other species evolving within that same environment.
-The effects of co-evolution in butterflies and plants have been studied as early as 1964 in ~\cite{ehrlich1964butterflies}.
-Furthermore, the authors of ~\cite{janzen1980coevolution} define co-evolution as ``an evolutionary change in a trait of the individuals in one population in response to a trait of the individuals of a second population''. 
-%In 1980 Janzen's \cite{janzen1980coevolution} formalised a clear definition for coevolution:
-%`` 'Coevolution' may be usefully defined as an evolutionary change in a trait of the individuals in one population in response to a trait of the individuals of a second population, followed by an evolutionary response by the second populations to the change in the first.''
+The effects of co-evolution in butterflies and plants have been studied as early as 1964 by Ehrlich and Raven ~\cite{ehrlich1964butterflies}.
+Furthermore, the Janzen defines co-evolution as ``an evolutionary change in a trait of the individuals in one population in response to a trait of the individuals of a second population''~\cite{janzen1980coevolution}. 
 
 % forms of co-evolution
 Co-evolution may be deployed, as described in \cite{eiben2003introduction}, in two different forms: \textit{cooperative} and \textit{competitive}.
@@ -181,19 +177,19 @@ In cooperative co-evolution, different species are evolved, each representing pa
 The individuals in each species have to cooperate in order to come to a solution to a larger problem.
 The advantage of this approach is that it permits a functional decomposition of the task to be solved.
 % competitive co-evolution
-In competitive co-evolution, individuals compete against each other in an environment with limited resources, with the aim to increase its fitness at the expense of other's.
+In competitive co-evolution, individuals compete against each other in an environment with limited resources, with the aim to increase its fitness at the expense of others.
 With more than one species, it is possible to let entire species compete against each other.
 Competitive co-evolution has the advantage of creating selection pressure.
 The individuals have to adapt to an increasingly challenging opponent, so that the fitness landscape changes over time thus becoming harsher to optimize.
 \citeauthor{dawkins1979arms} describe in~\cite{dawkins1979arms} the dynamics and terminology for competitive co-evolution by providing examples of manifestations of competitive co-evolution in natural systems.
-The paper captures the pure essential of competitive co-evolution giving the following description: ``An adaptation in one lineage (e.g. predators) may change the selection pressure on another lineage (e.g. prey), giving rise to a counter-adaptation. If this occurs reciprocally, an unstable runaway escalation or 'arms race' may result''.
+Their paper captures the pure essential of competitive co-evolution in the following description: ``An adaptation in one lineage (e.g. predators) may change the selection pressure on another lineage (e.g. prey), giving rise to a counter-adaptation. If this occurs reciprocally, an unstable runaway escalation or 'arms race' may result''.
 
 \subsection{\acrlong{er} \& Neuroevolution}
 % Evolutionary Robotics
 \citeauthor{nolfi2000evolutionary} in \cite{nolfi2000evolutionary}, define \gls{er} as a method for automatic creation of autonomous robots, following the Darwinian principle of selective reproduction of the fittest.
-The term \acrlong{er} was firstly introduced in \cite{cli1993evolving}, but between 1992 and 1993, other two research groups reported promising results on artificial evolution of autonomous robots in \cite{lewis1992genetic} and \cite{nolfi1994evolve}.
+The term \acrlong{er} was firstly introduced in \cite{cli1993evolving}, but between 1992 and 1993, two other research groups reported promising results on artificial evolution of autonomous robots in \cite{lewis1992genetic} and \cite{nolfi1994evolve}.
 \gls{er} can be implemented in simulation or in the physical world.
-In simulation, \gls{er} is able to fast-forwarding time and make the entire process faster than running on real robots.
+In simulation, \gls{er} is able to fast-forward time and make the entire process faster than running on real robots.
 Unfortunately evolution of physical entities in a virtual world may suffer from a \textit{reality gap} when the controllers are deployed in physical robots, as thoroughly investigated in \cite{jakobi1995noise}.
 By using physical robots, \gls{er} is able to bridge the reality gap but at expenses of deployment time
 
@@ -235,7 +231,7 @@ However, increased difficulty was never implemented structurally nor tested meth
 %This can be considered as an extension of~\cite{potter2001heterogeneity} because the task, as well as part of the model, are similar. 
 In this section we detail our model which aims to simulate a herding task by employing robots with intelligent controllers.
 % Herding environment + Task complexity
-The herding task involves shepherd agents trying to push sheep agents into a corral, this is further detailed in Section~\ref{sec:herding_task_environment}.
+The herding task involves shepherd agents trying to push sheep agents into a corral, which is further detailed in Section~\ref{sec:herding_task_environment}.
 %% Positioning system
 %In particular, the positioning system used to control and direct movements of the agents, is described in Section~\ref{sec:positioning_system}. 
 % NN_design
@@ -541,23 +537,23 @@ Additionally, both graphs show that homogeneous controllers outperform heterogen
 
 \begin{table*}[t]
 	\centering
-	\begin{tabularx}{6in}{| L{0.5} | L{0.5} | C{1} C{1} C{1} | C{1} |}
+	\begin{tabularx}{6in}{| L{0.5} | L{0.5} | C{2} C{1} C{1} | C{1} |}
 		\hline
 		\textit{\textbf{Shepherds}} & \textit{\textbf{Sheep}} & \multicolumn{3}{c|}{\textit{\textbf{Fitness}}} & \textbf{\textit{Corralled ratio}} \\
 		& & \textit{Mean} & \textit{Minimum} & \textit{Maximum} &  \\
 		\hline
-		1 & 1 & 2 $\pm$ 0.1 & 0 & 10 & 0.5 \\
+		1 & 1 & 9884.424766 $\pm$ 28397.962468 & -27922.935992 & 53253.535669 & 0.339013 $\pm$ 0.274005\\
 		%\hline
-		2 & 1 & 2 $\pm$ 0.1 & 0 & 10 & 0.5 \\
+		2 & 1 & 44143.672462 $\pm$ 25778.58867 & -25211.243094 & 71527.841981 & 0.367498 $\pm$ 0.256105\\
 		\hline
-		3 & 1 & 2 $\pm$ 0.1 & 0 & 10 & 0.5 \\
+		3 & 1 & 51618.239712 $\pm$ 19801.971710 & -12015.484921 & 69989.740948 & 0.614306 $\pm$ 0.205690\\
 		\hline
-		3 & 2 & 2 $\pm$ 0.1 & 0 & 10 & 0.5 \\
+		3 & 2 & 62098.088308 $\pm$ 14798.056540 & 564.612183 & 73474.598190 &  0.293475 $\pm$ 0.192474\\
 		%\hline
-		3 & 3 & 2 $\pm$ 0.1 & 0 & 10 & 0.5 \\
+		3 & 3 & 49477.559091 $\pm$ 12561.135183 & 8137.185969 & 63566.224583 & 0.493056 $pm$ 0.161947\\
 		\hline
 	\end{tabularx}
-	\caption{\textbf{TODO} Comparison of the mean fitness of the heterogeneous shepherds vs. homogeneous sheep over 40 runs.}
+	\caption{Comparison of the mean fitness of the heterogeneous shepherds vs. homogeneous sheep over 40 runs.}
 	\label{tab:1}
 \end{table*}
 
@@ -574,7 +570,7 @@ The experiments consider the following scenarios:
 	\item three shepherds herding one sheep: $\phi = 0.33$
 \end{itemize}	
 
-Subsequently, we investigate $H_3$ by keeping a fixed number of shepherds, and increasing the number of sheep being herd thus increasing the task complexity. These experiments consider the following scenarios:
+Subsequently, we investigate $H_3$ by keeping a fixed number of shepherds, and increasing the number of sheep herded thus increasing the task complexity. These experiments consider the following scenarios:
 \begin{itemize}
 	\item three shepherd herding one sheep: $\phi = 0.33$
 	\item three shepherd herding two sheep: $\phi = 0.66$
@@ -583,7 +579,7 @@ Subsequently, we investigate $H_3$ by keeping a fixed number of shepherds, and i
 The dependent variables are the corralled and escaped sheep ratios the best fitted individuals achieved in the last generation.
 Figure~\ref{fig:ratios_oneSheep} shows the corralled and escaped ratios for different number of shepherd herding one sheep, averaged over 40 runs. 
 Figure~\ref{fig:ratios_threeShepherd} shows the corralled and escaped ratios for three shepherd herding different number of sheep, averaged over 40 runs. 
-%TODO confidence intervals. Mention in text only. 
+
 The chart in Figure ~\ref{fig:ratios_oneSheep} provides supporting evidence for $H_2$. Adding a second shepherd to the task improves the corralled score by 400\% while adding a third shepherd has an increase of 800\% compared to a simple case with just one shepherd. 
 However, we notice that the ratio for escaped cases increases as well, meaning that overall the tied cases (cases where the simulations run till the end without shepherds of sheep being successful) are decreased. 
 Relating this to competitive co-evolution, it is reasonable to think that increasing the number of shepherds encourages both shepherds and sheep to pursue their goals more aggressively. %TODO: Really?
@@ -599,7 +595,8 @@ Given the above information, we conclude that shepherds benefit from homogeneous
 Given heterogeneous controllers and a fixed number of sheep to be herded, adding shepherds encourages more aggressive behaviours. More shepherds cooperate to corral more sheep, but the effectiveness in herding leads to sheep becoming better at escaping. 
 
 Given heterogeneous controllers and a fixed number of shepherds, adding more sheep to the task has no direct influence on the effectiveness in herding.
-The last two findings lead to the conclusion that simply changing the task complexity does not have a conclusive effect on the effectiveness of herding. The number of each type of agent matters, and some specific conditions make co-evolution more competitive.
+The last two findings lead to the conclusion that simply changing the task complexity does not have a conclusive effect on the effectiveness of herding. The number of each type of agent matters, and some specific conditions, such as heterogeneity or increased number of sheep, make co-evolution more competitive.
+%TODO what are the implications?
 
 \newpage
 \printbibliography
