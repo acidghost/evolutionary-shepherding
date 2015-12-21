@@ -45,8 +45,6 @@ Amsterdam, Netherlands}}
 In the context of robotics, intelligent behaviours are often achieved using neural networks as controllers evolved using  an evolutionary algorithm.
 In the case of multiple individuals within a species, controllers can be either homogeneous or heterogeneous.
 In this paper, we use competitive co-evolution of homogeneous and heterogeneous controllers in order to investigate its effects on the emergence of specialisation behaviour regarding a herding task.
-
-TODO: add what we have discovered!!!!!!!
 % TODO: add what we have discovered
 \end{abstract}
 
@@ -220,7 +218,6 @@ Both steps are specified in Section~\ref{sec:agents_design}.
 \label{sec:herding_task_environment}
 % herding task + environment
 The task domain is herding (a sub-domain of the more general pursuit evasion task).
-%TODO do we need some source for this evasion task?
 Our objective is to simulate shepherd agents trying to push sheep agents into a corral. 
 The environment consists of a $l \times l$ squared pasture with fences on the top and bottom.
 The corral is positioned on the right side, and the pasture is open on the left side for the sheep to escape.
@@ -402,7 +399,6 @@ We assign a greater radius to the shepherd then to the sheep, by doing so we all
 % Interpreting the Neural Network output
 Since the output of the network is represented as polar coordinates centred with the polar axis passing through the nearest opponent, they are translated into Cartesian coordinates within the pasture to calculate the agents target position.
 % TODO: explain the transformation
-%TODO: Others properites: like speed....
 All agents have the same maximum speed and mass, so their simulated physical characteristics are the same.
 Both maximum speed and mass have a value of $1$ simulated units.
 
@@ -415,7 +411,6 @@ We run the entire evolutionary process for $40$ times and perform statistical an
 
 \subsection{Implementation}
 \label{sec:implementation}
-%TODO: the implementation is the description of the instance of our model used to run the experiments, this means that all parameters should be defined (name+meaning) in the model section and instanciated in the implementation.  The impl. is not much about the code/classes etc unless we came up with a novel algortihm....
 The project is coded in Java and has a GUI to launch the different experiments, replay the best individuals for each generation and plot statistics.
 The evolutionary algorithm is implemented through the use of \textit{ECJ} \cite{luke2006ecj}: an easy to use evolutionary computation research framework with out-of-the-box algorithms and tools that enabled us to implement our co-evolutionary ES.
 To realise the simulation environment and its agents, we use \textit{MASON} \cite{luke2005mason}, developed at the George Mason University's ECLab Evolutionary Computation Laboratory as a sister project of ECJ.
