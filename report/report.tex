@@ -127,6 +127,7 @@ $H_0$, namely the null hypothesis, is ``Shepherds' fitness in the heterogeneous 
 In this paper we introduce our proposed model for running a herding task in a competitive co-evolution framework. 
 We have built our model and run a thorough set of simulations in order to test the hypothesis detailed in Section~\ref{sec:hypothesis}. 
 In what follows, we list the main contributions of this paper to the state-of-the-art:
+\textbf{TODO}
 \begin{itemize}
 	\item BLA
 	\item PIZZA
@@ -185,12 +186,13 @@ Therefore neuroevolution uses only the performance at the task to train a networ
 Floreano in \cite{floreano2008neuroevolution} classifies three classes of genetic encoding of an \gls{ann}: direct, developmental and implicit.
 This genetic encoding may represent not only the synaptic weights of the network, but also its topology.
 The algorithms that evolve the network's topology and its parameters simultaneously are called \gls{tweann} algorithms.
-%get some paper showing simple evolution of NNs
-Neuroevolution has been applied with success in different domains like video games \cite{stanley2005real} \cite{hausknecht2014neuroevolution}, collective self-organization \cite{nitschke2008neuro} \cite{nitschke2010collective} and common robotics tasks %TODO add citations
-In~\cite{stanley2004competitive}, the authors show that through the complexification of agent controllers in a competitive co-evolutionary setting, the controller's added complexity can be utilized through the generation of more advanced strategies as complexity increases. 
-Complexification of the controllers was managed by increasing the size of the \gls{ann} gradually during the evolution run.
-Resizing the network was achieved using \gls{neat}.
-\gls{neat} allows for the addition of connections and or nodes to a \gls{nn} while maintaining learned behaviours by keeping the encoded information in the resized \gls{nn} very close to its previous state.
+% get some paper showing simple evolution of NNs
+Neuroevolution has been applied with success in different domains such as video games \cite{hausknecht2014neuroevolution} \cite{stanley2005real}, collective self-organization \cite{nitschke2008neuro} \cite{nitschke2010collective} and robotics control systems \cite{brooks1989robot} \cite{floreano1996evolution} \cite{kodjabachian1998evolution}.
+% complexification
+An advanced \gls{tweann} technique is \gls{neat} \cite{stanley2002evolving}.
+\gls{neat} introduces the concept of \textit{complexification} of controllers; an \gls{ann} is evolved starting from a simple topology by adding new neurons and new synaptic connections, besides evolving the weights, by means of evolutionary operators.
+In~\cite{stanley2004competitive}, the authors show that through the complexification of agent controllers in a competitive co-evolutionary setting, the controller's added complexity can be used through the generation of more advanced strategies as complexity increases.
+\gls{neat} allows for the addition of connections and or nodes to a \gls{nn} while maintaining learned behaviours by keeping the encoded information in the resized \gls{nn} very close to its previous state, resolving the problem of \textit{competing conventions} with genetic markers as explained in \cite{floreano2008neuroevolution} and \cite{stanley2002evolving}.
 
 \subsection{Homogeneous \& Heterogeneous Controllers}
 \cite{potter2001heterogeneity} performed a study to a tradeoff of homogeneity versus heterogeneity in the control systems of robots by allowing teams to coevolve their high-level controllers given different levels of difficulty of the task.
