@@ -210,10 +210,12 @@ In~\cite{stanley2004competitive}, \citeauthor{stanley2004competitive} show that 
 
 \subsection{Homogeneous \& Heterogeneous Controllers}
 Assigning controllers to a group of agents can be done in two different modes: \textit{homogeneous} and \textit{heterogeneous}.
+
 % explain homogeneity
 In homogeneous mode, the agents are assigned the same high-level controller.
 This allows redundancy of the robots' behaviour so that if one fails, the rest of the team can still complete the task.
 \citeauthor{balch1998behavioral} in \cite{balch1998behavioral} shows that certain tasks, such as foraging, were solved more easily by a team of homogeneous robots.
+
 % explain heterogeneity
 In heterogeneous mode instead, agents are allowed to co-evolve their own controllers and therefore each agent has its own control structure.
 This approach allows the emergence of specialization within a team of robots, as detailed in \cite{balch1998behavioral}.
@@ -221,6 +223,7 @@ Thus it may be a great fit in domains such as soccer, where multiple roles are r
 \citeauthor{luke1998genetic} give a good exemplification of the different challenges in homogeneous and heterogeneous approaches in \cite{luke1998genetic}.
 They developed a team of robots for the \textit{RoboCup97} with both approaches but only the homogeneous team was entered the competition.
 The heterogeneous team had a much bigger search space to search for and one of the goals of the authors was to obtain the best possible team in a limited amount of time.
+
 In \cite{potter2001heterogeneity}, the authors analysed the trade-off of homogeneity versus heterogeneity in robotics control systems by allowing teams to co-evolve their high-level controllers given different levels of difficulty of the task.
 The hypothesis was ``simply increasing the difficulty of a task is not enough to induce a team of robots to create specialists''.
 Task difficulty was varied by replacing one adversary's passive controller with an active variant supposedly proving that increased difficulty did not justify the use of heterogeneous controllers.
@@ -499,12 +502,6 @@ Here, the independent variable is the controller type (homogeneous or heterogene
 
 Figure~\ref{fig:2v1_homo_vs_hetero} reports the shepherds' fitness score on a scenario with two shepherds and one sheep, while Figure~\ref{fig:3v1_homo_vs_hetero} reports the score on a scenario with three shepherds and one sheep.
 
-The graphs represent the mean fitness of the best individual seen so far, averaged over 40 trials, with 95-percent confidence intervals.
-Moreover, we perform \textit{t}-test on the means of the homogeneous and heterogeneous trials. The test  produced a \textit{p}-value $\ll0.5$ for both cases.
-
-Thus, supported by the significant difference between the homogeneous and heterogeneous cases, we reject the corresponding null hypothesis (see Section~\ref{sec:hypothesis}).
-Additionally, both graphs show that homogeneous controllers outperform heterogeneous controllers. Thus, we reject hypothesis $H_1$ as well.
-
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=1\hsize]{imgs/homo2v1-hetero2v1-bestSoFar.pdf}
@@ -519,20 +516,11 @@ Additionally, both graphs show that homogeneous controllers outperform heterogen
 	\label{fig:3v1_homo_vs_hetero}
 \end{figure}
 
+The graphs represent the mean fitness of the best individual seen so far, averaged over 40 trials, with 95-percent confidence intervals.
+Moreover, we perform \textit{t}-test on the means of the homogeneous and heterogeneous trials. The test  produced a \textit{p}-value $\ll0.05$ for both cases.
+Thus, supported by the significant difference between the homogeneous and heterogeneous cases, we reject the corresponding null hypothesis (see Section~\ref{sec:hypothesis}).
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=1\hsize]{imgs/barchart_vs_one_sheep.png}
-	\caption{Corralled and escaped ratios in heterogeneous setting, averaged over 40 runs. Cases with one (red), two (blue) and three (green) shepherds herding one sheep are shown in different bars.}
-	\label{fig:ratios_oneSheep}
-\end{figure}
-
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=1\hsize]{imgs/barchart_vs_more_sheep.png}
-	\caption{Corralled and escaped ratios in heterogeneous setting, averaged over 40 runs. Cases with one shepherd herding one (red), two (blue) and three (green) sheep are shown in different bars.}
-	\label{fig:ratios_threeShepherd}
-\end{figure}
+Additionally, both graphs show that homogeneous controllers outperform heterogeneous controllers. Thus, we reject hypothesis $H_1$ as well.
 
 
 \begin{table*}[t]
@@ -562,6 +550,7 @@ Additionally, both graphs show that homogeneous controllers outperform heterogen
 \subsubsection{Task complexity}
 Here we consider three experiments that relate to the second research question: \textit{How does varying task complexity (by moduling the sheep to shepherds ratio) affect the effectiveness of herding?}. 
 This time, the independent variable is the task complexity, previously defined as the sheep to shepherd ratio $\phi$.
+
 First we investigate $H_2$ by keeping a fixed number of sheep, and increasing the number of shepherd herding it thus decreasing the task complexity. 
 The experiments consider the following scenarios:
 \begin{itemize}
@@ -576,27 +565,42 @@ Subsequently, we investigate $H_3$ by keeping a fixed number of shepherds, and i
 	\item three shepherd herding two sheep: $\phi = 0.66$
 	\item three shepherd herding three sheep: $\phi = 1$
 \end{itemize}
-The dependent variables are the corralled and escaped sheep ratios the best fitted individuals achieved in the last generation.
+The dependent variables are the mean, maximum and minimum shepherds' fitness scores as well as the mean corralled and escaped sheep ratios.
+
 Figure~\ref{fig:ratios_oneSheep} shows the corralled and escaped ratios for different number of shepherd herding one sheep, averaged over 40 runs. 
 Figure~\ref{fig:ratios_threeShepherd} shows the corralled and escaped ratios for three shepherd herding different number of sheep, averaged over 40 runs. 
 
-The chart in Figure ~\ref{fig:ratios_oneSheep} provides supporting evidence for $H_2$. Adding a second shepherd to the task improves the corralled score by 400\% while adding a third shepherd has an increase of 800\% compared to a simple case with just one shepherd. 
-However, we notice that the ratio for escaped cases increases as well, meaning that overall the tied cases (cases where the simulations run till the end without shepherds of sheep being successful) are decreased. 
-Relating this to competitive co-evolution, it is reasonable to think that increasing the number of shepherds encourages both shepherds and sheep to pursue their goals more aggressively. %TODO: Really?
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=1\hsize]{imgs/barchart_vs_one_sheep.png}
+	\caption{Corralled and escaped ratios in heterogeneous setting, averaged over 40 runs. Cases with one (red), two (blue) and three (green) shepherds herding one sheep are shown in different bars.}
+	\label{fig:ratios_oneSheep}
+\end{figure}
 
-%TODO maybe we can introduce a corralled/escaped ratio, making the different setups easy to compare on performance
+The chart in Figure ~\ref{fig:ratios_oneSheep} shows that the optimal scenario is two shepherd herding one sheep, since it displays the highest corralled ratio with non overlaping confidence intervals compared to one shepherd herding one sheep. 
+Since the confidence intervals for one and three shepherd(s) herding one sheep overlap, we perform \textit{t}-test. The test produced \textit{p}-value of 0.005098, which is $\ll0.05$.
+Yet, we must accept the corresponding null hypothesis since there is no evident proportional relationship between the number of shepherds and the corralled ratio.
 
-Contrarily, the chart in Figure ~\ref{fig:ratios_threeShepherd} does not provide supporting evidence for $H_3$ since adding sheep to the task does not have an evident effect. Therefore, we accept the corresponding null hypothesis (see Section~\ref{sec:hypothesis}). 
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=1\hsize]{imgs/barchart_vs_more_sheep.png}
+	\caption{Corralled and escaped ratios in heterogeneous setting, averaged over 40 runs. Cases with one shepherd herding one (red), two (blue) and three (green) sheep are shown in different bars.}
+	\label{fig:ratios_threeShepherd}
+\end{figure}
+
+Similarly, the chart in Figure ~\ref{fig:ratios_threeShepherd} shows that the optimal scenario is three shepherds herding two sheep. Since it displays the highes corralled ratio. 
+%TODO add t/test p values
+Once again, there is no evident proportional relationship between the number of sheep herd and the corralled ratio. Thus we accept the corresponding numm hypothesis. 
+
 
 \section{Conclusion}
 \label{sec:conclusion}
 Given the above information, we conclude that shepherds benefit from homogeneous controllers in a competitive co-evolved herding task. 
 
-Given heterogeneous controllers and a fixed number of sheep to be herded, adding shepherds encourages more aggressive behaviours. More shepherds cooperate to corral more sheep, but the effectiveness in herding leads to sheep becoming better at escaping. 
+Given heterogeneous controllers, the sheep to shepherd ratio cannot predict the effectiveness shepherds will have in herding sheep. Different scenarios proved to be statistically different, with scenarios with two shepherds herding one sheep and three shepherds herding two sheep being optimal for herding. 
 
-Given heterogeneous controllers and a fixed number of shepherds, adding more sheep to the task has no direct influence on the effectiveness in herding.
-The last two findings lead to the conclusion that simply changing the task complexity does not have a conclusive effect on the effectiveness of herding. The number of each type of agent matters, and some specific conditions, such as heterogeneity or increased number of sheep, make co-evolution more competitive.
-%TODO what are the implications?
+These findings support and expand Potter et al.'s work ~\cite{potter2001heterogeneity}. We show that by increasing task complexity alone, there is not need to implement heterogeneous controllers. Having more adaptable sheep in fact weakens heterogeneity in the scenarios we explored, while varying the sheep to dog ratio is uninformative of the shepherds fitness scores. 
 
 \newpage
 \printbibliography
