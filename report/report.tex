@@ -431,22 +431,21 @@ The evolutionary algorithm is implemented through the use of \textit{ECJ} \cite{
 To realise the simulation environment and its agents, we use \textit{MASON} \cite{luke2005mason}, developed at the George Mason University's ECLab Evolutionary Computation Laboratory as a sister project of ECJ.
 Moreover we use \textit{neuroph} \footnote{http://neuroph.sourceforge.net/} to create and handle the neural networks.
 
-Because with a co-evolutionary setting ECJ can only do maximization problems, the shepherd fitness score is negated in the implementation, that is:
+In the case of a co-evolutionary setting, ECJ is only able to handle maximization problems. Therefore, the shepherd's fitness score is negated in the implementation, that is:
 $$ f_{sheph}(x) = -f_{sheph}(x) $$
 In our experiments we give a value of $0.8$ to the constant $RR$ of equation \eqref{eq:sheep_fitness}, reducing the weight given to the flocking behaviour produced by \eqref{eq:sheep_ratio}.
 
 Like in \cite{potter2001heterogeneity}, a simulation consists of 2.5 simulated minutes and the agents refresh their target position every 10Hz.
 This is equivalent to $1500$ simulation steps in which the agents refresh their target every step.
-To do so, an agent firstly acquires its inputs and then propagates them through its neural network computing a new target position that the simulation environment will translate in forces to be applied to the agent's virtual body.
-
+To do so, an agent firstly acquires its inputs and then propagates them through its NN, computing a new target position that the simulation environment will translate in movement to be applied to the agent's virtual body.
 
 \vspace{0.5em}
 \subsubsection{Environment and Agents}
 The size of the pasture is fixed across all the experiments at $l = 37$ simulated units.
-As already stated in Section \ref{sec:agents_design}, the shepherd is equipped with a greater radius than the sheep's.
-This is to allow them to effectively herd the sheep by rimming and pushing it towards the corral.
-Therefore we assign a radius of $3$ and $2$ simulation units to the shepherd and to the sheep respectively.
-The pasture is closed on the top and bottom sides, with the corral positioned on the right side, opposite to an open side that enables the sheep to escape.
+As already stated in Section \ref{sec:agents_design}, shepherds are equipped with a greater collision radius than sheep.
+This is to allows them to effectively herd the sheep by rimming and pushing it towards the corral.
+Therefore we assign a radius of $3$ and $2$ simulation units to the shepherd and sheep respectively.
+The pasture is closed on the top and bottom, with the corral positioned on the right side, opposite to the open side that enables sheep to escape.
 The initial positions of the agents inside the pasture are shown in Figure \ref{fig:simulation_screenshot} for a full \textit{three vs. three} experiment.
 The initial locations values used in the experiments are:
 \begin{align}
@@ -465,16 +464,15 @@ sheep_y(i) &= \frac{l}{2} + \begin{cases} 0 & \text{if } i=1 \\ -4 & \text{if } 
 
 
 \subsubsection{Evolution}
-In order to calculate the fitness for an individual, all controllers are evaluated through 10 trials of the task and the average is taken as fitness.
+In order to calculate the fitness of an individual, all controllers are evaluated through 10 simulation trials and the average is taken as its fitness.
 Every trial runs for a maximum of $1500$ time steps. 
-In cases where there is more than one sheep, a complex network is assigned to all sheep. 
-The simulation ends before the time elapses as soon as one sheep is corralled or escapes. 
-The reason for leaving one sheep left in the pasture when ending the simulation is that the number of inputs for the sheep controllers is fixed before the beginning of a trial, and having no other sheep left would lead to null inputs and misbehaviour. 
+In cases with more than one sheep, a complex network is assigned to all sheep. 
+Also, one sheep escaping or being corralled causes the simulation to end prematurely, that is, before the maximum amount of simulation steps have passed.
+The reason for this is the fixed number of inputs for the sheep controllers before the beginning of a trial, and having one sheep left would lead to null inputs and misbehaviour.
 In cases where there is only one sheep, a simple controller is assigned. 
 Thus, the sheep must either be corralled or has to escape in order for the simulation to stop before the time expires.
-
 In homogeneous set-ups we evolve one controller per type of agent, meaning we have two subpopulations, one for shepherds and one for sheep, co-evolving. 
-However, to create heterogeneity a population per agent is created. 
+However, to create heterogeneity, a population per each agent is created. 
 For example, in a scenario with two shepherds and one sheep, there is a total of three subpopulations, two of them cooperating among each other and competing with the third one.  
 
 
@@ -488,9 +486,9 @@ In this section we present the results of the experiments run using the implemen
 We first consider two experiments that relate to the first research question: \textit{How do homogeneous and heterogeneous shepherd controllers compare in a competitive co-evolved herding task?}. 
 
 Here, the independent variable is the controller type (homogeneous or heterogeneous). The dependent variable is the fitness score for the best fitted shepherds so far. 
-Figure~\ref{fig:2v1_homo_vs_hetero} reports the shepherds' fitness score on a scenario with two shepherds and one sheep, while Figure~\ref{fig:3v1_homo_vs_hetero} reports the score on a scenario with three shepherds and one sheep.
+Figure~\ref{fig:2v1_homo_vs_hetero} reports the shepherd's fitness score on a scenario with two shepherds and one sheep, while Figure~\ref{fig:3v1_homo_vs_hetero} reports the score on a scenario with three shepherds and one sheep.
 
-From a statistical point of view, we perform \textit{t}-test on the means of the homogeneous and heterogeneous trials. The test  produced a \textit{p}-value $\ll0.5$ for both cases.
+From a statistical point of view, we perform \textit{t}-test on the means of the homogeneous and heterogeneous trials. The test produced a \textit{p}-value $\ll0.5$ for both cases.
 Thus, supported by the significant difference between the homogeneous and heterogeneous cases, we reject the corresponding null hypothesis (see Section~\ref{sec:hypothesis}).
 Additionally, both graphs show that homogeneous controllers outperform heterogeneous controllers. Thus, we reject hypothesis $H_1$ as well. 
 
@@ -521,7 +519,7 @@ This time, the independent variable is the task complexity, previously defined a
 	\item three shepherds herding one sheep: $\phi = 0.33$
 \end{itemize}	
 
-Subsequently, we investigate $H_3$ by keeping a fixed number of shepherd, and increasing the number of sheep being herd thus increasing the task complexity. These experiments consider the following scenarios:
+Subsequently, we investigate $H_3$ by keeping a fixed number of shepherds, and increasing the number of sheep being herd thus increasing the task complexity. These experiments consider the following scenarios:
 \begin{itemize}
 	\item three shepherd herding one sheep: $\phi = 0.33$
 	\item three shepherd herding two sheep: $\phi = 0.66$
@@ -531,10 +529,14 @@ Subsequently, we investigate $H_3$ by keeping a fixed number of shepherd, and in
 The dependent variables are the corralled and escaped sheep ratios the best fitted individuals achieved in the last generation.
 Figure~\ref{fig:ratios_oneSheep} shows the corralled and escaped ratios for different number of shepherd herding one sheep. Figure~\ref{fig:ratios_threeShepherd} shows the corralled and escaped ratios for three shepherd herding different number of sheep. 
 
+
+
 %TODO confidence intervals. Mention in text only. 
 The chart in Figure ~\ref{fig:ratios_oneSheep} provides supporting evidence for $H_2$. Adding a second shepherd to the task improves the corralled score by 400\% while adding a third shepherd has an increase of 800\% compared to a simple case with just one shepherd. 
 However, we notice that the ratio for escaped cases increases as well, meaning that overall the tied cases (cases where the simulations run till the end without shepherds of sheep being successful) are decreased. 
-Relating this to competitive co-evolution, it is reasonable to think that increasing the number of shepherds encourages both shepherds and sheep to pursue their goals more aggresively.
+Relating this to competitive co-evolution, it is reasonable to think that increasing the number of shepherds encourages both shepherds and sheep to pursue their goals more aggressively. %TODO: Really?
+
+%TODO maybe we can introduce a corralled/escaped ratio, making the different setups easy to compare on performance
 
 Contrarily, the chart in Figure ~\ref{fig:ratios_threeShepherd} does not provide supporting evidence for $H_3$ since adding sheep to the task does not have an evident effect. Therefore, we accept the corresponding null hypothesis (see Section~\ref{sec:hypothesis}). 
 
@@ -555,7 +557,7 @@ Contrarily, the chart in Figure ~\ref{fig:ratios_threeShepherd} does not provide
 \section{Conclusion}
 \label{sec:conclusion}
 Given the above information, we conclude that shepherds benefit from homogeneous controllers in a competitive co-evolved herding task. 
-Given heterogeneous controllers and a fixed number of sheep to be herd, adding shepherds encourages more aggressive behaviours. More shepherds cooperate to corrall more sheep, but the effectiveness in herding leads to sheep becoming better at escaping. 
+Given heterogeneous controllers and a fixed number of sheep to be herd, adding shepherds encourages more aggressive behaviours. More shepherds cooperate to corral more sheep, but the effectiveness in herding leads to sheep becoming better at escaping. 
 Given heterogeneous controllers and a fixed number of shepherds, adding more sheep to the task has no direct influence on the effectiveness in herding.
 The last two findings lead to the conclusion that simply changing the task complexity does not have a conclusive effect on the effectiveness of herding. The number of each type of agent matters, and some specific conditions make co-evolution more competitive.
 
