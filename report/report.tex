@@ -511,14 +511,14 @@ Additionally, both graphs show that homogeneous controllers outperform heterogen
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=1\hsize]{imgs/homo2v1-hetero2v1-bestSoFar.pdf}
-	\caption{Best individuals fitness in scenario with two shepherds and one sheep. Both homogeneous and heterogeneous settings are shown}
+	\caption{Best individuals fitness in scenario with two shepherds and one sheep. Both homogeneous and heterogeneous settings are shown with 95-percent confidence intervals.}
 	\label{fig:2v1_homo_vs_hetero}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=1\hsize]{imgs/homo3v1-hetero3v1-bestSoFar.pdf}
-	\caption{Best individuals fitness in scenario with three shepherds and one sheep. Both homogeneous and heterogeneous settings are shown}
+	\caption{Best individuals fitness in scenario with three shepherds and one sheep. Both homogeneous and heterogeneous settings are shown with 95-percent confidence intervals.}
 	\label{fig:3v1_homo_vs_hetero}
 \end{figure}
 
@@ -526,14 +526,14 @@ Additionally, both graphs show that homogeneous controllers outperform heterogen
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=3in]{imgs/hetero_1v1-hetero_2v1-hetero_3v1-ratio-bar.jpg}
-	\caption{Bar chart for corralled and escaped ratios in heterogeneous setting. Shows one, two and three shepherds herding one sheep.}
+	\caption{Corralled and escaped ratios in heterogeneous setting, averaged over 40 runs. Cases with one (red), two (blue) and three (green) shepherds herding one sheep are shown in different bars.}
 	\label{fig:ratios_oneSheep}
 \end{figure}
 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=3in]{imgs/hetero_3v1-hetero_3v2-hetero_3v3-ratio-bar.jpg}
-	\caption{Bar chart for corralled and escaped ratios in heterogeneous setting. Shows three shepherd herding one, two and three sheep.}
+	\caption{Corralled and escaped ratios in heterogeneous setting, averaged over 40 runs. Cases with one shepherd herding one (red), two (blue) and three (green) sheep are shown in different bars.}
 	\label{fig:ratios_threeShepherd}
 \end{figure}
 
@@ -565,8 +565,8 @@ Additionally, both graphs show that homogeneous controllers outperform heterogen
 \subsubsection{Task complexity}
 Here we consider three experiments that relate to the second research question: \textit{How does varying task complexity (by moduling the sheep to shepherds ratio) affect the effectiveness of herding?}. 
 This time, the independent variable is the task complexity, previously defined as the sheep to shepherd ratio $\phi$.
- First we investigate $H_2$ by keeping a fixed number of sheep, and increasing the number of shepherd herding it thus decreasing the task complexity. 
- The experiments consider the following scenarios:
+First we investigate $H_2$ by keeping a fixed number of sheep, and increasing the number of shepherd herding it thus decreasing the task complexity. 
+The experiments consider the following scenarios:
 \begin{itemize}
 	\item one shepherd herding one sheep: $\phi = 1$
 	\item two shepherds herding one sheep: $\phi = 0.5$
@@ -579,7 +579,8 @@ Subsequently, we investigate $H_3$ by keeping a fixed number of shepherd, and in
 	\item three shepherd herding three sheep: $\phi = 1$
 \end{itemize}
 The dependent variables are the corralled and escaped sheep ratios the best fitted individuals achieved in the last generation.
-Figure~\ref{fig:ratios_oneSheep} shows the corralled and escaped ratios for different number of shepherd herding one sheep. Figure~\ref{fig:ratios_threeShepherd} shows the corralled and escaped ratios for three shepherd herding different number of sheep. 
+Figure~\ref{fig:ratios_oneSheep} shows the corralled and escaped ratios for different number of shepherd herding one sheep, averaged over 40 runs. 
+Figure~\ref{fig:ratios_threeShepherd} shows the corralled and escaped ratios for three shepherd herding different number of sheep, averaged over 40 runs. 
 %TODO confidence intervals. Mention in text only. 
 The chart in Figure ~\ref{fig:ratios_oneSheep} provides supporting evidence for $H_2$. Adding a second shepherd to the task improves the corralled score by 400\% while adding a third shepherd has an increase of 800\% compared to a simple case with just one shepherd. 
 However, we notice that the ratio for escaped cases increases as well, meaning that overall the tied cases (cases where the simulations run till the end without shepherds of sheep being successful) are decreased. 
