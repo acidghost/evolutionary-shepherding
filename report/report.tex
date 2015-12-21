@@ -407,20 +407,20 @@ Both maximum speed and mass have a value of $1$ simulated units.
 \section{Experimental results}
 \label{sec:experiment}
 In order to answer the research questions listed in {Section~\ref{sec:researchQuestions}} and test its corresponding hypothesis in {Section~\ref{sec:hypothesis}}, we execute the co-evolutionary algorithm in the different scenarios for $100$ generations. 
-We run the entire evolutionary process for $40$ times and perform statistical analysis to get $95\%$ confidence intervals.
+We run the entire evolutionary process for $40$ times and perform statistical analysis to get $95\%$ confidence intervals and $t$-test.
 
 \subsection{Implementation}
 \label{sec:implementation}
 The project is coded in Java and has a GUI to launch the different experiments, replay the best individuals for each generation and plot statistics.
 The evolutionary algorithm is implemented through the use of \textit{ECJ} \cite{luke2006ecj}: an easy to use evolutionary computation research framework with out-of-the-box algorithms and tools that enabled us to implement our co-evolutionary ES.
 To realise the simulation environment and its agents, we use \textit{MASON} \cite{luke2005mason}, developed at the George Mason University's ECLab Evolutionary Computation Laboratory as a sister project of ECJ.
-Moreover we use \textit{neuroph} \footnote{http://neuroph.sourceforge.net/} to create and handle the neural networks.
+Moreover, we use \textit{neuroph} \footnote{http://neuroph.sourceforge.net/} to create and handle the neural networks.
 
 Because with a co-evolutionary setting ECJ can only do maximization problems, the shepherd fitness score is negated in the implementation, that is:
 $$ f_{sheph}(x) = -f_{sheph}(x) $$
 In our experiments we give a value of $0.8$ to the constant $RR$ of equation \eqref{eq:sheep_fitness}, reducing the weight given to the flocking behaviour produced by \eqref{eq:sheep_ratio}.
 
-Like in \cite{potter2001heterogeneity}, a simulation consists of 2.5 simulated minutes and the agents refresh their target position every 10Hz.
+Similarly to \cite{potter2001heterogeneity}, a simulation consists of 2.5 simulated minutes and the agents refresh their target position every 10Hz.
 This is equivalent to $1500$ simulation steps in which the agents refresh their target every step.
 To do so, an agent firstly acquires its inputs and then propagates them through its neural network computing a new target position that the simulation environment will translate in forces to be applied to the agent's virtual body.
 
@@ -471,10 +471,12 @@ In this section we present the results of the experiments run using the implemen
 \vspace{0.5em}
 \subsubsection{Homo vs Hetero}
 We first consider two experiments that relate to $H_1$, here the IV is the controller type (homo or hetero).
-Note that the first and the second run involves respectively 2 and 3  shepherds.
-Figure~\ref{fig:2v1_homo_vs_hetero} reports the former case, while Figure~\ref{fig:3v1_homo_vs_hetero} the latter.
-In order to provide a statistical point of view, we perform \textit{t}-test on the means of the homogeneous and heterogeneous trials, which produced a \textit{p}-value $\ll0.5$ for both cases.
+Note that the first and the second run involves respectively two and three shepherds against one sheep.
+The results are reported in Figure~\ref{fig:2v1_homo_vs_hetero} for the former case, while Figure~\ref{fig:3v1_homo_vs_hetero} the latter.
+The graphs represent the mean fitness of the best individual seen so far, averaged over 40 trials, with 95-percent confidence intervals.
+Moreover, we perform \textit{t}-test on the means of the homogeneous and heterogeneous trials, which produced a \textit{p}-value $\ll0.5$ for both cases.
 Thus, supported by the significant difference between the homogeneous and heterogeneous cases, we reject the null hyptoesis (see Section~\ref{sec:hypothesis}).
+We hu
 
 \begin{figure}[ht]
 	\centering
