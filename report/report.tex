@@ -55,11 +55,12 @@ Amsterdam, Netherlands}}
 
 
 \begin{abstract}
-In the context of robotics, intelligent behaviours are often achieved using neural networks as controllers evolved using  evolutionary algorithms.
+In the context of robotics, intelligent behaviours are often achieved using neural networks as controllers created through evolutionary algorithms.
 In the case of multiple individuals within a species, controllers can be either homogeneous or heterogeneous.
-In this paper, we use competitive co-evolution of homogeneous and heterogeneous controllers in order to investigate its effects on the effectiveness regarding a herding task.
-Our experiments show that shepherds perform better when assigned homogeneous controllers than heterogeneous controllers.
-Furthermore, we also find that task complexity is not sufficient to determine the effectiveness heterogeneous controllers have in a herding task.
+In this paper, we simulate a herding task involving robotic shepherds and sheep. 
+Through this task, we aim to compare competitive co-evolution of homogeneous and heterogeneous controllers,  and to investigate the effect task complexity has on herding performance.
+Our experiments show that shepherds score higher fitness when assigned homogeneous controllers when herding a single intelligent sheep.
+Furthermore, given heterogeneous controllers, we find that task complexity is not a predictor of the effectiveness shepherds have in a herding task.
 \end{abstract}
 
 
@@ -77,11 +78,10 @@ Its main objective is to evolve intelligent robot behaviours required to solve s
 % Neural Networks
 An \gls{ann}, commonly referred to as \gls{nn} in this field, is a function estimator that can be used as a policy for an autonomous agent and its design is natural, inspired by the biological nervous system.
 In order to employ it as a controller, inputs usually come from sensors making observations of the environment and the output is then used to control an actuation schema.
-The evaluation of the individuals' controllers can be made in a simulation.
-This exploits the computer's computational power in order to evaluate many individuals in a reasonable time frame.
+The evaluation of the individuals' controllers may be done in simulation in order to exploit computers' computational power by evaluating multiple individuals in reasonable time.
 
 % Solvable tasks
-Tasks composition and complexity can vary based on specific scenarios, and in general it is the subject of many studies aiming to solve different tasks.
+Tasks composition and complexity vary based on specific scenarios, making it the subject of many studies aiming to solve different tasks.
 For instance, tasks can be relatively small (e.g., moving objects) or they could be based on collaboration between a number of individuals.
 Research investigates collective behaviour in order to asses the extent to which collaboration between individuals is feasible.
 
@@ -90,24 +90,24 @@ In this paper, we consider competitive co-evolution within a herding task which 
 We evolve \gls{nn} controllers and assign them to the agents. The latter step can be done with a homogeneous or heterogeneous approach.
 While the former employs the same controller instance for each agent,
 in the latter each agent gets its own instance of a controller, which is separately evolved by an \gls{ea}.
-Moreover, the task complexity can be increased by varying or introducing new agents like adding a fox.
+Moreover, the task complexity can be increased by varying or introducing new agents of existing species (e.g. sherpherds or sheep) or adding new species (e.g. adding a fox).
 
 In this paper we employ the aforementioned components within a simulated herding task.
 We recap our objectives in the following list:
 
 \begin{itemize}
 	\item To compare homogeneity versus heterogeneity.
-	\item To estimate the effect on homo versus heterogeneity of increasingly difficult tasks.
+	\item To estimate the effect of homogeneity versus heterogeneity on increasingly difficult tasks.
  	\item To develop controlled experiments through software simulations, using ad hoc libraries.
 	\item To collect comprehensive results data.
 \end{itemize}
  
 \subsection{Research questions}
 \label{sec:researchQuestions}
-In the herding task, shepherds and sheep have opposing goals.
-While the former tries to herd sheep into a corral, the latter tries to escape through the left side of the pasture. 
-Species can be competitively co-evolved in a race to evolve strategies to accomplish opposing goals. 
-Furthermore, the task complexity can be influenced by varying different parameters such as the number of present agents per each type or their relative movement speeds. 
+In a herding task, shepherds and sheep have opposing goals.
+While the former tries to herd sheep into a corral, the latter tries to escape through the open end of the pasture. 
+These species can be competitively co-evolved in a race to evolve strategies to accomplish opposing goals. 
+Furthermore, the task complexity can be influenced by varying different parameters such as the number of present agents per species or their relative movement speeds. 
 Another type of dimension used to scale the difficulty is the type of controllers used.
 Instances of different controller types can be either \textit{static} or \textit{intelligent}.
 A \textit{static} controller is simply a predefined set of rules that implements a specific behaviour.
@@ -139,19 +139,20 @@ Likewise, $H_0$, namely the corresponding null hypothesis are as follows:
 	\item Increasing the number of shepherds herding a fixed number of sheep does not affect the performance.
 	\item Increasing the number of sheep being herded by a fixed number of shepherds does not affect the performance.
 \end{enumerate}
-In what follows, while we provide a statistical evaluation for $H_1$, for the others hypotheses we only show evidences to support or reject them.
+This research will provide a statistical evaluation for $H_1$. Hypothesis $H_2$ and $H_3$ are evaluated through different methods and only show evidences to support or reject them.
 
 \subsection{Contributions}
-In this paper we introduce our proposed model for running a herding task in a competitive co-evolution framework. 
-We have built our model and run a thorough set of simulations in order to test the hypothesis detailed in Section~\ref{sec:hypothesis}. 
-In what follows, we list the main contributions of this paper to the state-of-the-art:
+In this paper we propose a model for running a herding task in a competitive co-evolution framework. 
+We have implemented our model and run a thorough set of simulations in order to test the hypothesis detailed in Section~\ref{sec:hypothesis}. 
+Hereby we list the main contributions of this paper to the state-of-the-art:
 \begin{itemize}
-	\item We propose fitness functions that reflect the goals for different types of agent (i.e., shepherds, sheep).
-	\item We implement and evaluate the effects of heterogeneity within a co-evolution settings.
+	\item We present fitness functions that reflect the goals for different types of agent (i.e., shepherds, sheep).
+	\item We implement and evaluate the effects of heterogeneity within different co-evolution settings.
 	\item We operationalize task complexity in co-evolved environments as the ratio between the number of agents of each species.
+	\item We propose and motivate a suitable performance measure as the ratio between corralled and escaped sheep.
 \end{itemize}
 
-This work sheds a tiny light in the topic of competitive co-evolution by showing to which extent it is feasible in a herding task accomplished by robots.
+This work sheds a tiny light in the topic of competitive co-evolution by showing its feasibility applied to a herding task accomplished by robots.
 
 \subsection{Organization}
 The rest of this paper is organized as follows. 
@@ -231,7 +232,6 @@ However, increased difficulty was never implemented structurally nor tested meth
 
 \section{Model design}
 \label{sec:model_design}
-%This can be considered as an extension of~\cite{potter2001heterogeneity} because the task, as well as part of the model, are similar. 
 In this section we detail our model which aims to simulate a herding task by employing robots with intelligent controllers.
 % Herding environment + Task complexity
 The herding task involves shepherd agents trying to push sheep agents into a corral, which is further detailed in Section~\ref{sec:herding_task_environment}.
@@ -548,10 +548,10 @@ Additionally, both graphs show that homogeneous controllers outperform heterogen
 % Task complexity
 \vspace{0.5em}
 \subsubsection{Task complexity}
-Here we consider three experiments that relate to the second research question: \textit{How does varying task complexity (by moduling the sheep to shepherds ratio) affect the effectiveness of herding?}. 
+Here we consider five experiments that relate to the second research question: \textit{How does varying task complexity (by moduling the sheep to shepherds ratio) affect the effectiveness of herding?}. 
 This time, the independent variable is the task complexity, previously defined as the sheep to shepherd ratio $\phi$.
 
-First we investigate $H_2$ by keeping a fixed number of sheep, and increasing the number of shepherd herding it thus decreasing the task complexity. 
+First we investigate $H_2$ by keeping a fixed number of sheep and increasing the number of shepherd herding it thus decreasing the task complexity. 
 The experiments consider the following scenarios:
 \begin{itemize}
 	\item one shepherd herding one sheep: $\phi = 1$
@@ -559,15 +559,16 @@ The experiments consider the following scenarios:
 	\item three shepherds herding one sheep: $\phi = 0.33$
 \end{itemize}	
 
-Subsequently, we investigate $H_3$ by keeping a fixed number of shepherds, and increasing the number of sheep herded thus increasing the task complexity. These experiments consider the following scenarios:
+Subsequently, we investigate $H_3$ by keeping a fixed number of shepherds and increasing the number of sheep herded thus increasing the task complexity. These experiments consider the following scenarios:
 \begin{itemize}
 	\item three shepherd herding one sheep: $\phi = 0.33$
 	\item three shepherd herding two sheep: $\phi = 0.66$
 	\item three shepherd herding three sheep: $\phi = 1$
 \end{itemize}
 The dependent variables are the number of corralled sheep $c$ and escaped sheep $e$ in the simulation.
-In order to evaluate the performance of the shepherds we define a performance measure as $c/e$.
-This metric is the performance of herding that can be increased by corralling more sheep or allowing less sheep to escape.
+In order to evaluate the effectiveness of herding we define a performance measure as $c/e$.
+This performance metric can be increased by corralling more sheep or allowing less sheep to escape.
+
 Figure~\ref{fig:ratios_oneSheep} shows the corralled and escaped ratios for different numbers of shepherds herding one sheep, averaged over 40 runs. 
 Figure~\ref{fig:ratios_threeShepherd} shows the corralled and escaped ratios for three shepherd herding different number of sheep, averaged over 40 runs. 
 
@@ -578,43 +579,38 @@ Figure~\ref{fig:ratios_threeShepherd} shows the corralled and escaped ratios for
 	\label{fig:ratios_oneSheep}
 \end{figure}
 
-Table~\ref{tab:1} shows the performance resulting from each simulated run.
-The optimal scenario including a single sheep is the version with 2 shepherds, this scenario shows the best performance.  
-Increasing the number of shepherds in a single sheep herding task seems to positively affect the performance.
-Going from a single shepherd to two shepherds creates a relatively large jump in performance compared to going from 1 to 3 shepherds.
-Comparing 2 to 3 shepherds on a single sheep herding task seem to worsen performance.
-Therefore we can speculate that $H_2$ is valid, since performance does increase with additional shepherds, although the performance increase is not linear.
-%Increasing the number of shepherd herding a fixed number of sheep increases the performance of shepherding.
-From the results we see performance increasing from a higher number of sheep.
-This leads us to state that the $H_3$ is not valid.
-This might happen because of the flocking behaviour of scenarios with more then one sheep, making the herding task easier due to cohesion between sheep, preventing scattering.
-%ncreasing the number of sheep being herded by a fixed number of shepherds decreases the performance of shepherding.
-%no statistical tests were performed due to poor t-test values.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=1\hsize]{imgs/barchart_vs_more_sheep.png}
 	\caption{Corralled and escaped ratios in heterogeneous setting, averaged over 40 runs. Cases with one shepherd herding one (red), two (blue) and three (green) sheep are shown in different bars with 95\% confidence intervals.}
 	\label{fig:ratios_threeShepherd}
 \end{figure}
-%Similarly, the chart in Figure ~\ref{fig:ratios_threeShepherd} shows that the optimal scenario is three shepherds herding two sheep. 
-%Since it displays the highes corralled ratio. 
-%This time, having only one sheep leads to the highest number of escape ratio. 
-%TODO add t/test p values
-%3v2 and 3v1 corralled
-%3v2 and 3v3 corralled
-%3v1 and 3v2 escaped
-%3v1 and 3v3 escaped
-%Once again, there is no evident proportional relationship between the number of sheep herd and the corralled ratio. Thus we accept the corresponding null hypothesis. 
+
+Table~\ref{tab:1} shows the average performance resulting from each simulated scenario.
+For scenarios involving one sheep, the optimal is the version with 2 shepherds, since it shows the best performance.  
+The results show that switching from a single shepherd to multiple shepherds in a single sheep herding task seems to positively affect the performance.
+The reson behind this might be that multiple shepherds have better performance because cooperation is enhanced as a common goal is pursued.
+However, we note that going from a single shepherd to two shepherds leads to a larger increase in performance compared to going from one to three shepherds.
+Furthermore, comparing two to three shepherds on a single sheep herding task has a negative effect onperformance.
+Therefore we can speculate that $H_2$ is valid, since performance does increase with additional shepherds, although the performance increase is not linear.
+
+%Increasing the number of shepherd herding a fixed number of sheep increases the performance of shepherding.
+With regards to scenarios involving three shepherds, the optimal is the version with two sheep since it shows the best performance.
+The results show performance increases when switching from a single sheep to multiple sheep being herd by three shepherds.
+This leads us to state that the $H_3$ is not valid, since increasing the number of sheep being herded by a fixed number of shepherds does not decrease the performance of shepherding.
+This might happen because of the flocking behaviour of scenarios with more then one sheep, making the herding task easier due to cohesion between sheep, preventing scattering.
+ 
 
 \section{Conclusion}
 \label{sec:conclusion}
-Given the above information, we conclude that shepherds benefit from homogeneous controllers in a competitive co-evolved herding task. 
+Firstly, we conclude that shepherds benefit from homogeneous controllers in a competitive co-evolved herding task involving one intelligent sheep.
+These findings expand Potter et al.'s work ~\cite{potter2001heterogeneity}. 
+We show that having more adaptable sheep in fact weakens the need for heterogeneity in shepherds. 
 
-Given heterogeneous controllers, the sheep to shepherd ratio cannot predictably influence the performance shepherds will have in a herding task.
-Structural changes to the sheep to shepherd ratio did not evoke similar structural changes to performance.
-%Different scenarios proved to be different, with scenarios with two shepherds herding one sheep and three shepherds herding two sheep being optimal for herding. 
-
-Our findings support and expand Potter et al.'s work ~\cite{potter2001heterogeneity}. We show that by increasing task complexity alone, there is no need to implement heterogeneous controllers. Having more adaptable sheep in fact weakens the use of heterogeneity in the scenarios we explored, while varying the sheep to dog ratio is uninformative of the shepherds fitness scores.
+Secondly, a deeper investigation on heterogeneous controllers shows that the sheep to shepherd ratio cannot predict the performance shepherds will have in a herding task.
+Structural changes to the sheep to shepherd ratio (i.e. the specific number of agents of each species in different scenarios) did not evoke corresponding changes to performance.
+Finally we note that in both cases, switching from one individual to multiple individuals within a species leads to better performance. 
+This is the consequence of cooperative behaviours prefered over individualistic approaches. 
 
 \newpage
 \printbibliography
